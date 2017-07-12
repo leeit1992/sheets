@@ -1,0 +1,29 @@
+{
+    "name": "atl/atl_framework",
+    "description": "Framework for system",
+    "authors": [
+        {
+            "name": "Le Trung Ha",
+            "email": "letrungha.192@gmail.com"
+        }
+    ],
+    "require": {
+        "atl/atl-framework": "dev-master",
+        "symfony/routing": "2.8.*|3.0.*",
+        "symfony/http-foundation": "2.8.*|3.0.*",
+        "pimple/pimple": "3.0",
+        "catfan/Medoo": "*",
+        "siriusphp/validation": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        },
+        "files": [
+            "vendor/atl/atl-framework/src/atl/Database/helpers.php",
+            "vendor/atl/atl-framework/src/atl/Foundation/helpers.php",
+            "vendor/atl/atl-framework/src/atl/View/helpers.php",
+            "config/define.php"
+        ]
+    }
+}

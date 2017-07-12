@@ -1,0 +1,71 @@
+.op-inline-block {
+    position: relative;
+    display: -moz-inline-box;
+    display: inline-block;
+}
+
+.op-icon{
+	direction: ltr;
+    text-align: left;
+    height: 21px;
+    overflow: hidden;
+    vertical-align: middle;
+    width: 21px;
+}
+.op-icon-img-container {
+    height: 4107px;
+    position: absolute;
+    width: 42px;
+}
+
+.op-icon-img:before {
+    content: url('../img/jfk_sprite173.png');
+}
+.op-icon-text-color {
+    left: -21px;
+    top: -3792px;
+}
+
+.op-icon-insert-formula{
+	left: 0;
+	top: -1002px;
+}
+
+.op-icon-fill-color{
+    left: -21px;
+    top: -189px;
+}
+
+.op-icon-bold{
+    left: -21px;
+    top: -1842px;
+}
+.op-icon-italic{
+    left: -21px;
+    top: -3036px;
+}
+
+.op-icon-strikethrough {
+    left: -21px;
+    top: -2178px;
+}
+
+.op-icon-link{
+    left: -21px;
+    top: -1128px;
+}
+.op-toolbar-combo-button-dropdown {
+    background: url('../img/small-grey-disclosure-arrow-down.png') center no-repeat;
+    float: right;
+    margin: 9px 0 0 0px;
+    padding: 0 0 0 1px;
+    min-width: 7px;
+    opacity: .8;
+    vertical-align: middle;
+    width: 5px;
+    height: 7px;
+}
+.op-icon-insert-function {
+    left: -21px;
+    top: -1170px;
+}
