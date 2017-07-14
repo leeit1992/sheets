@@ -242,7 +242,7 @@ var OP_CANCULATOR = Backbone.View.extend({
                 }
 
 
-            }, 300)
+            }, 500)
         });
     },
 

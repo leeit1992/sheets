@@ -73,6 +73,33 @@ class AdminDataMenu
                 ]
             ],
 
+            'user' => [
+                'label'   => 'User',
+                'icon'    => '<i class="material-icons md-36">&#xE8F0;</i>',
+                'conditionOpen' => ['UserController'],
+                'display' => '',
+                'submenu' => [
+                    [
+                        'label' => 'Add User',
+                        'link'  => url('/add-user'),
+                        'conditionOpen' => ['saveUser'],
+                    ],
+                    [
+                        'label' => 'Management User',
+                        'link'  => url('/manage-user'),
+                        'conditionOpen' => ['manageUser'],
+                    ]
+                ]
+            ],
+
+            'configs' => [
+                'label'   => 'Configs',
+                'icon'    => '<i class="material-icons md-36">&#xE8F0;</i>',
+                'conditionOpen' => ['CanculatorController'],
+                'display' => '',
+                'submenu' => array()
+            ],
+
         ];
     }
 

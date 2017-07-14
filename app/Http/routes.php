@@ -36,3 +36,13 @@ $route->get('/canculator','CanculatorController@canculator');
 /*=====  End of Canculator  ======*/
 
 
+/*============================
+=            User            =
+============================*/
+
+$route->get('/add-user','UserController@saveUser');
+$route->get('/manage-user','UserController@manageUser');
+
+/*=====  End of User  ======*/
+
+
