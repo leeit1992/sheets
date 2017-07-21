@@ -4,7 +4,7 @@
         <div class="md-card-content">
             <ul class="uk-tab uk-tab-grid" data-uk-tab="{connect:'#header_alerts',animation:'slide-horizontal'}">
                 <li class="uk-width-1-2 uk-active"><a href="#" class="js-uk-prevent uk-text-small">Messages (0)</a></li>
-                <li class="uk-width-1-2"><a href="#" class="js-uk-prevent uk-text-small">Alerts (4)</a></li>
+                <li class="uk-width-1-2"><a href="#" class="js-uk-prevent uk-text-small">Notices (4)</a></li>
             </ul>
             <ul id="header_alerts" class="uk-switcher uk-margin">
                 <li>
@@ -31,7 +31,7 @@
                                 <i class="md-list-addon-icon material-icons uk-text-warning">&#xE8B2;</i>
                             </div>
                             <div class="md-list-content">
-                                <span class="md-list-heading">Et aut.</span>
+                                <span class="md-list-heading"><a href="">Et aut.</a></span>
                                 <span class="uk-text-small uk-text-muted uk-text-truncate">Ad magni facilis deleniti numquam.</span>
                             </div>
                         </li>

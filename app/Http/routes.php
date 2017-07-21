@@ -23,6 +23,7 @@ $route->post('/validate','MainController@checkRoutePost');
 
 $route->get('/login','LoginController@login');
 $route->get('/logout','LoginController@logout');
+$route->post('/check-login','LoginController@checkLogin');
 
 /*=====  End of Login  ======*/
 
@@ -30,10 +31,24 @@ $route->get('/logout','LoginController@logout');
 =            Canculator            =
 ==================================*/
 
-$route->get('/canculator','CanculatorController@canculator');
+$route->get('/sheet','SheetsController@handleSheet');
+$route->get('/edit-sheet/{id}','SheetsController@handleSheet');
+$route->get('/sheets-manage','SheetsController@manageSheets');
+$route->post('/save-sheets','SheetsController@saveSheets');
 
 
 /*=====  End of Canculator  ======*/
+
+
+
+/*================================
+=            Massages            =
+================================*/
+
+$route->get('/massages-manage','MessagesController@manageMessages');
+
+/*=====  End of Massages  ======*/
+
 
 
 /*============================

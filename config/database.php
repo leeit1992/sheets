@@ -3,7 +3,7 @@
 return [
 	// required
 	'database_type' => 'mysql',
-	'database_name' => 'atl_booking',
+	'database_name' => 'project7',
 	'server' => '127.0.0.1',
 	'username' => 'root',
 	'password' => 'root',
@@ -13,7 +13,7 @@ return [
 	'port' => 3306,
  
 	// [optional] Table prefix
-	//'prefix' => 'PREFIX_',
+	'prefix' => 'op_',
  
 	// [optional] Enable logging (Logging is disabled by default for better performance)
 	'logging' => true,

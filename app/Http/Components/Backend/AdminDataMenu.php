@@ -55,20 +55,39 @@ class AdminDataMenu
                 'icon'  => '<i class="material-icons md-24">&#xE8F0;</i>',
                 'conditionOpen' => ['Backend\MainController'],
                 'display' => '',
-                'link'  => url('/atl-admin'),
+                'link'  => url('/'),
                 'display' => '',
             ],
 
-            'canculator' => [
-                'label'   => 'Canculator',
+            'sheet' => [
+                'label'   => 'Sheets',
                 'icon'    => '<i class="material-icons md-36">&#xE8F0;</i>',
-                'conditionOpen' => ['CanculatorController'],
+                'conditionOpen' => ['SheetsController'],
                 'display' => '',
                 'submenu' => [
                     [
-                        'label' => 'Canculator Management',
-                        'link'  => url('/canculator'),
-                        'conditionOpen' => ['canculator'],
+                        'label' => 'Create data sheet',
+                        'link'  => url('/sheet'),
+                        'conditionOpen' => ['sheet'],
+                    ],
+                    [
+                        'label' => 'Sheets management',
+                        'link'  => url('/sheets-manage'),
+                        'conditionOpen' => ['manageSheets'],
+                    ]
+                ]
+            ],
+
+            'messages' => [
+                'label'   => 'Messages',
+                'icon'    => '<i class="material-icons md-36">&#xE8F0;</i>',
+                'conditionOpen' => ['MessagesController'],
+                'display' => '',
+                'submenu' => [
+                    [
+                        'label' => 'Messages management',
+                        'link'  => url('/massages-manage'),
+                        'conditionOpen' => ['manageMessages'],
                     ]
                 ]
             ],

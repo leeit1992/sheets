@@ -49,11 +49,11 @@
                 <form method="POST" action="<?php echo url('/check-login') ?>">
                     <div class="uk-form-row">
                         <label for="atl_login_acc">Email</label>
-                        <input class="md-input" type="email" name="atl_login_acc" />
+                        <input class="md-input" type="email" name="op_login_acc" />
                     </div>
                     <div class="uk-form-row">
                         <label for="atl_login_pass">Password</label>
-                        <input class="md-input" type="password" name="atl_login_pass" />
+                        <input class="md-input" type="password" name="op_login_pass" />
                     </div>
                     <div class="uk-margin-medium-top">
                         <button type="submit" class="md-btn md-btn-primary md-btn-block md-btn-large">Sign In</button>

@@ -41,7 +41,7 @@ html {
                             <div class="op-toolbar-menu-button op-toolbar-color-menu-button op-inline-block op-toolbar-menu-button">
                                 <div class="op-toolbar-menu-button-outer-box">
                                     <div class="op-color-menu-button-indicator" style="border-bottom-color: rgb(0, 0, 0);">
-                                        <div class="op-icon op-inline-block" style="user-select: none;">
+                                        <div class="op-icon op-inline-block op-text-cell-color" style="user-select: none;">
                                             <div class="op-icon-img-container op-icon-img op-icon-text-color" style="user-select: none;">&nbsp;</div>
                                         </div>
                                         <div class="op-toolbar-combo-button-dropdown op-inline-block " style="user-select: none;">&nbsp;</div>
@@ -52,7 +52,7 @@ html {
                             <div class="op-toolbar-menu-button op-toolbar-color-menu-button op-inline-block op-toolbar-menu-button">
                                 <div class="op-toolbar-menu-button-outer-box">
                                     <div class="op-color-menu-button-indicator" style="border-bottom-color: rgb(0, 0, 0);">
-                                        <div class="op-icon op-inline-block" style="user-select: none;">
+                                        <div class="op-icon op-inline-block op-bg-cell-color" style="user-select: none;">
                                             <div class="op-icon-img-container op-icon-img op-icon-fill-color" style="user-select: none;">&nbsp;</div>
                                         </div>
                                         <div class="op-toolbar-combo-button-dropdown op-inline-block " style="user-select: none;">&nbsp;</div>
@@ -122,28 +122,28 @@ html {
             <i class="material-icons">&#xE145;</i>
         </a>
     </div>
+    <div id="style_switcher">
+        <div id="style_switcher_toggle"><i class="material-icons">&#xE8B8;</i></div>
+        <div class="uk-margin-medium-bottom">
+            <h4 class="heading_c uk-margin-bottom">Submit Form</h4>
+           
+            <div class="uk-width-medium-1-1 uk-margin-bottom">
+                <label>Title</label>
+                <input type="text" class="md-input" name="op_sheet_title" />
+            </div>
+
+            <div class="uk-width-medium-1-1 uk-margin-bottom">
+                <label>Message</label>
+               <textarea cols="30" rows="4" class="md-input" name="op_sheet_message"></textarea>
+            </div>
+
+            <button type="button" class="md-btn op-save-sheets-js"> Submit </button>
+        </div>
+    </div>
+    <div class="uk-notify uk-notify-bottom-right op-notify-js" style="display: none;"></div>
 </div>
 
-<div id="style_switcher">
-    <div id="style_switcher_toggle"><i class="material-icons">&#xE8B8;</i></div>
-    <div class="uk-margin-medium-bottom">
-        <h4 class="heading_c uk-margin-bottom">Toolbars</h4>
-        <ul class="md-list">
-            <li>
-                <label for="uk_dp_start">Text color</label>
-                <div class="uk-input-group">
-                    <input class="md-input custom" type="text">
-                </div>
-            </li>
-            <li>
-                <label for="uk_dp_start">Backgroud color</label>
-                <div class="uk-input-group">
-                    <input class="md-input custom" type="text">
-                </div>
-            </li>
-            
-        </ul>
-</div>
+
 
 <?php
 registerScrips([
