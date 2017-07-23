@@ -3,13 +3,13 @@ namespace App\Http\Components;
 
 use Atl\Routing\Controller as baseController;
 use App\Http\Components\Backend\AdminDataMenu;
-
+use App\Model\LogsModel;
 
 class Controller extends baseController{
 	
 	public function __construct(){
 		parent::__construct();
-
+		$this->mdLogs = new LogsModel;
 	}
 
 	/**
@@ -19,13 +19,13 @@ class Controller extends baseController{
 	 * @param  array $parameters Parameters for template.
 	 * @return string
 	 */
-	public function loadTemplate( $path, $parameters = array() ){
+	public function loadTemplate( $path, $parameters = array(), $options = array() ){
 
 		$output = View(
 			'layout/header.tpl',
 			[
-				'userId'    => 1,
-				'userInfo'  => array( 'user_avatar' => 1 )
+				'userId'    => Session()->get('op_user_id'),
+				'userInfo'  => Session()->get('op_user_meta'),
 			]
 		);
 
@@ -36,7 +36,11 @@ class Controller extends baseController{
 			]
 		);
 		$output .= View( $path, $parameters );
-		$output .= View('layout/footer.tpl');
+		$output .= View(
+					'layout/footer.tpl',
+					[
+					]
+					);
 
 		return $output;
 	}
@@ -47,8 +51,8 @@ class Controller extends baseController{
 	 * @return void
 	 */
 	public function userAccess(){
-		if (true !== Session()->has('atl_user_id')) {
-            redirect( url( '/atl-login' ) );
+		if (true !== Session()->has('op_user_id')) {
+            redirect( url( '/login' ) );
         }
 	}
 
@@ -91,6 +95,28 @@ class Controller extends baseController{
      */
     public function isValidMd5($md5 =''){
 	    return preg_match('/^[a-f0-9]{32}$/', $md5);
+	}
+
+	/**
+	 * Handle redirect to page 404
+	 * 
+	 * @param  string $route Link or router project
+	 * @return void
+	 */
+	public function redirect404( $route ){
+		redirect( url( '/error-404?url=' . $route ) );
+	}
+
+
+	/**
+	 * convertDateToYmd 
+	 * Handle format date.
+	 * 
+	 * @param  string $dateString Date string.
+	 * @return string
+	 */
+	public function convertDateToYmd( $dateString ) {	
+		return date( 'Y-m-d', strtotime( $dateString ) );		
 	}
 
 }

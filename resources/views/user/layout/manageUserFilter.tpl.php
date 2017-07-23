@@ -4,18 +4,11 @@
             <div class="uk-vertical-align-middle">
                 <ul class="uk-subnav uk-subnav-pill atl-manage-user-filter-js">
                     <li class="uk-active">
-                        <a href="<?php echo url( '/atl-admin/manage-user' ) ?>">All</a>
+                        <a href="<?php echo url( '/manage-user' ) ?>">All</a>
                     </li>
-                    <li class="">
-                        <a href="<?php echo url( '/atl-admin/manage-user' ) ?>">Administrator</a>
-                    </li>
-                    <li class="">
-                        <a href="<?php echo url( '/atl-admin/manage-user' ) ?>">Editor</a>
-                    </li>
-                    <li class="">
-                        <a href="<?php echo url( '/atl-admin/manage-user' ) ?>">Author</a>
-                    </li>
-
+                    <?php foreach ($mdUser->getRoleUser() as $key => $value) {
+                        echo '<li><a data-role="' . $key . '" href="' . url( '/manage-user?role=' .$key ) . '">' . $value . '</a></li>';
+                    } ?>
                 </ul>
             </div>
         </div>

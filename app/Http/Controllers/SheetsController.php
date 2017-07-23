@@ -4,19 +4,33 @@ namespace App\Http\Controllers;
 use App\Http\Components\Controller as baseController;
 use Atl\Foundation\Request;
 use App\Model\SheetModel;
+use App\Model\UserModel;
 
 class SheetsController extends baseController{
 
 	public function __construct(){
+		parent::__construct();
+		$this->userAccess();
 
 		$this->mdSheet = new SheetModel;
+		$this->mdUser = new UserModel;
 	}
 
-	public function handleSheet(){
+	public function handleSheet( $id = null ){
+		
 		registerStyle( [
 		    'handsontable' => assets('bower_components/handsontable/handsontable.full.min.css'),
-		    'spectrum' => assets('bower_components/spectrum/spectrum.css'),
+		    'spectrum'     => assets('bower_components/spectrum/spectrum.css'),
 		] ); 
+
+		if( $id ) {
+			$sheets = $this->mdSheet->getBy( [ 'sheet_author' => Session()->get('op_user_id'), 'id' => $id ] );
+
+			if( empty( $sheets ) ) {
+				redirect( url('/error-404?url=' . $_SERVER['REDIRECT_URL']) );
+			}
+		}
+
 		// Load layout.
 		return $this->loadTemplate(
 			'sheet/sheet.tpl',
@@ -27,11 +41,15 @@ class SheetsController extends baseController{
 	}
 
 	public function manageSheets(){
+
+		$listSheets = $this->mdSheet->getBy( [ 'sheet_author' => Session()->get('op_user_id') ] );
+
 		// Load layout.
 		return $this->loadTemplate(
 			'sheet/manageSheets.tpl',
 			[
-				
+				'listSheets' => $listSheets,
+				'mdUser'     => $this->mdUser
 			]
 		);
 	}
@@ -42,8 +60,13 @@ class SheetsController extends baseController{
 				'sheet_title'   => $request->get('sheetTitle'),
 				'sheet_message' => $request->get('sheetMessage'),
 				'sheet_content' => $request->get('sheetData'),
+				'sheet_author'  => Session()->get('op_user_id'),
+				'sheet_datetime' => date("Y-m-d H:i:s")
 			]
 		);
+
+		// Set notice success
+		 $this->mdLogs->add($this->mdLogs->logTemplate( ' Send sheets', 'Sheets'));
 	}
 
 }

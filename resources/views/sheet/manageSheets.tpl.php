@@ -53,9 +53,13 @@
 			<div class="md-card-list-header heading_list">Today</div>
 			<div class="md-card-list-header md-card-list-header-combined heading_list" style="display: none">All Messages</div>
 			<ul class="hierarchical_slide">
-				<?php for ($i=0; $i <= 5; $i++): ?>
-				<li>
-					<div class="md-card-list-item-menu" data-uk-dropdown="{mode:'click'}">
+                <?php 
+                    foreach ($listSheets as $key => $value):
+                    if( date('y-m-d') == date( 'y-m-d', strtotime($value['sheet_datetime']) ) ):
+                        $user = $mdUser->getUserBy('id', $value['sheet_author']);
+                ?>
+                <li>
+                    <div class="md-card-list-item-menu" data-uk-dropdown="{mode:'click'}">
                         <a href="#" class="md-icon material-icons">&#xE5D4;</a>
                         <div class="uk-dropdown uk-dropdown-flip uk-dropdown-small">
                             <ul class="uk-nav">
@@ -65,7 +69,7 @@
                             </ul>
                         </div>
                     </div>
-                    <span class="md-card-list-item-date">18 Aug</span>
+                    <span class="md-card-list-item-date"><?php echo date('d M',strtotime($value['sheet_datetime'])) ?></span>
                     <div class="md-card-list-item-select">
                         <input type="checkbox" data-md-icheck />
                     </div>
@@ -73,23 +77,31 @@
                         <span class="md-card-list-item-avatar md-bg-grey">vc</span>
                     </div>
                     <div class="md-card-list-item-sender">
-                        <span>Charlie Hand</span>
+                        <span>
+                            <?php 
+
+                                if( isset( $user[0] ) ) {
+                                    echo $user[0]['user_name'];
+                                }
+                            ?>
+                        </span>
                     </div>
                     <div class="md-card-list-item-subject">
-                        <div class="md-card-list-item-sender-small">
-                            <span>Charlie Hand</span>
-                        </div>
-                        <span><a href="<?php echo url( '/canculator' ) ?>">Consectetur dolores repellat officia architecto dignissimos aliquid tenetur soluta atque illum error</a></span>
+                        <span><a href="<?php echo url( '/view-sheet/' . $value['id'] ) ?>"><?php echo $value['sheet_message'] ?></a></span>
                     </div>
-				</li>
-				<?php endfor; ?>
-			</ul>
+                </li>
+                <?php endif; endforeach; ?>
+            </ul>
 
 		</div>
 		<div class="md-card-list">
 			<div class="md-card-list-header md-card-list-header-combined heading_list">All Sheets</div>
 			<ul class="hierarchical_slide">
-				<?php for ($i=0; $i <= 10; $i++): ?>
+				<?php 
+                    foreach ($listSheets as $key => $value):
+                    if( date('y-m-d') != date( 'y-m-d', strtotime($value['sheet_datetime']) ) ):
+                        $user = $mdUser->getUserBy('id', $value['sheet_author']);
+                ?>
 				<li>
 					<div class="md-card-list-item-menu" data-uk-dropdown="{mode:'click'}">
                         <a href="#" class="md-icon material-icons">&#xE5D4;</a>
@@ -101,7 +113,7 @@
                             </ul>
                         </div>
                     </div>
-                    <span class="md-card-list-item-date">18 Aug</span>
+                    <span class="md-card-list-item-date"><?php echo date('d M',strtotime($value['sheet_datetime'])) ?></span>
                     <div class="md-card-list-item-select">
                         <input type="checkbox" data-md-icheck />
                     </div>
@@ -109,16 +121,20 @@
                         <span class="md-card-list-item-avatar md-bg-grey">vc</span>
                     </div>
                     <div class="md-card-list-item-sender">
-                        <span>Charlie Hand</span>
+                        <span>
+                            <?php 
+
+                                if( isset( $user[0] ) ) {
+                                    echo $user[0]['user_name'];
+                                }
+                            ?>
+                        </span>
                     </div>
                     <div class="md-card-list-item-subject">
-                        <div class="md-card-list-item-sender-small">
-                            <span>Charlie Hand</span>
-                        </div>
-                        <span><a href="<?php echo url( '/canculator' ) ?>">Consectetur dolores repellat officia architecto dignissimos aliquid tenetur soluta atque illum error</a></span>
+                        <span><a href="<?php echo url( '/view-sheet/' . $value['id'] ) ?>"><?php echo $value['sheet_message'] ?></a></span>
                     </div>
 				</li>
-				<?php endfor; ?>
+				<?php endif; endforeach; ?>
 			</ul>
 		</div>
 	</div>

@@ -58,14 +58,14 @@
                         <li><a href="#" id="main_search_btn" class="user_action_icon"><i class="material-icons md-24 md-light">&#xE8B6;</i></a></li>
                        
                         <?php View('layout/messages.tpl') ?>
-
+            
                         <li data-uk-dropdown="{mode:'click'}">
                             <a href="#" class="user_action_image">
-                                <img class="md-user-image" style="height: 34px;" src="<?php echo assets('/assets/img/sidebar_head_bg.png') ?>" alt=""/>
+                                <img class="md-user-image" style="height: 34px;" src="<?php echo url( $userInfo['user_avatar'] ) ?>" alt=""/>
                             </a>
                             <div class="uk-dropdown uk-dropdown-small uk-dropdown-flip">
                                 <ul class="uk-nav js-uk-prevent">
-                                    <li><a href="<?php echo url('/atl-admin/edit-user/' . $userId) ?>">My profile</a></li>
+                                    <li><a href="<?php echo url('/edit-user/' . $userId) ?>">My profile</a></li>
                                     <li><a href="<?php echo url('/logout') ?>">Logout</a></li>
                                 </ul>
                             </div>

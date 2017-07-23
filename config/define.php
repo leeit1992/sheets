@@ -5,4 +5,6 @@
 |--------------------------------------------------------------------------
 */
 
-define("SITE_DIR", "/project7/");
+define("SITE_DIR", $_SERVER['DOCUMENT_ROOT'] . "/project7/");
+
+define("FOLDER_UPLOAD", SITE_DIR . 'uploads');

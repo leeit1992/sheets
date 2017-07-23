@@ -101,12 +101,12 @@ class AdminDataMenu
                     [
                         'label' => 'Add User',
                         'link'  => url('/add-user'),
-                        'conditionOpen' => ['saveUser'],
+                        'conditionOpen' => ['handleUser'],
                     ],
                     [
                         'label' => 'Management User',
                         'link'  => url('/manage-user'),
-                        'conditionOpen' => ['manageUser'],
+                        'conditionOpen' => ['manageUsers'],
                     ]
                 ]
             ],

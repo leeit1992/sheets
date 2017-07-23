@@ -277,11 +277,13 @@ var OP_CANCULATOR = Backbone.View.extend({
 
         $.post(OPDATA.adminUrl + 'save-sheets' ,data, function(){
             altair_helpers.content_preloader_hide();
-            var output = self.errorFormTpl({
-                message: message,
+            
+            var output = self.noticeTpl({
+                message: 'Send sheet success.',
                 classes: 'uk-notify-message-success'
-              });
-              $('.atl-notify-js', self.el).html(output).show();
+            });
+            $('.atl-notify-js', self.el).html(output).show();
+            
         });
 
         return false;

@@ -9,7 +9,7 @@
     <!-- Remove Tap Highlight on Windows Phone IE -->
     <meta name="msapplication-tap-highlight" content="no"/>
 
-    <title>Login Sytem</title>
+    <title>Atl Travel Manage - Login Page</title>
 
     <?php  
         enqueueStyle(
@@ -31,12 +31,10 @@
                 if( !empty( $noticeLogin ) ) {
                     ?>
                     <div class="uk-alert uk-alert-warning" data-uk-alert="">
-                      
                         <a href="#" class="uk-alert-close uk-close"></a>
                         <?php
                             echo $noticeLogin[0];
                         ?>
-                       
                     </div>
                     <?php   
                 }
