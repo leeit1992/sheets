@@ -49,6 +49,7 @@ class AdminDataMenu
      */
     public function dataMenu()
     {   
+        $userMeta = Session()->get('op_user_meta');
         return [
             'Dashboard' => [
                 'label' => 'Dashboard',
@@ -96,7 +97,7 @@ class AdminDataMenu
                 'label'   => 'User',
                 'icon'    => '<i class="material-icons md-36">&#xE8F0;</i>',
                 'conditionOpen' => ['UserController'],
-                'display' => '',
+                'display' => ( 1 == $userMeta['user_role'] ) ? '' : 'none',
                 'submenu' => [
                     [
                         'label' => 'Add User',

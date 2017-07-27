@@ -37,6 +37,7 @@ $route->get('/sheet','SheetsController@handleSheet');
 $route->get('/view-sheet/{id}','SheetsController@handleSheet');
 $route->get('/sheets-manage','SheetsController@manageSheets');
 $route->post('/save-sheets','SheetsController@saveSheets');
+$route->get('/get-sheets','SheetsController@getSheets');
 
 /*=====  End of Sheets  ======*/
 

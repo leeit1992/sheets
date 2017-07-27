@@ -105,7 +105,14 @@ html {
                                 <input type="text" name="">
                             </div>
                         </div>
-                        
+                        <?php 
+                            if( !empty( $sheet ) ) {
+                                ?>
+                                <input type="hidden" id="op_sheet_id" value="<?php echo $sheet[0]['id'] ?>">
+                                <textarea style="display: none;" id="op_sheet_data"><?php echo $sheet[0]['sheet_content'] ?></textarea>
+                                <?php
+                            }
+                        ?>
 	                    <ul id="tab_sheet" class="uk-switcher uk-margin op-sheet-tabs-content-js">
 	                        <li>
                                 <div class="op-sheet-js style-5" id="op-sheet-0"></div>

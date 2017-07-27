@@ -14,6 +14,7 @@ class UserController extends baseController{
 	public function __construct(){
 		parent::__construct();
 		$this->userAccess();
+		$this->userRole();
 
 		// Model data system.
 		$this->mdUser = new UserModel;
@@ -27,7 +28,6 @@ class UserController extends baseController{
 	 * @return string
 	 */
 	public function manageUsers( $page = null ){
-		
 		$ofset                = 10;
         $config['pageStart']  = $page;
         $config['ofset']      = $ofset;
@@ -72,7 +72,7 @@ class UserController extends baseController{
 			$userSocial = ( array ) json_decode( $metaData['user_social'] );
 
 			if( empty( $infoUser ) ) {
-				redirect( url('/atl-admin/error-404?url=' . $_SERVER['REDIRECT_URL']) );
+				redirect( url('/error-404?url=' . $_SERVER['REDIRECT_URL']) );
 			}
 		}
 

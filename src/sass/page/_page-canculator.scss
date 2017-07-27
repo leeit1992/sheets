@@ -158,6 +158,12 @@
 	    background-image: linear-gradient(top, #f8f8f8, #f1f1f1)
 	}
 
+	/* Column headers */
+	.ht_clone_top th {
+	  background-color: #cddc39;
+	  font-weight: bold;
+	}
+
 }
 
 #style_switcher {

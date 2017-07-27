@@ -27,6 +27,7 @@
     <script type="text/javascript">
         window.OPDATA = {
             adminUrl: "<?php echo url('/'); ?>",
+            user: <?php echo json_encode(  $userInfo ) ?>
         }
     </script>
 	
@@ -61,7 +62,7 @@
             
                         <li data-uk-dropdown="{mode:'click'}">
                             <a href="#" class="user_action_image">
-                                <img class="md-user-image" style="height: 34px;" src="<?php echo url( $userInfo['user_avatar'] ) ?>" alt=""/>
+                                <img class="md-user-image" style="height: 34px;" src="<?php echo url( $userInfo['meta']['user_avatar'] ) ?>" alt=""/>
                             </a>
                             <div class="uk-dropdown uk-dropdown-small uk-dropdown-flip">
                                 <ul class="uk-nav js-uk-prevent">

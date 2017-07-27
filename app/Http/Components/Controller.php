@@ -10,6 +10,8 @@ class Controller extends baseController{
 	public function __construct(){
 		parent::__construct();
 		$this->mdLogs = new LogsModel;
+
+		// var_dump($this->getRoute('method'));
 	}
 
 	/**
@@ -25,7 +27,12 @@ class Controller extends baseController{
 			'layout/header.tpl',
 			[
 				'userId'    => Session()->get('op_user_id'),
-				'userInfo'  => Session()->get('op_user_meta'),
+				'userInfo'  => [
+						'id'     => Session()->get('op_user_id'),
+						'email'  => Session()->get('op_user_email'),
+						'name'   => Session()->get('op_user_name'),
+						'meta'   => Session()->get('op_user_meta')
+					],
 			]
 		);
 
@@ -54,6 +61,41 @@ class Controller extends baseController{
 		if (true !== Session()->has('op_user_id')) {
             redirect( url( '/login' ) );
         }
+	}
+
+	public function userRole(){
+		$module = [];
+		$argsRule = [];
+		$router = $this->getRoute();
+		$userMeta = Session()->get('op_user_meta');
+		
+		if( 1 == $userMeta['user_role'] ) {
+			$module = [
+				'/manage-user',
+				'/manage-user/page/{page}',
+				'/add-user',
+				'/edit-user/{id}',
+				'/ajax-manage-user',
+				'/validate-user',
+				'/delete-user',
+			];
+		}
+
+		if( 2 == $userMeta['user_role'] ) {
+			$module = [
+				'/edit-user/{id}'
+			];
+		}
+		
+		if( in_array( $router['_route'], $module ) ) {
+			$argsRule[] = true;
+		}else{
+			$argsRule[] = false;
+		}
+
+		if( in_array( false, $argsRule ) ) {
+			redirect( url('/error-404?url=' . $_SERVER['REDIRECT_URL']) );
+		}
 	}
 
 	/**

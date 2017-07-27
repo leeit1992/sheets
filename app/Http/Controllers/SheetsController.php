@@ -23,6 +23,8 @@ class SheetsController extends baseController{
 		    'spectrum'     => assets('bower_components/spectrum/spectrum.css'),
 		] ); 
 
+		$sheets = array();
+
 		if( $id ) {
 			$sheets = $this->mdSheet->getBy( [ 'sheet_author' => Session()->get('op_user_id'), 'id' => $id ] );
 
@@ -35,7 +37,7 @@ class SheetsController extends baseController{
 		return $this->loadTemplate(
 			'sheet/sheet.tpl',
 			[
-				
+				'sheet' => $sheets
 			]
 		);
 	}
@@ -67,6 +69,27 @@ class SheetsController extends baseController{
 
 		// Set notice success
 		 $this->mdLogs->add($this->mdLogs->logTemplate( ' Send sheets', 'Sheets'));
+	}
+
+	public function getSheets(Request $request){
+		$sheets = $this->mdSheet->getBy( [ 'sheet_author' => Session()->get('op_user_id'), 'id' => $request->get('id') ] );
+
+		if( !empty( $sheets ) ) {
+
+			$data = json_decode( $sheets[0]['sheet_content'] );
+			$message = true;
+
+		}else{
+			$message = false;
+		}
+
+		echo json_encode(
+			[
+				'data'   => $data,
+				'status' => $message
+			]
+		);
+
 	}
 
 }
