@@ -2,30 +2,11 @@
 namespace App\Model;
 
 use Atl\Database\Model;
-use App\Model\AtlModel;
 
-class SheetModel extends AtlModel
+class MessagesModel extends Model
 {
 	public function __construct(){
-		parent::__construct('sheets');
-	}
-
-	/**
-	 * Sett meta table.
-	 * 
-	 * @return string
-	 */
-	public function metaDataTable(){
-		return 'sheetmeta';
-	}
-
-	/**
-	 * Set meta query.
-	 * 
-	 * @return stirng
-	 */
-	public function metaDataQueryBy(){
-		return 'sheet_id';
+		parent::__construct('messages');
 	}
 
 	/**
@@ -70,27 +51,11 @@ class SheetModel extends AtlModel
 			$where = [ $key => $value ];
 		}
 
-		$listSheets = $this->db->select(
+		return $this->db->select(
 			$this->table, 
 				'*', 
 				$where
 			);
-
-		$args = array();
-		foreach ($listSheets as $sheet) {
-			$metas = $this->getAllMetaData( $sheet['id'] );
-			
-			if( !empty( $metas ) ) {
-				foreach ($metas as $mkey => $mValue) {
-					$sheet[$mkey] = $mValue;
-				}
-			}
-			
-			$args[] = $sheet;
-			
-		}
-
-		return $args;
 	}
 
 
@@ -130,20 +95,14 @@ class SheetModel extends AtlModel
 	 * @return void
 	 */
 	public function searchBy( $key ){
-		$listCar =  $this->db->select(
+		$list =  $this->db->select(
 			$this->table,
 			'*',
 			[
-				"service_type" => 'car',
-				"service_name[~]" => $key
+				"op_message_title[~]" => $key
 			]
 		);
-		$argsCars = [];
-		foreach ($listCar as $car) {
-			$carMeta = $this->getAllMetaData( $car['id'] );
-			$argsCars[] = $this->setListCars($carMeta,$car);
-		}
-		return $argsCars;
+		return $list;
 	}
 
 }

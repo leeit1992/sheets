@@ -69,7 +69,7 @@ class AdminDataMenu
                     [
                         'label' => 'Create data sheet',
                         'link'  => url('/sheet'),
-                        'conditionOpen' => ['sheet'],
+                        'conditionOpen' => ['handleSheet'],
                     ],
                     [
                         'label' => 'Sheets management',
@@ -85,8 +85,13 @@ class AdminDataMenu
                 'conditionOpen' => ['MessagesController'],
                 'display' => '',
                 'submenu' => [
+                    [   
+                        'label' => 'Message sent',
+                        'link'  => url('/message-send'),
+                        'conditionOpen' => ['messageSend'],
+                    ],
                     [
-                        'label' => 'Messages management',
+                        'label' => 'Inbox',
                         'link'  => url('/massages-manage'),
                         'conditionOpen' => ['manageMessages'],
                     ]

@@ -21,6 +21,11 @@
 .op-icon-img:before {
     content: url('../img/jfk_sprite173.png');
 }
+
+.op-icon-img2:before {
+    content: url('../img/jfk_sprite174.png');
+}
+
 .op-icon-text-color {
     left: -21px;
     top: -3792px;
@@ -54,6 +59,12 @@
     left: -21px;
     top: -1128px;
 }
+
+.op-icon-autofilter-filled {
+    left: -21px;
+    top: -84px;
+}
+
 .op-toolbar-combo-button-dropdown {
     background: url('../img/small-grey-disclosure-arrow-down.png') center no-repeat;
     float: right;

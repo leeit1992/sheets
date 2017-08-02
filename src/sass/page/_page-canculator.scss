@@ -159,11 +159,14 @@
 	}
 
 	/* Column headers */
+	// .ht_clone_top.handsontable .htDimmed {
+	//   background-color: #cddc39;
+	//   font-weight: bold;
+	// }
 	.ht_clone_top th {
 	  background-color: #cddc39;
 	  font-weight: bold;
 	}
-
 }
 
 #style_switcher {

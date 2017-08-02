@@ -7,6 +7,8 @@ use App\Model\LogsModel;
 
 class Controller extends baseController{
 	
+	protected $infoUser = [];
+
 	public function __construct(){
 		parent::__construct();
 		$this->mdLogs = new LogsModel;
@@ -61,6 +63,13 @@ class Controller extends baseController{
 		if (true !== Session()->has('op_user_id')) {
             redirect( url( '/login' ) );
         }
+
+        $this->infoUser =  [
+							'id'     => Session()->get('op_user_id'),
+							'email'  => Session()->get('op_user_email'),
+							'name'   => Session()->get('op_user_name'),
+							'meta'   => Session()->get('op_user_meta')
+						];
 	}
 
 	public function userRole(){

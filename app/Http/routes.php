@@ -35,6 +35,7 @@ $route->post('/check-login','LoginController@checkLogin');
 
 $route->get('/sheet','SheetsController@handleSheet');
 $route->get('/view-sheet/{id}','SheetsController@handleSheet');
+$route->get('/view-sheet/{id}/{mesId}','SheetsController@handleSheet');
 $route->get('/sheets-manage','SheetsController@manageSheets');
 $route->post('/save-sheets','SheetsController@saveSheets');
 $route->get('/get-sheets','SheetsController@getSheets');
@@ -48,6 +49,11 @@ $route->get('/get-sheets','SheetsController@getSheets');
 ================================*/
 
 $route->get('/massages-manage','MessagesController@manageMessages');
+$route->get('/message-send','MessagesController@messageSend');
+$route->post('/write-messages','MessagesController@writeMessages');
+$route->post('/delete-messages','MessagesController@removeMessages');
+$route->get('/filter-messages','MessagesController@filterMessages');
+$route->post('/update-inbox','MessagesController@updateInbox');
 
 /*=====  End of Massages  ======*/
 

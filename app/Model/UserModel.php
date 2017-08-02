@@ -92,6 +92,32 @@ class UserModel extends AtlModel
 	}
 
 	/**
+	 * Handle get all user
+	 * 
+	 * @return array
+	 */
+	public function getAll(){
+		$listUser = $this->db->select(
+			$this->table, 
+				'*'
+			);
+
+		$argsUsers = array();
+		foreach ($listUser as $user) {
+			$userMeta = $this->getAllMetaData( $user['id'] );
+
+			foreach ($userMeta as $uMkey => $uMValue) {
+				$user[$uMkey] = $uMValue;
+			}
+
+			$argsUsers[] = $user;
+			
+		}
+
+		return $argsUsers;
+	}
+
+	/**
 	 * Handle get limit user
 	 * 
 	 * @param  int 	  	$start Start query.

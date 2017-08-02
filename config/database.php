@@ -9,7 +9,7 @@ return [
 	'password' => 'root',
  
 	// [optional]
-	'charset' => 'utf8',
+	'charset' => 'UTF8',
 	'port' => 3306,
  
 	// [optional] Table prefix

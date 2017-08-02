@@ -51,7 +51,7 @@
         </div>
 		<div class="md-card-list">
 			<div class="md-card-list-header heading_list">Today</div>
-			<div class="md-card-list-header md-card-list-header-combined heading_list" style="display: none">All Messages</div>
+
 			<ul class="hierarchical_slide">
                 <?php 
                     foreach ($listSheets as $key => $value):
@@ -87,7 +87,7 @@
                         </span>
                     </div>
                     <div class="md-card-list-item-subject">
-                        <span><a href="<?php echo url( '/view-sheet/' . $value['id'] ) ?>"><?php echo $value['sheet_message'] ?></a></span>
+                         <span><a href="<?php echo url( '/view-sheet/' . $value['id'] ) ?>"><?php echo $value['sheet_description'] ?></a></span>
                     </div>
                 </li>
                 <?php endif; endforeach; ?>
@@ -123,7 +123,6 @@
                     <div class="md-card-list-item-sender">
                         <span>
                             <?php 
-
                                 if( isset( $user[0] ) ) {
                                     echo $user[0]['user_name'];
                                 }
@@ -131,7 +130,7 @@
                         </span>
                     </div>
                     <div class="md-card-list-item-subject">
-                        <span><a href="<?php echo url( '/view-sheet/' . $value['id'] ) ?>"><?php echo $value['sheet_message'] ?></a></span>
+                        <span><a href="<?php echo url( '/view-sheet/' . $value['id'] ) ?>"><?php echo $value['sheet_description'] ?></a></span>
                     </div>
 				</li>
 				<?php endif; endforeach; ?>
