@@ -69,11 +69,13 @@ class AdminDataMenu
                     [
                         'label' => 'Create data sheet',
                         'link'  => url('/sheet'),
+                        'display' => '',
                         'conditionOpen' => ['handleSheet'],
                     ],
                     [
                         'label' => 'Sheets management',
                         'link'  => url('/sheets-manage'),
+                        'display' => '',
                         'conditionOpen' => ['manageSheets'],
                     ]
                 ]
@@ -88,11 +90,13 @@ class AdminDataMenu
                     [   
                         'label' => 'Message sent',
                         'link'  => url('/message-send'),
+                        'display' => '',
                         'conditionOpen' => ['messageSend'],
                     ],
                     [
                         'label' => 'Inbox',
                         'link'  => url('/massages-manage'),
+                        'display' => '',
                         'conditionOpen' => ['manageMessages'],
                     ]
                 ]
@@ -107,11 +111,13 @@ class AdminDataMenu
                     [
                         'label' => 'Add User',
                         'link'  => url('/add-user'),
+                        'display' => '',
                         'conditionOpen' => ['handleUser'],
                     ],
                     [
                         'label' => 'Management User',
                         'link'  => url('/manage-user'),
+                        'display' => '',
                         'conditionOpen' => ['manageUsers'],
                     ]
                 ]
@@ -120,9 +126,16 @@ class AdminDataMenu
             'configs' => [
                 'label'   => 'Configs',
                 'icon'    => '<i class="material-icons md-36">&#xE8F0;</i>',
-                'conditionOpen' => ['CanculatorController'],
+                'conditionOpen' => ['LogsController'],
                 'display' => '',
-                'submenu' => array()
+                'submenu' => [
+                    [
+                        'label' => 'Logs',
+                        'link'  => url('/logs'),
+                        'display' => ( 1 == $userMeta['user_role'] ) ? '' : 'none',
+                        'conditionOpen' => ['manageLogs'],
+                    ]
+                ]
             ],
 
         ];
@@ -158,15 +171,17 @@ class AdminDataMenu
                 </a>
                 <ul <?php echo ( in_array( $control, $value['conditionOpen'] ) ) ? 'style="display: block;"' : '' ?>>
                     <?php foreach ($value['submenu'] as $submenu): ?>
+                    <?php if( 'none' !== $submenu['display'] ): ?>
                     <li <?php echo ( in_array( $action, $submenu['conditionOpen'] ) ) ? 'class="act_item submenu_trigger act_section"' : '' ?>>
                         <a href="<?php echo $submenu['link'] ?>"> 
                             <?php echo $submenu['label'] ?>
                         </a>
                     </li>
+                    <?php endif; ?>
                     <?php endforeach; ?>
                 </ul>
             </li>
-             <?php endif; ?>
+            <?php endif; ?>
 
             <?php endforeach; ?>  
         </ul>

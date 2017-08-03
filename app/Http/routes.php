@@ -79,6 +79,9 @@ $route->post('/delete-user','UserController@ajaxDelete' );
 
 $route->get('/logs','LogsController@manageLogs');
 $route->get('/logs/page/{page}','LogsController@manageLogs');
+$route->get('/filter-logs','LogsController@filterLogs');
+$route->post('/remove-log','LogsController@removeLogs');
+$route->post('/clear-logs','LogsController@clearLogs');
 
 /*=====  End of Logs  ======*/
 

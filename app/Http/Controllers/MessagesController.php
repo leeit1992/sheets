@@ -76,13 +76,20 @@ class MessagesController extends baseController{
 					'op_type'      => 'inbox'
 				]
 			);
+	
+			$userInfo = $this->mdUser->getUserBy('id',$formData['op_receiver']);
+
+			$log = 'User <b>' . $this->infoUser['name'] . '</b> send message to User <b>' . $userInfo[0]['user_name'] . '</b>';
+			// Set notice success
+			$this->mdLogs->add($this->mdLogs->logTemplate( $log, 'Messages'));
 		}
-		
+
 	}
 
 	public function manageMessages(){
 
 		$condition['op_user_receiver'] = Session()->get('op_user_id');
+		$condition['op_type'] = 'inbox';
 		$condition['ORDER'] = [
 						'id' => 'DESC'
 					];
@@ -90,13 +97,34 @@ class MessagesController extends baseController{
 		$listMessages = $this->mdMessages->getBy( 
 			$condition
 		);
+
+		$listSheets = $this->mdSheet->getBy(['sheet_author' => Session()->get('op_user_id')]);
+
+		if( 1 == $this->infoUser['meta']['user_role'] ) {
+			$listSheets = $this->mdSheet->getBy();
+		}
+
+		if( 3 == $this->infoUser['meta']['user_role'] ) {
+			$mesIds = array();
+			foreach ($listMessages as $key => $value) {
+				$mesIds[] = $value['op_sheet_id'];
+			}
+
+			$listSheets = $this->mdSheet->getBy(
+				["OR" => [
+					'sheet_author' => Session()->get('op_user_id'),
+					'id' => $mesIds,
+				]]
+			);
+		}
+
 		// Load layout.
 		return $this->loadTemplate(
 			'messages/inbox.tpl',
 			[
 				'listMessages' => $listMessages,
 				'mdUser'  => $this->mdUser,
-				'listSheets' => $this->mdSheet->getBy(['sheet_author' => Session()->get('op_user_id')]),
+				'listSheets' => $listSheets,
 				'userCurrent' => $this->infoUser
 			]
 		);

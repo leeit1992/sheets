@@ -82,7 +82,7 @@
                                 </div>
                                 <p><?php echo $value['op_messages'] ?></p>
                                 <div>
-                                    <p><i class="uk-icon-file-excel-o"></i> <a href="<?php echo url('/view-sheet/' . $value['op_sheet_id']) ?>">File Sheet</a></p>
+                                    <p><i class="uk-icon-file-excel-o"></i> <a target="_blank" href="<?php echo url('/view-sheet/' . $value['op_sheet_id']) ?>">File Sheet</a></p>
                                 </div>
                                 <div class="uk-modal-footer uk-text-right">
                                     <textarea class="op-data-mes-<?php echo $value['id'] ?>" style="display: none;"><?php echo json_encode($value) ?></textarea>
@@ -97,7 +97,7 @@
                 <ul class="op-list-result"></ul>
             </div> 
         </div>
-        <?php View('messages/layout/popinSend.tpl', [ 'mdUser' => $mdUser, 'listSheets' => $listSheets ]) ?>
+        <?php View('messages/layout/popinSend.tpl', [ 'userCurrent' => $userCurrent, 'mdUser' => $mdUser, 'listSheets' => $listSheets ]) ?>
     </div>
     <div class="uk-notify uk-notify-bottom-right op-notify-js" style="display: none;"></div>
 </div>

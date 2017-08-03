@@ -62,12 +62,16 @@ class SheetModel extends AtlModel
 	 * @param  string $value Condition query
 	 * @return array
 	 */
-	public function getBy( $key, $value = null ){
+	public function getBy( $key = null, $value = null ){
+		
+		$where = [];
 
 		if( is_array( $key ) ) {
 			$where = $key;
 		}else{
-			$where = [ $key => $value ];
+			if( $key ){
+				$where = [ $key => $value ];
+			}
 		}
 
 		$listSheets = $this->db->select(

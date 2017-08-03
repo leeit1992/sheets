@@ -18,7 +18,7 @@ class SheetsController extends baseController{
 		$this->mdMessages = new MessagesModel;
 	}
 
-	public function handleSheet( $id = null, $mesId = null ){
+	public function handleSheet( $id = null ){
 		
 		registerStyle( [
 		    'handsontable' => assets('bower_components/handsontable/handsontable.full.min.css'),
@@ -44,29 +44,17 @@ class SheetsController extends baseController{
 			if( empty( $sheets ) ) {
 				redirect( url('/error-404?url=' . $_SERVER['REDIRECT_URL']) );
 			}
-		}
-
-		if( $mesId ) {
 
 			if( 3 == $this->infoUser['meta']['user_role'] ) {
 				$checkMes = $this->mdMessages->getBy([
 					'op_sheet_id' => $id,
 					'op_user_receiver' => $this->infoUser['id'],
-					'id' => $mesId,
 				]);
+
 				if( empty( $checkMes ) ) {
 					redirect( url('/error-404?url=' . $_SERVER['REDIRECT_URL']) );
 				}
 			}
-
-
-			$this->mdMessages->save(
-				[
-					'op_status' => 2
-				],
-				$mesId
-			);
-
 		}
 
 		// Load layout.
@@ -104,16 +92,29 @@ class SheetsController extends baseController{
 	}
 
 	public function saveSheets(Request $request){
+		$author = Session()->get('op_user_id');
+		$sheetId = null;
+
+		if( !empty( $request->get('sheetId') ) && 'new' != $request->get('saveType') ) {
+			$sheetAuthor = $this->mdSheet->getBy(['id' => $request->get('sheetId') ]);
+
+			if( !empty( $sheetAuthor ) ) {
+				$author = $sheetAuthor[0]['sheet_author'];
+			}
+
+			$sheetId = $request->get('sheetId');
+		}
+
 		$lastID = $this->mdSheet->save(
 			[
 				'sheet_title'   => $request->get('sheetTitle'),
 				'sheet_description' => $request->get('sheetDescription'),
 				'sheet_content' => $request->get('sheetData'),
-				'sheet_author'  => Session()->get('op_user_id'),
+				'sheet_author'  => $author,
 				'sheet_datetime' => date("Y-m-d H:i:s"),
 				'sheet_status'  => 1
 			],
-			!empty( $request->get('sheetId') )  ? $request->get('sheetId') : null
+			$sheetId
 		);
 
 		$receiver = $request->get('sheetReceiver');
@@ -131,19 +132,6 @@ class SheetsController extends baseController{
 			$this->mdSheet->setMetaData( $lastID, $mtaKey, $metaValue );
 		}
 
-
-		// foreach ($receiver as $sendID) {
-		// 	$this->mdMessages->save(
-		// 		[
-		// 			'op_sheet_id'  => $lastID,
-		// 			'op_messages'  => $request->get('sheetMessage'),
-		// 			'op_user_send' => Session()->get('op_user_id'),
-		// 			'op_user_receiver' => $sendID,
-		// 			'op_datetime'  => date("Y-m-d H:i:s"),
-		// 			'op_status'    => 1
-		// 		]
-		// 	);
-		// }
 
 		$action = !empty( $request->get('sheetId') )  ? 'Update' : 'Created';
 		// Set notice success

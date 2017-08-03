@@ -124,7 +124,7 @@
 		filterMessages: function(e) {
 			var self = this,
 				value = $(e.currentTarget).val(),
-				type  = $(e.currentTarget).attr('data-type'),
+				type = $(e.currentTarget).attr('data-type'),
 				typeMes = $(e.currentTarget).attr('data-type-mes');
 
 			if (0 < value.length) {
@@ -155,29 +155,44 @@
 			});
 		},
 
-		checkInbox: function(e){
+		checkInbox: function(e) {
 			var self = this,
-				id  = $(e.currentTarget).attr('data-id');
+				id = $(e.currentTarget).attr('data-id');
 
-				$.ajax({
+			$.ajax({
 				url: OPDATA.adminUrl + '/update-inbox',
 				type: "POST",
 				data: {
 					id: id,
 				},
-				success: function(res) {
-				}
+				success: function(res) {}
 			});
 		},
 
-		getDataForward: function(e){
+		getDataForward: function(e) {
 			var self = this,
-				id  = $(e.currentTarget).attr('data-id'),
-				dataMes = $('.op-data-mes-'+id).val();
+				id = $(e.currentTarget).attr('data-id'),
+				dataMes = $('.op-data-mes-' + id).val(),
+				listSheet = JSON.parse($('#op-data-list-sheets').val());
 
-				dataMes = JSON.parse(dataMes);
+			dataMes = JSON.parse(dataMes);
 
-				console.log(dataMes);
+			var sheetName = '';
+			$.each(listSheet, function(i, el) {
+				if (el.id == dataMes.op_sheet_id) {
+					sheetName = el.sheet_title;
+				}
+			});
+
+			$(".md-input-wrapper").addClass('md-input-filled');
+
+			$(".op-list-sheet-select").find('.has-options').html('<div data-value="' + dataMes.op_sheet_id + '" class="item">' + sheetName + '</div>')
+
+			$("input[name=op_title]").val(dataMes.op_message_title);
+			$("textarea[name=op_messages]").val(dataMes.op_messages);
+
+			$("select[name=op_sheet]").html('<option value="' + dataMes.op_sheet_id + '" selected="selected">' + sheetName + '</option>');
+
 		}
 
 	});

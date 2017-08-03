@@ -16,7 +16,7 @@ var OP_CANCULATOR_MODEL = Backbone.Model.extend({
             
             var data100 = new Array;
 
-            for (var i = 0; i <= 500; i++) {
+            for (var i = 0; i <= 10; i++) {
                data100.push(['01/06/2017','Hai Trieu','hu shop','CULOTTE PANTS',"BJ8187","8","Black","1","22.5","","","22.5","","12/6","","61","http://www.adidas.co.uk/culotte-pants/BJ8187.html"]);
             };
 
@@ -169,11 +169,11 @@ var OP_CANCULATOR = Backbone.View.extend({
             sheetContent = JSON.parse(sheetContent.val());
         }else{
             var sheetContent = [
-                [
-                    'Ngày/Tháng', 'Người Mua', 'Người Order', 'Tên Mặt Hàng',
-                    'Mã Hàng', 'Size', 'Mầu', ' Số Lượng', 'Giá Web', 'Ship Web', 'Giảm Giá', 'Giá Order', 'Thành Tiền',
-                    'Ngày Hàng Về', 'Tracking Number', 'Cân Nặng', 'Link Hàng'
-                ]
+                // [
+                //     'Ngày/Tháng', 'Người Mua', 'Người Order', 'Tên Mặt Hàng',
+                //     'Mã Hàng', 'Size', 'Mầu', ' Số Lượng', 'Giá Web', 'Ship Web', 'Giảm Giá', 'Giá Order', 'Thành Tiền',
+                //     'Ngày Hàng Về', 'Tracking Number', 'Cân Nặng', 'Link Hàng'
+                // ]
             ];
         }
 
@@ -212,9 +212,11 @@ var OP_CANCULATOR = Backbone.View.extend({
                 this.OpDataSheets = {};
 
                 var $sheetId = $("#op_sheet_id", this.el);
+                var $sheetStatus = $("#op_sheet_status", this.el);
 
                 if( 0 !== $sheetId.length ) {
                     this.sheetId = $sheetId.val();
+                    this.sheetStatus = $sheetStatus.val();
 
                     var sheetMeta = $("#op_sheet_meta", this.el);
                     this.OpDataSheets = JSON.parse( sheetMeta.val() );
@@ -309,20 +311,27 @@ var OP_CANCULATOR = Backbone.View.extend({
                 $(".op-fx--input input").val( data );
                 $(".op-fx--input input").attr( 'data-row', r );
                 $(".op-fx--input input").attr( 'data-col', c );
-
-                $('.op-fx--input input').change(function(){
-                    self.setDataAtCell(r,c, $(this).val());
-                });
+               
+                if( 2 != this.sheetStatus && 2 == OPDATA.user.meta.user_role) {
+                    $('.op-fx--input input').change(function(){
+                        self.setDataAtCell(r,c, $(this).val());
+                    });
+                }   
             },
 
             cells: function (row, col, prop) {
                 var cellProperties = {};
-                // if( this.instance.sheetId && 2 == OPDATA.user.meta.user_role) {
-                //     cellProperties.readOnly = true;
-                // }
-                // if( 0 == row ) {
-                //     cellProperties.readOnly = true;
-                // }
+                if( 2 == this.instance.sheetStatus && ( 2 == OPDATA.user.meta.user_role || 3 == OPDATA.user.meta.user_role )  ) {
+                    cellProperties.readOnly = true;
+                }
+
+                if( 17 == col ) {
+                    cellProperties.readOnly = false;
+                }
+
+                if( 17 == col && 2 == OPDATA.user.meta.user_role ) {
+                    cellProperties.readOnly = true;
+                }
 
                 cellProperties.renderer = window.firstRowRenderer;
                 return cellProperties;
@@ -460,24 +469,15 @@ var OP_CANCULATOR = Backbone.View.extend({
             sheetDescription: $('textarea[name=op_sheet_description]').val(),
             sheetData: JSON.stringify(this.opSheet.getData()),
             sheetMeta: JSON.stringify(this.opSheet.OpDataSheets),
+            saveType: saveType,
         };
 
-        if( undefined == saveType ){
+        if( this.opSheet.sheetId ){
             data.sheetId = this.opSheet.sheetId;
         }
-
+        
         $.post(OPDATA.adminUrl + 'save-sheets' ,data, function(){
             altair_helpers.content_preloader_hide();
-
-            // self.opSheet.updateSettings({
-            //     readOnly: true, // make table cells read-only
-            //     cells: function (row, col, prop) {
-            //         var cellProperties = {};
-            //         cellProperties.readOnly = true; 
-            //         cellProperties.renderer = window.firstRowRenderer;
-            //         return cellProperties;
-            //     }
-            // });
 
             var output = self.noticeTpl({
                 message: 'Send sheet success.',

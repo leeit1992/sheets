@@ -4,6 +4,7 @@ namespace App\Http\Components;
 use Atl\Routing\Controller as baseController;
 use App\Http\Components\Backend\AdminDataMenu;
 use App\Model\LogsModel;
+use App\Model\MessagesModel;
 
 class Controller extends baseController{
 	
@@ -12,8 +13,7 @@ class Controller extends baseController{
 	public function __construct(){
 		parent::__construct();
 		$this->mdLogs = new LogsModel;
-
-		// var_dump($this->getRoute('method'));
+		$this->mdMessages = new MessagesModel;
 	}
 
 	/**
@@ -25,6 +25,17 @@ class Controller extends baseController{
 	 */
 	public function loadTemplate( $path, $parameters = array(), $options = array() ){
 
+		$listMessages = $this->mdMessages->getBy( 
+			[
+				'op_user_receiver' => Session()->get('op_user_id'),
+				'op_type' => 'inbox',
+				'op_status' => 1,
+				'ORDER' => [
+						'id' => 'DESC'
+					]
+			]
+		);
+
 		$output = View(
 			'layout/header.tpl',
 			[
@@ -35,6 +46,7 @@ class Controller extends baseController{
 						'name'   => Session()->get('op_user_name'),
 						'meta'   => Session()->get('op_user_meta')
 					],
+				'listMessages' => $listMessages
 			]
 		);
 
@@ -87,6 +99,7 @@ class Controller extends baseController{
 				'/ajax-manage-user',
 				'/validate-user',
 				'/delete-user',
+				'/logs'
 			];
 		}
 
@@ -95,7 +108,7 @@ class Controller extends baseController{
 				'/edit-user/{id}'
 			];
 		}
-		
+
 		if( in_array( $router['_route'], $module ) ) {
 			$argsRule[] = true;
 		}else{

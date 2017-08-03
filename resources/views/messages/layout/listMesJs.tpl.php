@@ -52,13 +52,17 @@ foreach ($listMessages as $value) :
     <div class="uk-modal" id="modal_message_js_<?php echo $value['id'] ?>">
         <div class="uk-modal-dialog">
             <div class="uk-modal-header">
-                <h3 class="uk-modal-title">Content</h3>
+                <h3 class="uk-modal-title"><i class="material-icons md-24">&#xE554;</i> Messages</h3>
             </div>
             <p><?php echo $value['op_messages'] ?></p>
+            <div>
+                <p><i class="uk-icon-file-excel-o"></i> <a target="_blank" href="<?php echo url('/view-sheet/' . $value['op_sheet_id']) ?>">File Sheet</a></p>
+            </div>
             <div class="uk-modal-footer uk-text-right">
                 <?php if( 'inbox' == $typeMes ){ ?>
-                <button type="button" class="md-btn md-btn-flat op-modal-forward">Forward</button>
-                <?php } ?>
+                <textarea class="op-data-mes-<?php echo $value['id'] ?>" style="display: none;"><?php echo json_encode($value) ?></textarea>
+                <a data-id="<?php echo $value['id'] ?>" class="md-btn md-btn-flat op-massage-forward" href="#mailbox_new_message" data-uk-modal="{center:true}">Forward </a>
+                <?php } ?>                            
                 <button type="button" class="md-btn md-btn-flat uk-modal-close">Close</button>
             </div>
         </div>

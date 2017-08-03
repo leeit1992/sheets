@@ -49,9 +49,8 @@
                 </div>
             </div>
         </div>
-		<div class="md-card-list">
+		<!-- <div class="md-card-list">
 			<div class="md-card-list-header heading_list">Today</div>
-
 			<ul class="hierarchical_slide">
                 <?php 
                     foreach ($listSheets as $key => $value):
@@ -92,14 +91,13 @@
                 </li>
                 <?php endif; endforeach; ?>
             </ul>
-
-		</div>
+		</div> -->
 		<div class="md-card-list">
 			<div class="md-card-list-header md-card-list-header-combined heading_list">All Sheets</div>
 			<ul class="hierarchical_slide">
 				<?php 
                     foreach ($listSheets as $key => $value):
-                    if( date('y-m-d') != date( 'y-m-d', strtotime($value['sheet_datetime']) ) ):
+                    // if( date('y-m-d') != date( 'y-m-d', strtotime($value['sheet_datetime']) ) ):
                         $user = $mdUser->getUserBy('id', $value['sheet_author']);
                 ?>
 				<li>
@@ -107,8 +105,6 @@
                         <a href="#" class="md-icon material-icons">&#xE5D4;</a>
                         <div class="uk-dropdown uk-dropdown-flip uk-dropdown-small">
                             <ul class="uk-nav">
-                                <li><a href="#"><i class="material-icons">&#xE15E;</i> Reply</a></li>
-                                <li><a href="#"><i class="material-icons">&#xE149;</i> Archive</a></li>
                                 <li><a href="#"><i class="material-icons">&#xE872;</i> Delete</a></li>
                             </ul>
                         </div>
@@ -133,7 +129,8 @@
                         <span><a href="<?php echo url( '/view-sheet/' . $value['id'] ) ?>"><?php echo $value['sheet_description'] ?></a></span>
                     </div>
 				</li>
-				<?php endif; endforeach; ?>
+				<?php //endif; 
+                endforeach; ?>
 			</ul>
 		</div>
 	</div>

@@ -36,6 +36,7 @@ td.op-current{
                         <?php 
                             if( !empty( $sheet ) ) {
                                 ?>
+                                <input type="hidden" id="op_sheet_status" value="<?php echo $sheet[0]['sheet_status'] ?>">
                                 <input type="hidden" id="op_sheet_id" value="<?php echo $sheet[0]['id'] ?>">
                                 <textarea style="display: none;" id="op_sheet_data"><?php echo $sheet[0]['sheet_content'] ?></textarea>
                                 <textarea style="display: none;" id="op_sheet_meta"><?php echo $sheet[0]['sheet_meta'] ?></textarea>
@@ -70,9 +71,11 @@ td.op-current{
 
             <div class="uk-width-medium-1-1 uk-margin-bottom">
                 <label>Description</label>
-               <textarea <?php echo $submitFormRule ?> cols="30" rows="4" class="md-input" name="op_sheet_description"><?php echo isset( $sheet[0]['sheet_description'] ) ? $sheet[0]['sheet_description'] : '' ?></textarea>
+                <textarea <?php echo $submitFormRule ?> cols="30" rows="4" class="md-input" name="op_sheet_description"><?php echo isset( $sheet[0]['sheet_description'] ) ? $sheet[0]['sheet_description'] : '' ?></textarea>
             </div>
+            <?php if( ( !empty( $sheet ) && 1 == $sheet[0]['sheet_status'] ) or ( 3 == $infoUser['meta']['user_role'] ) or ( 2 == $infoUser['meta']['user_role'] ) or ( 1 == $infoUser['meta']['user_role'] ) ): ?>
             <button type="button" class="md-btn op-save-sheets-js"> Save </button>
+            <?php endif; ?>
             <?php 
                 if( !empty( $sheet ) ) {
                     ?>
