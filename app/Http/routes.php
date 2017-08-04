@@ -25,6 +25,8 @@ $route->post('/validate','MainController@checkRoutePost');
 $route->get('/login','LoginController@login');
 $route->get('/logout','LoginController@logout');
 $route->post('/check-login','LoginController@checkLogin');
+$route->post('/register-user','LoginController@registerUser');
+$route->get('/active-account/{token}','LoginController@activeAccount');
 
 /*=====  End of Login  ======*/
 

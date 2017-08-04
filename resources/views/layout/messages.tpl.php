@@ -14,8 +14,10 @@
                                 <span class="md-user-letters md-bg-cyan">nq</span>
                             </div>
                             <div class="md-list-content">
-                                <span class="md-list-heading"><a class="op-check-message" data-uk-modal="{target:'#modal_message_<?php echo $value['id'] ?>'}" href="#"><?php echo $value['op_user_send'] ?>.</a></span>
-                                <span class="uk-text-small uk-text-muted"><?php echo $value['op_message_title'] ?>.</span>
+                                <a class="op-check-message" data-id="<?php echo $value['id'] ?>" data-uk-modal="{target:'#modal_message_<?php echo $value['id'] ?>'}" href="#">
+                                    <span class="md-list-heading"><?php echo $value['op_user_send'] ?>.</span>
+                                    <span class="uk-text-small uk-text-muted"><?php echo $value['op_message_title'] ?>.</span>
+                                </a>
                             </div>
                         </li>
                         <?php endforeach; ?>

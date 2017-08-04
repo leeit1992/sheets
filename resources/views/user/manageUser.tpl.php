@@ -32,7 +32,7 @@
                             <?php
                                 $avatar = $mdUser->getMetaData( $value['id'], 'user_avatar' );
                             ?>
-                                <img class="md-user-image" style="height: 34px;" src="<?php echo url(!empty($avatar)?$avatar:'/public/backend/assets/img/user.png') ?>">
+                                <img class="md-user-image" style="height: 34px;" src="<?php echo !empty($avatar) ? url($avatar): assets('img/user.png') ; ?>">
                             </td>
                             <td>
                                 <?php echo $value['user_email'] ?>

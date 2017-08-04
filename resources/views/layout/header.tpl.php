@@ -38,6 +38,12 @@
     <![endif]-->
 
 </head>
+<?php 
+$avatar = assets('img/user.png');
+if( isset( $userInfo['meta']['user_avatar'] ) ) {
+    $avatar = $userInfo['meta']['user_avatar'];
+}
+?>
 <body class="sidebar_main_open sidebar_main_swipe">
 	<!-- main header -->
     <header id="header_main">
@@ -62,7 +68,7 @@
             
                         <li data-uk-dropdown="{mode:'click'}">
                             <a href="#" class="user_action_image">
-                                <img class="md-user-image" style="height: 34px;" src="<?php echo url( $userInfo['meta']['user_avatar'] ) ?>" alt=""/>
+                                <img class="md-user-image" style="height: 34px;" src="<?php echo $avatar ?>" alt=""/>
                             </a>
                             <div class="uk-dropdown uk-dropdown-small uk-dropdown-flip">
                                 <ul class="uk-nav js-uk-prevent">

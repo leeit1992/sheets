@@ -6,11 +6,13 @@ use Atl\Validation\Validation;
 
 use App\Http\Components\Controller as baseController;
 use App\Model\UserModel;
+use PHPMailer;
 
 class LoginController extends baseController{
 
 	public function __construct(){
 		parent::__construct();
+		$this->mdUser = new UserModel;
 	}
 
 	public function login(){
@@ -47,23 +49,30 @@ class LoginController extends baseController{
 			$checkUser = $user->checkLogin( $request->get('op_login_acc'), md5( $request->get('op_login_pass') ) );
 			
 			if( !empty( $checkUser ) ) {
-				Session()->set('op_user_id', $checkUser[0]['id']);
-				Session()->set('op_user_name', $checkUser[0]['user_name']);
-				Session()->set('op_user_email', $checkUser[0]['user_email']);
-				Session()->set('op_user_meta',  $user->getAllMetaData( $checkUser[0]['id'] ) );
+				if( 1 == $checkUser[0]['user_status'] ) {
+					Session()->set('op_user_id', $checkUser[0]['id']);
+					Session()->set('op_user_name', $checkUser[0]['user_name']);
+					Session()->set('op_user_email', $checkUser[0]['user_email']);
+					Session()->set('op_user_meta',  $user->getAllMetaData( $checkUser[0]['id'] ) );
 
-				$this->mdLogs->add( $this->mdLogs->logTemplate( ' User <b> ' . $checkUser[0]['user_email'] . ' </b>', 'Login' ) );
+					$this->mdLogs->add( $this->mdLogs->logTemplate( ' User <b> ' . $checkUser[0]['user_email'] . ' </b>', 'Login' ) );
 
-				redirect( url( '/' ) );
+					redirect( url( '/' ) );
+				}else{
+					$error[] = 'error';
+					Session()->getFlashBag()->set('loginError', 'Account is not activated. Go to mail to receive activation mail !');
+				}
+				
 			}else{
 				$error[] = 'error';
+				Session()->getFlashBag()->set('loginError', 'Account or Password not match !');
 			}
 		} else{
 			$error[] = 'error';
+			Session()->getFlashBag()->set('loginError', 'Wrong account or password !');
 		}
 
 		if( !empty( $error ) ) {
-			Session()->getFlashBag()->set('loginError', 'Account or Password not match !');
 			redirect( url( '/login' ) );
 		}
 	}
@@ -75,6 +84,107 @@ class LoginController extends baseController{
 		Session()->remove('op_user_email');
 
 		redirect( url( '/login' ) );
+	}
+
+	public function registerUser(Request $request){
+
+		if( !empty( $request->get('formdata') ) ) {
+			parse_str($request->get('formdata'), $formData);
+			
+			// Save user.
+			$emailExists = $this->mdUser->getUserBy( 'user_email', $formData['register_email'] );
+			if( empty( $emailExists ) ) {
+				$status = true;
+
+				/**
+				 * Insert
+				 */
+				$token = uniqid();
+				$lastID = $this->mdUser->save( 
+					[
+						'user_name'         => $formData['register_username'],
+						'user_password'     => md5( $formData['register_password'] ),
+						'user_email'        => $formData['register_email'],
+						'user_registered'   => date("Y-m-d H:i:s"),
+						'user_status'       => 0,
+						'user_display_name' => ucfirst($formData['register_username']),
+						'user_token'        => $token
+					]
+				);
+
+				/**
+				 * Add meta data for user.
+				 */
+				$userMeta = [
+					'user_birthday' => '',
+					'user_address'  => '',
+					'user_moreinfo' => '',
+					'user_phone'    => '',
+					'user_social'   => '',
+					'user_role'     => 2,
+				];
+
+				// Loop add add
+				foreach ($userMeta as $mtaKey => $metaValue) {
+					$this->mdUser->setMetaData( $lastID, $mtaKey, $metaValue );
+				}
+
+				$mail = new PHPMailer;
+				$mail->isSMTP();                                      // Set mailer to use SMTP
+				$mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+				$mail->SMTPAuth = true;                               // Enable SMTP authentication
+				$mail->Username = 'letrungha.192@gmail.com';                 // SMTP username
+				$mail->Password = 'dtnncmmnidifocjn';                           // SMTP password
+				$mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+				$mail->Port = 587;                                    // TCP port to connect to
+
+				$mail->setFrom($formData['register_email'], 'Active account');
+				$mail->addAddress($formData['register_email'], $formData['register_username']);     // Add a recipient
+				$mail->addReplyTo($formData['register_email'], 'Information');
+
+				$mail->Subject = 'Active account';
+
+				$link = '<a href="'.url('/active-account/' . $token).'"> Here </a>';
+				$mail->isHTML(true); 
+				
+				$mail->Body    = 'Congratulations on signing up for a successful account. Please click '.$link.' to activate your account.';
+				$mail->send();
+
+				$output = 'Register success.';
+			}else{
+				$status = false;
+				$output = 'Email already exists.';
+			}
+
+			echo json_encode([
+				'status' => $status,
+				'output' => $output
+			]);
+		}
+
+	}
+
+	public function activeAccount(Request $request, $token){
+		if( isset( $token ) ) {
+			$checkUser = $this->mdUser->getUserBy( 'user_token', $token );
+
+			if( !empty( $checkUser ) ) {
+
+				$this->mdUser->save( 
+					[
+						'user_status'       => 1,
+						'user_token'        => ''
+					],
+					$checkUser[0]['id']
+				);
+
+				$message = 'User <strong>' . $checkUser[0]['user_name'] . '</strong> with account <strong>' . $checkUser[0]['user_email'] . '</strong> active sucess!';
+			}else{
+				$message = 'Token do not exists.';
+			}
+		}
+
+		View('activeAccount.tpl', [ 'message' => $message ]);
 	}
 
 }

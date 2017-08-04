@@ -76,6 +76,12 @@ class UserController extends baseController{
 			}
 		}
 
+		if( 1 != $this->infoUser['meta']['user_role'] ) {
+			if( $id != $this->infoUser['id'] ){
+				redirect( url('/error-404?url=' . $_SERVER['REDIRECT_URL']) );
+			}
+		}
+
 		// Load template
 		return $this->loadTemplate(
 			'user/addUser.tpl',

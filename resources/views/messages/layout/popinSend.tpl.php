@@ -40,11 +40,21 @@
                 <label for="op_sheet">Choose sheets</label>
                 <select id="op_sheet" name="op_sheet" data-md-selectize>
                     <option value="">Select...</option>
-                    <?php foreach ($listSheets as $key => $value) {
-                         echo '<option value="' . $value['id'] . '">' . $value['sheet_title'] . '</option>';
+                    <?php 
+                    $dataListSheet = array();
+                    foreach ($listSheets as $key => $value) {
+                        $dataListSheet[] = [
+                            'id' => $value['id'],
+                            'sheet_title' => $value['sheet_title'],
+                            'sheet_author' => $value['sheet_author'],
+                            'sheet_status' => $value['sheet_status'],
+                            'sheet_datetime' => $value['sheet_datetime'],
+                        ];
+                        echo '<option value="' . $value['id'] . '">' . $value['sheet_title'] . '</option>';
                     } ?>
                 </select>
-                <textarea id="op-data-list-sheets" style="display: none;"><?php echo json_encode($listSheets) ?></textarea>
+ 
+                <textarea id="op-data-list-sheets" style="display: none;"><?php echo json_encode($dataListSheet) ?></textarea>
             </div>
             
             <div class="uk-modal-footer">

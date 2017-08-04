@@ -109,6 +109,12 @@ class Controller extends baseController{
 			];
 		}
 
+		if( 3 == $userMeta['user_role'] ) {
+			$module = [
+				'/edit-user/{id}'
+			];
+		}
+
 		if( in_array( $router['_route'], $module ) ) {
 			$argsRule[] = true;
 		}else{

@@ -43,4 +43,17 @@ window.ATLLIB = {
     }
 }
 
+$(document).on('click', '.op-check-message', function(){
+    var self = this,
+        id = $(this).attr('data-id');
+
+    $.ajax({
+        url: OPDATA.adminUrl + '/update-inbox',
+        type: "POST",
+        data: {
+            id: id,
+        }
+    });
+});
+
 })(jQuery);

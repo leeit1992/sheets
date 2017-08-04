@@ -21,8 +21,14 @@
         );
     ?>
 
+    <script type="text/javascript">
+        window.OPDATA = {
+            adminUrl: "<?php echo url('/'); ?>",
+        }
+    </script>
+
 </head>
-<body class="login_page">
+<body id="op-login-page" class="login_page">
 
     <div class="login_page_wrapper">
         <div class="md-card" id="login_card">
@@ -79,7 +85,7 @@
                 <form>
                     <div class="uk-form-row">
                         <label for="login_email_reset">Your email address</label>
-                        <input class="md-input" type="text" id="login_email_reset" name="login_email_reset" />
+                        <input class="md-input" type="text" name="login_email_reset" />
                     </div>
                     <div class="uk-margin-medium-top">
                         <a href="index-2.html" class="md-btn md-btn-primary md-btn-block">Reset password</a>
@@ -89,25 +95,25 @@
             <div class="md-card-content large-padding" id="register_form" style="display: none">
                 <button type="button" class="uk-position-top-right uk-close uk-margin-right uk-margin-top back_to_login"></button>
                 <h2 class="heading_a uk-margin-medium-bottom">Create an account</h2>
-                <form>
+                <form id="op-register-user" action="" method="POST">
                     <div class="uk-form-row">
                         <label for="register_username">Username</label>
-                        <input class="md-input" type="text" id="register_username" name="register_username" />
+                        <input class="md-input atl-required-js" type="text" name="register_username" />
                     </div>
                     <div class="uk-form-row">
                         <label for="register_password">Password</label>
-                        <input class="md-input" type="password" id="register_password" name="register_password" />
+                        <input class="md-input atl-required-js" type="password" name="register_password" />
                     </div>
                     <div class="uk-form-row">
                         <label for="register_password_repeat">Repeat Password</label>
-                        <input class="md-input" type="password" id="register_password_repeat" name="register_password_repeat" />
+                        <input class="md-input atl-required-js" type="password" name="register_password_repeat" />
                     </div>
                     <div class="uk-form-row">
                         <label for="register_email">E-mail</label>
-                        <input class="md-input" type="text" id="register_email" name="register_email" />
+                        <input class="md-input atl-required-js" type="email" name="register_email" />
                     </div>
                     <div class="uk-margin-medium-top">
-                        <a href="index-2.html" class="md-btn md-btn-primary md-btn-block md-btn-large">Sign Up</a>
+                        <button type="submit" class="md-btn md-btn-primary md-btn-block md-btn-large">Sign Up</button>
                     </div>
                 </form>
             </div>
@@ -122,7 +128,13 @@
             array(
                     'common'  => assets('assets/js/common.min.js'),
                     'altair_admin_common'  => assets('assets/js/altair_admin_common.min.js'),
+                    'uikit_custom'  => assets('assets/js/uikit_custom.min.js'),
                     'login'  => assets('assets/js/pages/login.min.js'),
+                    'jquery-ui'  => assets('bower_components/jquery-ui/jquery-ui.js'),
+                    'underscore' => assets('bower_components/backbone/underscore.js'),
+                    'backbone'   => assets('bower_components/backbone/backbone-min.js'),
+                    'backend'   => assets('js/backend-scripts.min.js'),
+                    'op-login' => assets('js/login-debug.js'),
                 )
         );
         ?>

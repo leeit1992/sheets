@@ -13,7 +13,8 @@
         "symfony/http-foundation": "2.8.*|3.0.*",
         "pimple/pimple": "3.0",
         "catfan/Medoo": "*",
-        "siriusphp/validation": "*"
+        "siriusphp/validation": "*",
+        "phpmailer/phpmailer": "~5.2"
     },
     "autoload": {
         "psr-4": {
