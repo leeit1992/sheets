@@ -87,6 +87,10 @@ class MessagesController extends baseController{
 	}
 
 	public function manageMessages(){
+		
+		registerStyle( [
+		    'handsontable' => assets('bower_components/handsontable/handsontable.full.min.css'),
+		] ); 
 
 		$condition['op_user_receiver'] = Session()->get('op_user_id');
 		$condition['op_type'] = 'inbox';
@@ -100,23 +104,22 @@ class MessagesController extends baseController{
 
 		$listSheets = $this->mdSheet->getBy(['sheet_author' => Session()->get('op_user_id')]);
 
-		if( 1 == $this->infoUser['meta']['user_role'] ) {
-			$listSheets = $this->mdSheet->getBy();
-		}
+		// if( 1 == $this->infoUser['meta']['user_role'] ) {
+		// 	$listSheets = $this->mdSheet->getBy();
+		// }
 
-		if( 3 == $this->infoUser['meta']['user_role'] ) {
-			$mesIds = array();
-			foreach ($listMessages as $key => $value) {
-				$mesIds[] = $value['op_sheet_id'];
-			}
+		// if( 3 == $this->infoUser['meta']['user_role'] ) {
+		// 	$mesIds = array();
+		// 	foreach ($listMessages as $key => $value) {
+		// 		$mesIds[] = $value['op_sheet_id'];
+		// 	}
 
-			$listSheets = $this->mdSheet->getBy(
-				["OR" => [
-					'sheet_author' => Session()->get('op_user_id'),
-					'id' => $mesIds,
-				]]
-			);
-		}
+		// 	$listSheets = $this->mdSheet->getBy(
+		// 		["OR" => [
+		// 			'sheet_author' => Session()->get('op_user_id'),
+		// 		]]
+		// 	);
+		// }
 
 		// Load layout.
 		return $this->loadTemplate(
@@ -248,6 +251,127 @@ class MessagesController extends baseController{
 				'op_status'    => 2,
 			], $request->get('id')
 		);
+	}
+
+	public function acceptSheet(Request $request){
+		$infoMes = $this->mdMessages->getBy( 
+						[
+							'id' => $request->get('mesId')
+						]
+					);
+		$infoSheet = $this->mdSheet->getBy( 
+						[
+							'id' => $request->get('sheetId')
+						]
+					);
+
+		if( !empty( $infoMes ) && !empty( $infoSheet ) ) {
+
+			// Get current sheet data
+			if( is_array( json_decode($infoSheet[0]['sheet_content']) ) ) {
+				$currentDataSheet = json_decode($infoSheet[0]['sheet_content']);
+			}else{
+				$currentDataSheet = array();
+			}
+
+			// Get current sheet meta data
+			if( is_array( json_decode($infoSheet[0]['sheet_meta'], true) ) ) {
+				$currentMetaSheet = json_decode($infoSheet[0]['sheet_meta'], true);
+			}else{
+				$currentMetaSheet = array();
+			}
+
+			$newMetaSheet = array();
+			$dataSheetMetaInbox = json_decode($infoMes[0]['op_data_sheet_meta']);
+			foreach ($dataSheetMetaInbox as $key => $value) {
+				$newMetaSheet[] = $value;
+				
+			}
+			
+			$dataSheetInbox = json_decode($infoMes[0]['op_data_sheet']);
+			$nextKey = 0;
+			$nextRow = count($currentDataSheet);
+			foreach ($dataSheetInbox as $key => $value) {
+				$_nextRow = $nextRow++;
+				foreach ($value as $_key => $_value) {
+					$metaOrder = $nextKey++;
+
+					if( isset( $newMetaSheet[$metaOrder] ) ) {
+						
+						$newMetaSheet[$metaOrder]->row = $_nextRow;
+						$newMetaSheet[$metaOrder]->col = $_key;
+						$newMetaSheet[$metaOrder]->background = '';
+						$newMetaSheet[$metaOrder]->color = '';
+
+						$currentMetaSheet[$_nextRow . '-' . $_key] = $newMetaSheet[$metaOrder];
+
+					}
+				}
+
+				$currentDataSheet[] = $value;
+			}
+
+
+			$this->mdSheet->save(
+				[
+					'sheet_content' => json_encode($currentDataSheet),
+				],
+				$request->get('sheetId')
+			);
+
+			/**
+			 * Add meta data for user.
+			 */
+			$sheetMeta = [
+				'sheet_meta' => json_encode($currentMetaSheet),
+			];
+
+			// Loop add add | update meta data.
+			foreach ($sheetMeta as $mtaKey => $metaValue) {
+				$this->mdSheet->setMetaData( $request->get('sheetId'), $mtaKey, $metaValue );
+			}
+
+			$this->mdMessages->save(
+				[
+					'op_accept_status'  => 1,
+				],
+				$request->get('mesId')
+			);
+		}
+	}
+
+	public function autoLoadInbox(Request $request){
+
+		$condition['op_user_receiver'] = $request->get('userId');
+		$condition['op_type'] = 'inbox';
+		$condition['op_status'] = 1;
+		$condition['ORDER'] = [
+					'id' => 'DESC'
+			];
+		$listMessages = $this->mdMessages->getBy( 
+			$condition
+		);
+
+		$newMes = [];
+		foreach ($listMessages as $key => $value) {
+			$user = $this->mdUser->getUserBy('id', $value['op_user_send']);
+            $avatar = assets('img/user.png');
+            if( isset( $user[0]['user_avatar'] ) ) {
+                $avatar = url($user[0]['user_avatar']);
+            }
+
+			$newMes[] = [
+				'id' => $value['id'],
+				'op_message_title' => $value['op_message_title'],
+				'op_messages' => $value['op_messages'],
+				'user_name' => isset($user[0]) ? $user[0]['user_name'] : '',
+				'user_avatar' => $avatar,
+				'linkSheet' => url('/view-sheet/' . $value['op_sheet_id']),
+				'linkInbox' => url('/massages-manage?inbox=' . $value['id'] ),
+			];
+		}
+
+		echo json_encode($newMes);
 	}
 
 }

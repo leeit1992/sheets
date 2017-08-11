@@ -55,7 +55,17 @@ class SheetsController extends baseController{
 					redirect( url('/error-404?url=' . $_SERVER['REDIRECT_URL']) );
 				}
 			}
+		}else{
+			$autoRedirect = $this->mdSheet->getBy(['sheet_author' => Session()->get('op_user_id')]);
+
+			if( !empty( $autoRedirect ) ) {
+				redirect( url('/view-sheet/' . $autoRedirect[0]['id'] ) );
+			}
 		}
+
+		$listSheets = $this->mdSheet->getBy( [
+			'sheet_author' => Session()->get('op_user_id')
+		] );
 
 		// Load layout.
 		return $this->loadTemplate(
@@ -64,7 +74,8 @@ class SheetsController extends baseController{
 				'infoUser' => $this->infoUser,
 				'sheet'  => $sheets,
 				'mdUser' => $this->mdUser,
-				'mdMessages' => $this->mdMessages
+				'mdMessages' => $this->mdMessages,
+				'listSheets' => $listSheets
 			]
 		);
 	}
@@ -92,7 +103,7 @@ class SheetsController extends baseController{
 	}
 
 	public function saveSheets(Request $request){
-		$author = Session()->get('op_user_id');
+		$author  = Session()->get('op_user_id');
 		$sheetId = null;
 
 		if( !empty( $request->get('sheetId') ) && 'new' != $request->get('saveType') ) {
@@ -107,8 +118,6 @@ class SheetsController extends baseController{
 
 		$lastID = $this->mdSheet->save(
 			[
-				'sheet_title'   => $request->get('sheetTitle'),
-				'sheet_description' => $request->get('sheetDescription'),
 				'sheet_content' => $request->get('sheetData'),
 				'sheet_author'  => $author,
 				'sheet_datetime' => date("Y-m-d H:i:s"),
@@ -131,7 +140,6 @@ class SheetsController extends baseController{
 		foreach ($sheetMeta as $mtaKey => $metaValue) {
 			$this->mdSheet->setMetaData( $lastID, $mtaKey, $metaValue );
 		}
-
 
 		$action = !empty( $request->get('sheetId') )  ? 'Update' : 'Created';
 		// Set notice success
@@ -156,7 +164,30 @@ class SheetsController extends baseController{
 				'status' => $message
 			]
 		);
+	}
 
+	public function sendSheet(Request $request){
+
+		$this->mdMessages->save(
+			[
+				'op_messages'   => $request->get('message'),
+				'op_message_title'  => $request->get('title'),
+				'op_user_send'  => Session()->get('op_user_id'),
+				'op_user_receiver' => $request->get('receiver'),
+				'op_sheet_id'   => $request->get('sheetId'),
+				'op_datetime'   => date("Y-m-d H:i:s"),
+				'op_status'     => 1,
+				'op_type'       => 'inbox',
+				'op_data_sheet' => $request->get('sheetData'),
+				'op_data_sheet_meta' => $request->get('sheetMeta'),
+			]
+		);
+
+		$userInfo = $this->mdUser->getUserBy('id', $request->get('receiver'));
+
+		$log = 'User <b>' . $this->infoUser['name'] . '</b> send message to User <b>' . $userInfo[0]['user_name'] . '</b>';
+		// Set notice success
+		$this->mdLogs->add($this->mdLogs->logTemplate( $log, 'Messages'));
 	}
 
 }

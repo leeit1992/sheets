@@ -17,7 +17,9 @@
 			'click .op-massages-rm-js': 'removeMessage',
 			'click .op-remove-all-mes': 'removeAllMessage',
 			'click .op-check-message': 'checkInbox',
-			'click .op-massage-forward': 'getDataForward',
+			'click .op-massage-accept': 'acceptSheetInbox',
+			'click .op-accept-data': 'acceptSheetData',
+			'click .op-massage-send-back': 'sheetOrdererSendBack',
 			'change .op-mes-search, .op-mes-filter-by-user, .op-mes-filter-by-date': 'filterMessages'
 		},
 
@@ -36,8 +38,93 @@
 					$(this).iCheck(i.is(":checked") ? "check" : "uncheck")
 				})
 			});
+
+			$('.op-list-current').ready(function(){
+				var checkAuto = $("input[name=op_inbox_auto_open]");
+
+				if( 0 < checkAuto.length ) {
+					var idBox = checkAuto.val();
+					$(".op-mes-item-" + idBox).find('.op-check-message').trigger('click');
+					history.pushState('', '', OPDATA.adminUrl +"massages-manage");
+				}
+			});
+
 		},
 
+		formatTextHead: function(text, text2) {
+	        return '<p>'+text+'</p><p>'+text2+'</p>';
+	    },
+
+		initInboxSheet : function( id, sheetData ){
+
+			var self = this,
+            	$sheet = $('.op-sheet-inbox-show-' + id)[0];
+			this.opSheet = new Handsontable($sheet, {
+	            readOnly: true,
+	            data: sheetData,
+	            startRows: 100,
+	            rowHeaders: true,
+	            colHeaders: true,
+	            colHeaders: [
+	                self.formatTextHead('A','User Code'),
+	                self.formatTextHead('B','Date'),
+	                self.formatTextHead('C','Buyer'),
+	                self.formatTextHead('D','Collector'),
+	                self.formatTextHead('E','Name items'),
+	                self.formatTextHead('F','Code Items'),
+	                self.formatTextHead('G','Size'),
+	                self.formatTextHead('H','Color'),
+	                self.formatTextHead('I','Quantity'),
+	                self.formatTextHead('J','Price On Website'),
+	                self.formatTextHead('K','Ship Web'),
+	                self.formatTextHead('L','Sale'),
+	                self.formatTextHead('M','Price Order'),
+	                self.formatTextHead('N','Into Money'),
+	                self.formatTextHead('O','Day In Stock'),
+	                self.formatTextHead('P','Tracking Number'),
+	                self.formatTextHead('Q','Weight'),
+	                self.formatTextHead('R','Link Items'),
+	                self.formatTextHead('S','Status'),
+	                self.formatTextHead('T',''),
+	            ],
+	            columns: window.ATLLIB.colSheetFormat(),
+	            contextMenu: true,
+	            rowHeaders: true,
+	            colWidths: 150,
+	            manualColumnMove: true,
+	            manualRowMove: true,
+	            manualColumnResize: true,
+	            manualRowResize: true,
+	            minSpareRows: true,
+	            filters: true,
+	            width: $("#page_content_inner").width() - 30,
+	            height: 300,
+	            afterInit: function() {
+	            	var self = this;
+
+	            	$("#HandsontableCopyPaste").css('position','absolute');
+                	$("#HandsontableCopyPaste").css('top',0);
+
+                	setTimeout(function(){
+	                    self.setDataAtCell(sheetData.length,18,'');
+	                }, 500 ); 
+	            },
+	            cells: function (row, col, prop) {
+	                var cellProperties = {};
+
+	                if( 18 == col ) {
+	                	if( 3 == OPDATA.user.meta.user_role ) {
+	                		cellProperties.readOnly = false;
+	                	}
+	                    
+	                }
+
+	                return cellProperties;
+	            }
+      
+	        });
+		},
+		//OPDATA.user.meta.user_role
 		handleForm: function() {
 			var self = this,
 				data = {
@@ -60,6 +147,7 @@
 						classes: 'uk-notify-message-success'
 					});
 
+					socket.emit('notice-inbox', $("select[name=op_receiver]").val() );
 					$('.op-notify-js', self.el).html(output).show();
 
 					setTimeout(function() {
@@ -157,42 +245,62 @@
 
 		checkInbox: function(e) {
 			var self = this,
-				id = $(e.currentTarget).attr('data-id');
+				id = $(e.currentTarget).attr('data-id'),
+				sheetData = $('.op-data-mes-' + id).val(),
+				sheetMeta = $('.op-meta-mes-' + id).val();
 
+			if( 0 < sheetData.length ) {
+				sheetData = JSON.parse(sheetData);
+				this.initInboxSheet(id, sheetData);
+			}
+			
 			$.ajax({
 				url: OPDATA.adminUrl + '/update-inbox',
 				type: "POST",
 				data: {
 					id: id,
 				},
-				success: function(res) {}
+				success: function(res) {} 
 			});
 		},
 
-		getDataForward: function(e) {
+		acceptSheetInbox: function(e){
 			var self = this,
 				id = $(e.currentTarget).attr('data-id'),
-				dataMes = $('.op-data-mes-' + id).val(),
-				listSheet = JSON.parse($('#op-data-list-sheets').val());
+				apccetStatus = $(e.currentTarget).attr('apccet-status');
+			
+			if( 1 == apccetStatus ) {lo
+				$(".uk-close").trigger('click');
+				UIkit.modal.alert('This data has been added to personal data.!');
+				return false;
+			}
 
-			dataMes = JSON.parse(dataMes);
+			$(".op-accept-data").attr('data-id', id);
+		},
 
-			var sheetName = '';
-			$.each(listSheet, function(i, el) {
-				if (el.id == dataMes.op_sheet_id) {
-					sheetName = el.sheet_title;
+		acceptSheetData: function(e){
+			var self = this,
+				id = $(e.currentTarget).attr('data-id');
+			altair_helpers.content_preloader_show();
+			$.ajax({
+				url: OPDATA.adminUrl + '/accept-sheet',
+				type: "POST",
+				data: {
+					mesId: id,
+					sheetId: $("select[name=op_sheet_accept]").val(),
+				},
+				success: function(res) {
+					altair_helpers.content_preloader_hide();
+
+					$("#modal_message_" + id).find('.op-massage-accept').attr('apccet-status',1);
+					$(".uk-close").trigger('click');
+					UIkit.modal.alert('Accept Success!');
 				}
 			});
+		},
 
-			$(".md-input-wrapper").addClass('md-input-filled');
-
-			$(".op-list-sheet-select").find('.has-options').html('<div data-value="' + dataMes.op_sheet_id + '" class="item">' + sheetName + '</div>')
-
-			$("input[name=op_title]").val(dataMes.op_message_title);
-			$("textarea[name=op_messages]").val(dataMes.op_messages);
-
-			$("select[name=op_sheet]").html('<option value="' + dataMes.op_sheet_id + '" selected="selected">' + sheetName + '</option>');
-
+		sheetOrdererSendBack : function(){
+			console.log(this.opSheet.getData());
 		}
 
 	});

@@ -3,7 +3,6 @@ var browserSync = require('browser-sync');
 var minify = require('gulp-minify');
 var sass = require('gulp-sass');
 
-
 gulp.task('js-complie', function() {
     gulp.src('src/js/*.js')
         .pipe(minify({

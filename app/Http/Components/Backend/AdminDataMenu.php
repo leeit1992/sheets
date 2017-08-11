@@ -127,7 +127,7 @@ class AdminDataMenu
                 'label'   => 'Configs',
                 'icon'    => '<i class="material-icons md-36">&#xE8F0;</i>',
                 'conditionOpen' => ['LogsController'],
-                'display' => '',
+                'display' => ( 1 == $userMeta['user_role'] ) ? '' : 'none',
                 'submenu' => [
                     [
                         'label' => 'Logs',

@@ -69,6 +69,10 @@
   left: -21px;
   top: -1170px; }
 
+.op-icon-add-order {
+  left: 2px;
+  top: -961px; }
+
 .op-toolbar-menu-button {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
@@ -97,13 +101,16 @@
   position: relative;
   height: 19px; }
 
-#page-canculator {
+#page-canculator, #op-page-handle-massages {
   /* Column headers */ }
-  #page-canculator .md-card .md-card-content {
+  #page-canculator .md-card .md-card-content, #op-page-handle-massages .md-card .md-card-content {
     padding-top: 0; }
-  #page-canculator #tab_sheet {
-    margin-top: 4px; }
-  #page-canculator #op-toolbar-wrapper {
+  #page-canculator #tab_sheet, #op-page-handle-massages #tab_sheet {
+    margin-top: 4px;
+    padding: 0; }
+    #page-canculator #tab_sheet li, #op-page-handle-massages #tab_sheet li {
+      list-style: none; }
+  #page-canculator #op-toolbar-wrapper, #op-page-handle-massages #op-toolbar-wrapper {
     border-top: 1px solid #d9d9d9;
     border-bottom: 1px solid #d9d9d9;
     min-height: 30px;
@@ -119,38 +126,38 @@
     padding: 0 44px 0 10px;
     position: relative;
     margin-top: 4px; }
-    #page-canculator #op-toolbar-wrapper .op-toolbar-separator {
+    #page-canculator #op-toolbar-wrapper .op-toolbar-separator, #op-page-handle-massages #op-toolbar-wrapper .op-toolbar-separator {
       border-left: 1px solid #d9d9d9;
       height: 30px;
       margin: 0 5px 0 4px;
       vertical-align: top; }
-  #page-canculator .op-fx {
+  #page-canculator .op-fx, #op-page-handle-massages .op-fx {
     padding-top: 2px;
     padding-bottom: 2px;
     margin-top: 4px; }
-    #page-canculator .op-fx--icon {
+    #page-canculator .op-fx--icon, #op-page-handle-massages .op-fx--icon {
       display: inline-block;
       width: 3%;
       text-align: center;
       border: 1px solid #ccc;
       height: 22px; }
-    #page-canculator .op-fx--input {
+    #page-canculator .op-fx--input, #op-page-handle-massages .op-fx--input {
       display: inline-block;
       width: 96%; }
-      #page-canculator .op-fx--input input {
+      #page-canculator .op-fx--input input, #op-page-handle-massages .op-fx--input input {
         width: 100%;
         height: 20px; }
-  #page-canculator .op-scroll::-webkit-scrollbar-track {
+  #page-canculator .op-scroll::-webkit-scrollbar-track, #op-page-handle-massages .op-scroll::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     background-color: #F5F5F5; }
-  #page-canculator .op-scroll::-webkit-scrollbar {
+  #page-canculator .op-scroll::-webkit-scrollbar, #op-page-handle-massages .op-scroll::-webkit-scrollbar {
     width: 8px !important;
     height: 8px;
     background-color: #F5F5F5; }
-  #page-canculator .op-scroll::-webkit-scrollbar-thumb {
+  #page-canculator .op-scroll::-webkit-scrollbar-thumb, #op-page-handle-massages .op-scroll::-webkit-scrollbar-thumb {
     background-color: #0ae;
     background-image: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0.5, rgba(255, 255, 255, 0.2)), color-stop(0.5, transparent), to(transparent)); }
-  #page-canculator .op-toolbar-combo-button {
+  #page-canculator .op-toolbar-combo-button, #op-page-handle-massages .op-toolbar-combo-button {
     -webkit-border-radius: 2px;
     -moz-border-radius: 2px;
     border-radius: 2px;
@@ -172,7 +179,7 @@
     text-decoration: none;
     vertical-align: middle;
     cursor: default; }
-  #page-canculator .op-toolbar-combo-button-input {
+  #page-canculator .op-toolbar-combo-button-input, #op-page-handle-massages .op-toolbar-combo-button-input {
     background: transparent;
     border: 1px solid transparent !important;
     color: #333;
@@ -181,7 +188,7 @@
     font-weight: bold !important;
     height: 20px !important;
     overflow: hidden !important; }
-    #page-canculator .op-toolbar-combo-button-input:focus {
+    #page-canculator .op-toolbar-combo-button-input:focus, #op-page-handle-massages .op-toolbar-combo-button-input:focus {
       -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
       -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
       box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
@@ -191,11 +198,11 @@
       border: 1px solid #4d90fe !important;
       height: 20px;
       outline: none; }
-  #page-canculator .op-toolbar-menu-button {
+  #page-canculator .op-toolbar-menu-button, #op-page-handle-massages .op-toolbar-menu-button {
     margin: 2px 0 0 -1px; }
-  #page-canculator #op-font-size .op-toolbar-combo-button-input {
+  #page-canculator #op-font-size .op-toolbar-combo-button-input, #op-page-handle-massages #op-font-size .op-toolbar-combo-button-input {
     width: 28px; }
-  #page-canculator .op-toolbar-menu-button-caption {
+  #page-canculator .op-toolbar-menu-button-caption, #op-page-handle-massages .op-toolbar-menu-button-caption {
     padding: 0;
     margin: 0;
     overflow: hidden;
@@ -203,13 +210,15 @@
     white-space: nowrap;
     width: 70px; }
   #page-canculator .op-toolbar-button-hover,
-  #page-canculator .op-toolbar-menu-button-hover {
+  #page-canculator .op-toolbar-menu-button-hover, #op-page-handle-massages .op-toolbar-button-hover,
+  #op-page-handle-massages .op-toolbar-menu-button-hover {
     border-color: #c6c6c6 !important;
     color: #222; }
-  #page-canculator .op-toolbar-menu-button-open {
+  #page-canculator .op-toolbar-menu-button-open, #op-page-handle-massages .op-toolbar-menu-button-open {
     color: #222; }
   #page-canculator .op-toolbar-button-hover,
-  #page-canculator .op-toolbar-menu-button-hover {
+  #page-canculator .op-toolbar-menu-button-hover, #op-page-handle-massages .op-toolbar-button-hover,
+  #op-page-handle-massages .op-toolbar-menu-button-hover {
     -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
     -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
@@ -219,9 +228,16 @@
     background-image: -ms-linear-gradient(top, #f8f8f8, #f1f1f1);
     background-image: -o-linear-gradient(top, #f8f8f8, #f1f1f1);
     background-image: linear-gradient(top, #f8f8f8, #f1f1f1); }
-  #page-canculator .ht_clone_top th {
+  #page-canculator .ht_clone_top th, #op-page-handle-massages .ht_clone_top th {
     background-color: #cddc39;
     font-weight: bold; }
+  #page-canculator .handsontable thead tr:first-child th, #op-page-handle-massages .handsontable thead tr:first-child th {
+    height: 50px; }
+  #page-canculator .colHeader p, #op-page-handle-massages .colHeader p {
+    margin: 0; }
+
+.sidebar_main_swipe .htCommentsContainer {
+  display: none; }
 
 #style_switcher {
   width: 50%;

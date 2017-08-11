@@ -1,3 +1,8 @@
+<?php 
+    if( isset($_GET['inbox']) ) {
+        echo '<input type="hidden" name="op_inbox_auto_open" value="'.$_GET['inbox'].'">';
+    }
+?>
 <div id="op-page-handle-massages">
     <div id="top_bar">
         <div class="md-top-bar">
@@ -31,6 +36,10 @@
                     <?php 
                     foreach ($listMessages as $value) :
                         $user = $mdUser->getUserBy('id', $value['op_user_send']);
+                        $avatar = assets('img/user.png');
+                        if( isset( $user[0]['user_avatar'] ) ) {
+                            $avatar = url($user[0]['user_avatar']);
+                        }
                     ?>
                     <li class="op-mes-item-<?php echo $value['id'] ?>">
                         <div class="md-card-list-item-menu" data-uk-dropdown="{mode:'click'}">
@@ -52,7 +61,9 @@
                                     $classNotice = 'md-bg-light-blue';
                                 }
                             ?>
-                            <span class="md-card-list-item-avatar <?php echo $classNotice ?>">Mes</span>
+                            <a href="#" class="md-card-list-item-avatar  user_action_image <?php echo $classNotice  ?>">
+                                <img class="md-user-image" style="height: 34px;" src="<?php echo $avatar ?>" alt="">
+                            </a>
                         </div>
                         <div class="md-card-list-item-sender">
                             <span>
@@ -76,18 +87,26 @@
                             </span>   
                         </div>
                         <div class="uk-modal" id="modal_message_<?php echo $value['id'] ?>">
-                            <div class="uk-modal-dialog">
+                            <div class="uk-modal-dialog op-inbox-sheet-wrap" style="width: 100%;">
+                                <button class="uk-modal-close uk-close" type="button"></button>
                                 <div class="uk-modal-header">
-                                    <h3 class="uk-modal-title"><i class="material-icons md-24">&#xE554;</i> Messages</h3>
+                                    <h3 class="uk-modal-title"><i class="material-icons md-24">&#xE554;</i> <?php echo ucfirst($value['op_message_title']) ?></h3>
                                 </div>
                                 <p><?php echo $value['op_messages'] ?></p>
-                                <div>
-                                    <p><i class="uk-icon-file-excel-o"></i> <a target="_blank" href="<?php echo url('/view-sheet/' . $value['op_sheet_id']) ?>">File Sheet</a></p>
+                                <div class="uk-width-large-1-1">
+                                    <textarea class="op-data-mes-<?php echo $value['id'] ?>" style="display: none;"><?php echo $value['op_data_sheet'] ?></textarea>
+                                    <textarea class="op-meta-mes-<?php echo $value['id'] ?>" style="display: none;"><?php echo $value['op_data_sheet_meta'] ?></textarea>
+                                    <div class="op-sheet-inbox-show-<?php echo $value['id'] ?>"></div>
                                 </div>
                                 <div class="uk-modal-footer uk-text-right">
-                                    <textarea class="op-data-mes-<?php echo $value['id'] ?>" style="display: none;"><?php echo json_encode($value) ?></textarea>
-                                    <a data-id="<?php echo $value['id'] ?>" class="md-btn md-btn-flat op-massage-forward" href="#mailbox_new_message" data-uk-modal="{center:true}">Forward </a>
-                                    <button type="button" class="md-btn md-btn-flat uk-modal-close">Close</button>
+
+                                    <?php if( 1 == $userCurrent['meta']['user_role'] ) : ?>
+                                    <a apccet-status="<?php echo $value['op_accept_status'] ?>" data-id="<?php echo $value['id'] ?>" class="md-btn md-btn-flat op-massage-accept" href="#op-massage-accept" data-uk-modal="{center:true}">Accept </a>
+                                    <?php endif; ?>
+                                    <?php if( 3 == $userCurrent['meta']['user_role'] ) : ?>
+                                    <a apccet-status="<?php echo $value['op_accept_status'] ?>" data-id="<?php echo $value['id'] ?>" class="md-btn md-btn-flat op-massage-send-back">Send Back </a>
+                                    <?php endif; ?>
+                                    <a data-id="<?php echo $value['id'] ?>" class="md-btn md-btn-flat op-massage-cancel"> Cancel </a>
                                 </div>
                             </div>
                         </div>
@@ -97,12 +116,14 @@
                 <ul class="op-list-result"></ul>
             </div> 
         </div>
+        <?php View('messages/layout/popinAcceptOrder.tpl', [ 'listSheets' => $listSheets ]) ?>
         <?php View('messages/layout/popinSend.tpl', [ 'userCurrent' => $userCurrent, 'mdUser' => $mdUser, 'listSheets' => $listSheets ]) ?>
     </div>
     <div class="uk-notify uk-notify-bottom-right op-notify-js" style="display: none;"></div>
 </div>
 <?php
 registerScrips([
+    'handsontable' => assets('bower_components/handsontable/handsontable.full.min.js'),
     'op-massages' => assets('js/messages-debug.js'),
     'rangeSlider' => assets('bower_components/ion.rangeslider/js/ion.rangeSlider.min.js'),
     'inputmask' => assets('bower_components/jquery.inputmask/dist/min/jquery.inputmask.bundle.min.js'),

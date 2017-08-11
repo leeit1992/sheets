@@ -1,6 +1,10 @@
 <?php 
 foreach ($listMessages as $value) :
     $user = $mdUser->getUserBy('id', $value['op_user_send']);
+    $avatar = assets('img/user.png');
+    if( isset( $user[0]['user_avatar'] ) ) {
+        $avatar = url($user[0]['user_avatar']);
+    }
 ?>
 <li class="op-mes-item-<?php echo $value['id'] ?>">
     <div class="md-card-list-item-menu" data-uk-dropdown="{mode:'click'}">
@@ -22,7 +26,9 @@ foreach ($listMessages as $value) :
                 $classNotice = 'md-bg-light-blue';
             }
         ?>
-        <span class="md-card-list-item-avatar <?php echo $classNotice ?>">Mes</span>
+        <a href="#" class="md-card-list-item-avatar  user_action_image <?php echo $classNotice  ?>">
+            <img class="md-user-image" style="height: 34px;" src="<?php echo $avatar ?>" alt="">
+        </a>
     </div>
     <div class="md-card-list-item-sender">
         <span>
@@ -52,7 +58,7 @@ foreach ($listMessages as $value) :
     <div class="uk-modal" id="modal_message_js_<?php echo $value['id'] ?>">
         <div class="uk-modal-dialog">
             <div class="uk-modal-header">
-                <h3 class="uk-modal-title"><i class="material-icons md-24">&#xE554;</i> Messages</h3>
+                <h3 class="uk-modal-title"><i class="material-icons md-24">&#xE554;</i> <?php echo ucfirst($value['op_message_title']) ?></h3></h3>
             </div>
             <p><?php echo $value['op_messages'] ?></p>
             <div>

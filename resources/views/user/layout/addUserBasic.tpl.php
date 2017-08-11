@@ -1,3 +1,16 @@
+<?php 
+$userCode = '';
+$inputDis = '';
+if( !empty($user) ) {
+    if( isset( $user['user_code'] ) ) {
+        $userCode = explode('-',$user['user_code']);
+        $userCode = $userCode[1];
+    }
+    
+    $inputDis = 'readonly';
+}
+
+?>
 <li>
     <div class="uk-margin-top">
         <h3 class="full_width_in_card heading_c">
@@ -24,6 +37,17 @@
             <div class="uk-width-1-1">
                 <label>More information</label>
                 <textarea class="md-input" name="atl_user_moreinfo" cols="30" rows="4"><?php echo isset( $meta['user_moreinfo'] ) ? $meta['user_moreinfo'] : '' ?></textarea>
+            </div>
+        </div>
+
+        <div class="uk-grid">
+            <div class="uk-width-1-2">
+                <label>User Code</label>
+                <input <?php echo $inputDis ?> type="text" class="md-input input-count atl-required-js" value="<?php echo $userCode ?>" name="atl_user_code" style="text-transform: uppercase" maxlength="3" />
+            </div>
+            <div class="uk-width-1-2">
+                <label>User Color</label>
+                <input type="text" <?php echo $inputDis ?> name="atl_user_color" value="<?php echo isset( $user['user_color'] ) ? $user['user_color'] : '' ?>" class="op-user-color" />
             </div>
         </div>
   

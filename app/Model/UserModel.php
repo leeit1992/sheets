@@ -82,13 +82,26 @@ class UserModel extends AtlModel
 	 * @return array
 	 */
 	public function getUserBy( $key, $value ){
-		return $this->db->select(
+		$listUser = $this->db->select(
 			$this->table, 
 				'*', 
 				[
 					$key => $value,
 				]
 			);
+		$argsUsers = array();
+		foreach ($listUser as $user) {
+			$userMeta = $this->getAllMetaData( $user['id'] );
+			if( !empty( $userMeta ) ) {
+				foreach ($userMeta as $uMkey => $uMValue) {
+					$user[$uMkey] = $uMValue;
+				}	
+			}
+			$argsUsers[] = $user;
+			
+		}
+
+		return $argsUsers;
 	}
 
 	/**

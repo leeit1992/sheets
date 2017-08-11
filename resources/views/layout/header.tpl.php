@@ -11,7 +11,7 @@
     <!-- Remove Tap Highlight on Windows Phone IE -->
     <meta name="msapplication-tap-highlight" content="no"/>
 
-    <title>Atl Travel Manage - </title>
+    <title>Sheet Manage</title>
     
     <?php  
 		enqueueStyle(
@@ -23,8 +23,10 @@
 				)
 		);
 	?>
-
+   <!--  <script src="http://127.0.0.1:8080/socket.io/socket.io.js" type="text/javascript" ></script>
+    <script type="text/javascript" src="<?php echo url('/socket.js'); ?>"></script> -->
     <script type="text/javascript">
+        //var socket = io.connect('http://127.0.0.1:8080');
         window.OPDATA = {
             adminUrl: "<?php echo url('/'); ?>",
             user: <?php echo json_encode(  $userInfo ) ?>
@@ -41,18 +43,21 @@
 <?php 
 $avatar = assets('img/user.png');
 if( isset( $userInfo['meta']['user_avatar'] ) ) {
-    $avatar = $userInfo['meta']['user_avatar'];
+    $avatar = url($userInfo['meta']['user_avatar']);
 }
 ?>
-<body class="sidebar_main_open sidebar_main_swipe">
+<!-- <body class="sidebar_main_open sidebar_main_swipe"> -->
+<body class="sidebar_main_swipe">
 	<!-- main header -->
     <header id="header_main">
         <div class="header_main_content">
             <nav class="uk-navbar">
                 <!-- main sidebar switch -->
+                <?php if( 1 == $userInfo['meta']['user_role'] or 3 == $userInfo['meta']['user_role'] ) : ?>
                 <a href="#" id="sidebar_main_toggle" class="op-switch-screen-js sSwitch sSwitch_left">
                     <span class="sSwitchIcon"></span>
                 </a>
+                <?php endif; ?>
                 <!-- secondary sidebar switch -->
                 <a href="#" id="sidebar_secondary_toggle" class="sSwitch sSwitch_right sidebar_secondary_check">
                     <span class="sSwitchIcon"></span>
@@ -64,7 +69,7 @@ if( isset( $userInfo['meta']['user_avatar'] ) ) {
                     <ul class="uk-navbar-nav user_actions">
                         <li><a href="#" id="main_search_btn" class="user_action_icon"><i class="material-icons md-24 md-light">&#xE8B6;</i></a></li>
                        
-                        <?php View('layout/messages.tpl', [ 'listMessages' => $listMessages ]) ?>
+                        <?php View('layout/messages.tpl', [ 'listMessages' => $listMessages, 'mdUser' => $mdUser ]) ?>
             
                         <li data-uk-dropdown="{mode:'click'}">
                             <a href="#" class="user_action_image">
@@ -88,6 +93,25 @@ if( isset( $userInfo['meta']['user_avatar'] ) ) {
                 <input type="text" class="header_main_search_input" />
                 <button class="header_main_search_btn uk-button-link"><i class="md-icon material-icons">&#xE8B6;</i></button>
             </form>
+        </div>
+        <div id="op-list-message-notice">
+        <?php foreach ($listMessages as $key => $value) : ?>
+            <div class="uk-modal" id="modal_message_head_<?php echo $value['id'] ?>">
+                <div class="uk-modal-dialog">
+                    <div class="uk-modal-header">
+                        <h3 class="uk-modal-title"><i class="material-icons md-24">&#xE554;</i> <?php echo ucfirst($value['op_message_title']) ?></h3></h3>
+                    </div>
+                    <p><?php echo $value['op_messages'] ?></p>
+                    <div>
+                        <p><i class="uk-icon-file-excel-o"></i> <a target="_blank" href="<?php echo url('/view-sheet/' . $value['op_sheet_id']) ?>">File Sheet</a></p>
+                    </div>
+                    <div class="uk-modal-footer uk-text-right">
+                        <a class="md-btn md-btn-flat op-massage-forward" href="<?php echo url('/massages-manage?inbox=' . $value['id'] ) ?>">Goto Inbox </a>
+                        <button type="button" class="md-btn md-btn-flat uk-modal-close">Close</button>
+                    </div>
+                </div>
+            </div>           
+        <?php endforeach; ?>
         </div>
     </header>
     <!-- main header end -->

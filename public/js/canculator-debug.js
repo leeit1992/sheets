@@ -30,6 +30,10 @@ var OP_CANCULATOR_MODEL = Backbone.Model.extend({
 
     colType: function(){
         return [
+            { // Trạng Thái
+                editor: 'select',
+                selectOptions: [OPDATA.user.all_info.user_code]
+            },
             { // Ngày/Tháng
               type: 'date',
               dateFormat: 'DD/MM/YYYY',
@@ -74,7 +78,7 @@ var OP_CANCULATOR_MODEL = Backbone.Model.extend({
             { /** Link Hàng **/ },
             { // Trạng Thái
                 editor: 'select',
-                selectOptions: ['Stock', 'Out of stock']
+                selectOptions: ['Oke', 'Out']
             },
             { /** Link Hàng **/ }
         ]
@@ -82,7 +86,7 @@ var OP_CANCULATOR_MODEL = Backbone.Model.extend({
 
     listCols: function(){
         return [
-            'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S'
+            'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T'
         ];
     },
 
@@ -115,13 +119,20 @@ var OP_CANCULATOR = Backbone.View.extend({
     events: {
         'click .op-add-canculator-js': 'addCanculator',
         'mouseover .op-toolbar-menu-button': 'hoverButtonEditor',
-        'click .op-save-sheets-js,.op-save-sheets-new-js': 'saveSheets',
+        'click .op-save-sheets-js': 'saveSheets',
+        'click .op-send-sheet-js': 'sendSheets',
+        'click #style_switcher_toggle': 'openSendMes',
         'change #op_filter_sheet': 'actionFilter',
         'click .op-icon-bold': 'useFilter',
         'click .op-fx--input input': 'fxEvent',
+
+        // For Admin role
+        'change #op_sheet_add_order': 'adminChooseOrderer',
+        'click .op-apply-orderer': 'setOrderer',
     },
 
     initialize: function() {
+
         this.listenTo(this.model, 'change', this.render);
         this.listenTo(this.model, 'change', this.fixWidthCanculator);
         this.reizeContentCanculator();
@@ -152,7 +163,10 @@ var OP_CANCULATOR = Backbone.View.extend({
                 this.canculatorConfig(sheetsNumber, this.model.get('sheetsWidth'));
             }
         }
+    },
 
+    formatTextHead: function(text, text2) {
+        return '<p>'+text+'</p><p>'+text2+'</p>';
     },
 
     canculatorConfig: function(sheetId, width) {
@@ -185,10 +199,28 @@ var OP_CANCULATOR = Backbone.View.extend({
             rowHeaders: true,
             colHeaders: true,
             colHeaders: [
-                    'A - Ngày/Tháng', 'B - Người Mua', 'C - Người Order', 'D - Tên Mặt Hàng',
-                    'E - Mã Hàng', 'F - Size', 'G - Mầu', ' H - Số Lượng', 'I - Giá Web', 'J - Ship Web', 'K - Giảm Giá', 'L - Giá Order', 'M - Thành Tiền',
-                    'N - Ngày Hàng Về', 'O - Tracking Number', 'P - Cân Nặng', 'Q - Link Hàng', 'R - Trạng Thái', 'S'
-                ],
+                self.formatTextHead('A','User Code'),
+                self.formatTextHead('B','Date'),
+                self.formatTextHead('C','Buyer'),
+                self.formatTextHead('D','Collector'),
+                self.formatTextHead('E','Name items'),
+                self.formatTextHead('F','Code Items'),
+                self.formatTextHead('G','Size'),
+                self.formatTextHead('H','Color'),
+                self.formatTextHead('I','Quantity'),
+                self.formatTextHead('J','Price On Website'),
+                self.formatTextHead('K','Ship Web'),
+                self.formatTextHead('L','Sale'),
+                self.formatTextHead('M','Price Order'),
+                self.formatTextHead('N','Into Money'),
+                self.formatTextHead('O','Day In Stock'),
+                self.formatTextHead('P','Tracking Number'),
+                self.formatTextHead('Q','Weight'),
+                self.formatTextHead('R','Link Items'),
+                self.formatTextHead('S','Status'),
+                self.formatTextHead('T',''),
+            ],
+            //comments: [{row: 2, col: 2, comment: "Test comment"}],
             columns: self.model.colType(),
             contextMenu: true,
             rowHeaders: true,
@@ -206,6 +238,9 @@ var OP_CANCULATOR = Backbone.View.extend({
             height: window.outerHeight - 258,
             formulas: true,
             afterInit: function() {
+                $("#HandsontableCopyPaste").css('position','absolute');
+                $("#HandsontableCopyPaste").css('top',0);
+
                 var self = this;
                 $(".wtHolder", this.container).addClass('op-scroll');
 
@@ -219,15 +254,21 @@ var OP_CANCULATOR = Backbone.View.extend({
                     this.sheetStatus = $sheetStatus.val();
 
                     var sheetMeta = $("#op_sheet_meta", this.el);
-                    this.OpDataSheets = JSON.parse( sheetMeta.val() );
-           
+
+                    if( '[]' != sheetMeta.val() ) {
+                        this.OpDataSheets = JSON.parse( sheetMeta.val() );
+                    }
                 }
             
                 setTimeout(function(){
-                    self.setDataAtCell(100,18,'');
-                }, 500 );
-                
+                    var limitRow = sheetContent.length;
+                    if( 2 == OPDATA.user.meta.user_role ){
+                        limitRow = 100;
+                    }
+                    self.setDataAtCell(limitRow-1,18,'');
+                }, 500 );  
             },
+
             afterFilter: function(conditionsStack){
 
                 var d = this; 
@@ -303,7 +344,7 @@ var OP_CANCULATOR = Backbone.View.extend({
                 // console.log(row, col);
             },
 
-            afterSelection: function(r,c){
+            afterSelection: function(r, c){
                 var self = this,
                     data = this.getDataAtCell(r,c),
                     fomulas = $(".handsontableInput").val();
@@ -327,6 +368,10 @@ var OP_CANCULATOR = Backbone.View.extend({
 
                 if( 17 == col ) {
                     cellProperties.readOnly = false;
+                }
+
+                if( 2 == col ) {
+                    cellProperties.readOnly = true;
                 }
 
                 if( 17 == col && 2 == OPDATA.user.meta.user_role ) {
@@ -360,12 +405,22 @@ var OP_CANCULATOR = Backbone.View.extend({
                     argsCells.push({row : ii, col: i});
                 }
             };
+
+            d.opAfterSelectionEnd = argsCells;
+            d.dataCellSelect = {rst, cst, re, ce};
        
            // console.log(rst, cst, re, ce);
 
             // Change color background for cell
             $(".op-bg-cell-color").spectrum({
-                color: "#f00",
+                showPaletteOnly: true,
+                showPalette:true,
+                color: 'blanchedalmond',
+                palette: [
+                    ['black', 'white', 'blanchedalmond',
+                    'rgb(255, 128, 0);', 'hsv 100 70 50'],
+                    ['red', 'yellow', 'green', 'blue', 'violet']
+                ],
                 move: function(color) {
                     $.each(argsCells,function(i,v){
 
@@ -382,7 +437,14 @@ var OP_CANCULATOR = Backbone.View.extend({
 
             // Change text color for cell
             $(".op-text-cell-color").spectrum({
-                color: "#f00",
+                showPaletteOnly: true,
+                showPalette:true,
+                color: 'blanchedalmond',
+                palette: [
+                    ['black', 'white', 'blanchedalmond',
+                    'rgb(255, 128, 0);', 'hsv 100 70 50'],
+                    ['red', 'yellow', 'green', 'blue', 'violet']
+                ],
                 move: function(color) {
                     $.each(argsCells,function(i,v){
                         $(d.getCell(v.row, v.col)).css({'color': color.toHexString()});
@@ -391,6 +453,7 @@ var OP_CANCULATOR = Backbone.View.extend({
                     });
                 }
             });
+
         });   
     },
 
@@ -407,11 +470,22 @@ var OP_CANCULATOR = Backbone.View.extend({
             if( instance.OpDataSheets ) {
                 if( instance.OpDataSheets[row + '-' + col] ) {
                     var dataSheet       = instance.OpDataSheets[row + '-' + col];
+                    
+                    // Set style cell.
                     td.style.color      = dataSheet.color;
-                    td.style.background = dataSheet.background;;
+                    td.style.background = dataSheet.background;
+
+                    // Set cell meta.
+                    instance.setCellMeta(row, col, 'background', dataSheet.background);
+                    instance.setCellMeta(row, col, 'color', dataSheet.color);
+                    instance.setCellMeta(row, col, 'codeId', dataSheet.codeId );
+                    instance.setCellMeta(row, col, 'sheetId', dataSheet.sheetId );
+
+                    if( dataSheet.readOnly && 'true' == dataSheet.readOnly ) {
+                        cellProperties.readOnly = true;
+                    }
                 }
             }
-  
         }
     },
 
@@ -465,8 +539,6 @@ var OP_CANCULATOR = Backbone.View.extend({
         });
 
         var data = {
-            sheetTitle: $('input[name=op_sheet_title]').val(),
-            sheetDescription: $('textarea[name=op_sheet_description]').val(),
             sheetData: JSON.stringify(this.opSheet.getData()),
             sheetMeta: JSON.stringify(this.opSheet.OpDataSheets),
             saveType: saveType,
@@ -480,7 +552,7 @@ var OP_CANCULATOR = Backbone.View.extend({
             altair_helpers.content_preloader_hide();
 
             var output = self.noticeTpl({
-                message: 'Send sheet success.',
+                message: 'Save sheet success.',
                 classes: 'uk-notify-message-success'
             });
             $('.op-notify-js', self.el).html(output).show();
@@ -506,7 +578,6 @@ var OP_CANCULATOR = Backbone.View.extend({
     },
 
     useFilter : function(){
-        console.log(this.opSheet);
         this.opSheet.updateSettings({
 
             columnSummary: [
@@ -527,6 +598,181 @@ var OP_CANCULATOR = Backbone.View.extend({
         $(this.opSheet.getCell(row, col)).addClass('op-set-cell op-current');
 
         return false;  
+    },
+
+    openSendMes: function(){
+
+        var self = this, 
+            d = this.opSheet;
+        if( 2 == OPDATA.user.meta.user_role ){
+            $.each(this.opSheet.opAfterSelectionEnd, function(i, v){
+
+                $(d.getCell(v.row, v.col)).css({'background': ' #85817a'});
+                $(d.getCell(v.row, v.col)).css({'color': '#ffffff'});
+                d.setCellMeta(v.row, v.col, 'background', ' #85817a');
+                d.setCellMeta(v.row, v.col, 'color', '#ffffff');
+                d.setCellMeta(v.row, v.col, 'codeId', OPDATA.user.all_info.user_code + '-' + d.sheetId + '-' + window.ATLLIB.makeid() );
+                d.setCellMeta(v.row, v.col, 'sheetId', d.sheetId );
+
+                var cellMeta = d.getCellMeta(v.row, v.col);
+
+                d.OpDataSheets[ v.row + '-' + v.col ] = cellMeta;     
+            });
+        }
+    },
+
+    sendSheets: function(){
+        
+        var self = this, 
+            d = this.opSheet,
+            metaSelect = {},
+            rowSend = d.getSourceDataArray(
+                d.dataCellSelect.rst,
+                d.dataCellSelect.cst,
+                d.dataCellSelect.re,
+                d.dataCellSelect.ce
+            );
+
+        if( 0 == $("textarea[name=op_mes_description]").val().length ) {
+            UIkit.modal.alert('Please choose receiver!');
+            return false;
+        }
+
+
+        metaSelect = this.getCellMetaSelect(d);
+
+        var data = {
+            sheetData: JSON.stringify(rowSend),
+            receiver: $("select[name=op_receiver]").val(),
+            sheetMeta: JSON.stringify(metaSelect),
+            message: $("textarea[name=op_mes_description]").val(),
+            title: $("input[name=op_mes_title]").val(),
+            sheetId: this.opSheet.sheetId
+        };
+
+        altair_helpers.content_preloader_show();
+        $.post(OPDATA.adminUrl + 'send-sheet' ,data, function(){
+            altair_helpers.content_preloader_hide();
+
+            var output = self.noticeTpl({
+                message: 'Send sheet success.',
+                classes: 'uk-notify-message-success'
+            });
+            $('.op-notify-js', self.el).html(output).show();
+            $("#style_switcher").removeClass('switcher_active');
+
+            $(".op-save-sheets-js").trigger('click');
+
+            setTimeout(function(){
+                $('.op-notify-js', self.el).fadeOut();
+            }, 2000);
+            
+        });
+
+        return false;
+    },
+
+
+    getCellMetaSelect: function(d){
+        var metaSelect = {};
+
+        for (var i = d.dataCellSelect.cst; i <= d.dataCellSelect.ce; i++) {
+            for (var ii = d.dataCellSelect.rst; ii <= d.dataCellSelect.re; ii++) {
+                d.setCellMeta(ii, i, 'readOnly', 'true');
+
+                var meta = d.getCellMeta(ii, i);
+                    meta.instance  = undefined;
+                    meta.prop      = undefined;
+                    meta.visualCol = undefined;
+                    meta.visualRow = undefined;
+                    meta.renderer  = undefined;
+                metaSelect[ ii + '-' + i ] = meta; 
+            }
+        };
+
+        return metaSelect;
+    },
+
+    adminChooseOrderer: function(e){
+        var self     = this,
+            ordererId = $(e.currentTarget).val();
+        $(".op_orderer_list").hide();
+
+        $(".op_orderer_" + ordererId).fadeIn();
+        $(".op-apply-orderer").attr('data-id', ordererId);
+        return false;
+    },
+
+    setOrderer: function(e){
+        altair_helpers.content_preloader_show();
+        var self     = this,
+            d = this.opSheet,
+            metaSelect = {},
+            rowSend = d.getSourceDataArray(
+                d.dataCellSelect.rst,
+                d.dataCellSelect.cst,
+                d.dataCellSelect.re,
+                d.dataCellSelect.ce
+            ),
+            ordererId = $(e.currentTarget).attr('data-id'),
+            dataUser = JSON.parse( $('textarea[name=op_orderer_'+ordererId+']').val() );
+
+        if( ordererId ) {
+            $.each(d.opAfterSelectionEnd, function(i, v){
+                var metaCurrent = d.getCellMeta(v.row, v.col);
+
+                $(d.getCell(v.row, v.col)).css({'background': dataUser.user_color});
+                $(d.getCell(v.row, v.col)).css({'color': '#ffffff'});
+
+                // Set meta user order
+                d.setCellMeta(v.row, v.col, 'background', dataUser.user_color);
+                d.setCellMeta(v.row, v.col, 'color', '#ffffff');
+                d.setCellMeta(v.row, v.col, 'codeId', metaCurrent.codeId );
+                d.setCellMeta(v.row, v.col, 'sheetId', metaCurrent.sheetId );
+
+                var cellMeta = d.getCellMeta(v.row, v.col);
+
+                d.OpDataSheets[ v.row + '-' + v.col ] = cellMeta;    
+
+                // Set user order.
+                if( 2 == v.col ) {
+                    d.setDataAtCell(v.row, 2, dataUser.user_name);
+                }
+                  
+            });
+
+            metaSelect = this.getCellMetaSelect(d);
+
+            var 
+            orderId = window.ATLLIB.makeid(),
+            data = {
+                sheetData: JSON.stringify(rowSend),
+                receiver: ordererId,
+                sheetMeta: JSON.stringify(metaSelect),
+                message: 'Oder #' + orderId,
+                title: 'Oder #' + orderId,
+                sheetId: this.opSheet.sheetId
+            };
+             
+            $.post(OPDATA.adminUrl + 'send-sheet' ,data, function(){
+                altair_helpers.content_preloader_hide();
+
+                var output = self.noticeTpl({
+                    message: 'Add sheet to oderer success.',
+                    classes: 'uk-notify-message-success'
+                });
+                $('.op-notify-js', self.el).html(output).show();
+                $(".uk-close").trigger('click');
+
+
+                setTimeout(function(){
+                    $('.op-notify-js', self.el).fadeOut();
+                    $(".op-save-sheets-js").trigger('click');
+                }, 2000);
+                
+            });
+        }
+
     }
 });
 new OP_CANCULATOR_MODEL;

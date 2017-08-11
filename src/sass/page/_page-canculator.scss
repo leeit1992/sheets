@@ -1,10 +1,14 @@
-#page-canculator{
+#page-canculator, #op-page-handle-massages{
 	.md-card .md-card-content{
 		padding-top: 0;
 	}
 
-	#tab_sheet{
-		margin-top: 4px;
+	#tab_sheet {
+	    margin-top: 4px;
+	    padding: 0;
+	    li {
+	    	list-style: none;
+	    }
 	}
 
 	#op-toolbar-wrapper{
@@ -163,12 +167,25 @@
 	//   background-color: #cddc39;
 	//   font-weight: bold;
 	// }
+	
 	.ht_clone_top th {
 	  background-color: #cddc39;
 	  font-weight: bold;
 	}
-}
 
+	.handsontable thead tr:first-child th {
+	    height: 50px;
+	}
+
+	.colHeader p{
+		margin: 0;
+	}
+
+
+}
+.sidebar_main_swipe .htCommentsContainer{
+		display: none;
+	}
 #style_switcher {
 	width: 50%;
 	margin-right: -50%;

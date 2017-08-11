@@ -8,6 +8,7 @@ use App\Http\Components\Controller as baseController;
 use App\Model\UserModel;
 use App\Model\LogsModel;
 use Atl\Pagination\Pagination;
+use App\Model\SheetModel;
 
 class UserController extends baseController{
 
@@ -19,6 +20,7 @@ class UserController extends baseController{
 		// Model data system.
 		$this->mdUser = new UserModel;
 		$this->mdLogs = new LogsModel;
+		$this->mdSheet = new SheetModel;
 	}
 
 	/**
@@ -60,6 +62,10 @@ class UserController extends baseController{
 	 * @return string
 	 */
 	public function handleUser( $id = null ){
+
+		registerStyle( [
+		    'spectrum'     => assets('bower_components/spectrum/spectrum.css'),
+		] ); 
 
 		$infoUser   = array();
 		$metaData   = array();
@@ -127,6 +133,16 @@ class UserController extends baseController{
 				$emailExists = isset( $formData['atl_user_id'] ) ? array() : $emailExists;
 
 				if( empty( $emailExists ) ) {
+					
+					$userCode = $this->slug( $formData['atl_user_name'] . '-' . $formData['atl_user_code'] );
+					$userCode = strtoupper( $userCode );
+					$usercolor = $formData['atl_user_color'];
+
+					if( isset( $formData['atl_user_id'] ) ) {
+						$currentUser = $this->mdUser->getUserBy( 'id', $formData['atl_user_id'] );
+						$userCode = $currentUser[0]['user_code'];
+						$usercolor = $currentUser[0]['user_color'];
+					}
 
 					/**
 					 * Insert | Update user.
@@ -139,10 +155,18 @@ class UserController extends baseController{
 							'user_registered'   => date("Y-m-d H:i:s"),
 							'user_status'       => !empty( $formData['atl_user_status'] ) ? $formData['atl_user_status'] : 0,
 							'user_display_name' => empty( $formData['atl_user_name'] ) ? $formData['atl_user_email'] : $formData['atl_user_name'],
+							'user_code'         => $userCode,
+							'user_color'        => $usercolor,
 						],
 						isset( $formData['atl_user_id'] ) ? $formData['atl_user_id'] : null
 					);
-
+					
+					if( !isset( $formData['atl_user_id'] ) ) {
+						for ($i = 0; $i < 10; $i++) { 
+							$this->addSheetDefault($formData['atl_user_id'], ['sheetTitle' => $formData['atl_user_name'] . ' ' . $i ]);
+						}
+					}
+					
 					/**
 					 * Upload avatar
 					 */
@@ -174,7 +198,6 @@ class UserController extends baseController{
 						'user_social'   => $formData['atl_user_social'],
 						'user_role'     => $formData['atl_user_role'],
 						'user_avatar'   => $linkAvatar,
-
 					];
 
 					// Loop add add | update meta data.
@@ -291,6 +314,32 @@ class UserController extends baseController{
 		echo json_encode(
 			$message
 		);
+	}
+
+	public function addSheetDefault( $uerId, $args ){
+		$lastID = $this->mdSheet->save(
+			[
+				'sheet_title'   => $args['sheetTitle'],
+				'sheet_description' => '',
+				'sheet_content' => '[]',
+				'sheet_author'  => $uerId,
+				'sheet_datetime' => date("Y-m-d H:i:s"),
+				'sheet_status'  => 1
+			]
+		);
+
+		/**
+		 * Add meta data for user.
+		 */
+		$sheetMeta = [
+			'sheet_meta' => '[]',
+		];
+
+		// Loop add add | update meta data.
+		foreach ($sheetMeta as $mtaKey => $metaValue) {
+			$this->mdSheet->setMetaData( $lastID, $mtaKey, $metaValue );
+		}
+
 	}
 
 }

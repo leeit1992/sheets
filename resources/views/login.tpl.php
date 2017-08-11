@@ -17,6 +17,7 @@
                     'googleapis'  => 'http://fonts.googleapis.com/css?family=Roboto:300,400,500',
                     'almost'      => assets('bower_components/uikit/css/uikit.almost-flat.min.css'),
                     'login_page'  => assets('assets/css/login_page.min.css'),
+                    'spectrum'     => assets('bower_components/spectrum/spectrum.css'),
                 )
         );
     ?>
@@ -98,19 +99,27 @@
                 <form id="op-register-user" action="" method="POST">
                     <div class="uk-form-row">
                         <label for="register_username">Username</label>
-                        <input class="md-input atl-required-js" type="text" name="register_username" />
+                        <input class="md-input atl-required-js input-count" type="text" maxlength="40" name="register_username" />
                     </div>
                     <div class="uk-form-row">
                         <label for="register_password">Password</label>
-                        <input class="md-input atl-required-js" type="password" name="register_password" />
+                        <input class="md-input atl-required-js input-count" type="password" maxlength="40" name="register_password" />
                     </div>
                     <div class="uk-form-row">
                         <label for="register_password_repeat">Repeat Password</label>
-                        <input class="md-input atl-required-js" type="password" name="register_password_repeat" />
+                        <input class="md-input atl-required-js input-count" type="password" maxlength="40" name="register_password_repeat" />
                     </div>
                     <div class="uk-form-row">
                         <label for="register_email">E-mail</label>
-                        <input class="md-input atl-required-js" type="email" name="register_email" />
+                        <input class="md-input atl-required-js input-count" type="email" maxlength="40" name="register_email" />
+                    </div>
+                    <div class="uk-form-row">
+                        <label for="register_email">Code Custom</label>
+                        <input type="text" class="md-input input-count atl-required-js" name="register_code" style="text-transform: uppercase" maxlength="3" />
+                    </div>
+                    <div class="uk-form-row">
+                        <label for="register_email">Account Color</label>
+                        <input type="text" name="register_color" class="op-user-color" />
                     </div>
                     <div class="uk-margin-medium-top">
                         <button type="submit" class="md-btn md-btn-primary md-btn-block md-btn-large">Sign Up</button>
@@ -129,10 +138,17 @@
                     'common'  => assets('assets/js/common.min.js'),
                     'altair_admin_common'  => assets('assets/js/altair_admin_common.min.js'),
                     'uikit_custom'  => assets('assets/js/uikit_custom.min.js'),
+
+                    'rangeSlider'  => assets('bower_components/ion.rangeslider/js/ion.rangeSlider.min.js'),
+                    
+                    'inputmask'  => assets('bower_components/jquery.inputmask/dist/min/jquery.inputmask.bundle.min.js'),
+                    'forms_advanced'  => assets('assets/js/pages/forms_advanced.min.js'),
+
                     'login'  => assets('assets/js/pages/login.min.js'),
                     'jquery-ui'  => assets('bower_components/jquery-ui/jquery-ui.js'),
                     'underscore' => assets('bower_components/backbone/underscore.js'),
                     'backbone'   => assets('bower_components/backbone/backbone-min.js'),
+                    'spectrum' => assets('bower_components/spectrum/spectrum.js'),
                     'backend'   => assets('js/backend-scripts.min.js'),
                     'op-login' => assets('js/login-debug.js'),
                 )

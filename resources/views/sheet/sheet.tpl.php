@@ -3,14 +3,16 @@ $submitFormRule = '';
 if( !empty( $sheet ) && ( 2 == $infoUser['meta']['user_role'] or 3 == $infoUser['meta']['user_role'] ) ) {
    // $submitFormRule = 'readonly';
 }
-
 ?>
 <style type="text/css">
-/*html {
+html {
     overflow:hidden;
-}*/
+}
 td.op-current{
     border: 2px solid rgb(82, 146, 247);
+}
+body>.content-preloader{
+    z-index: 9999 !important;
 }
 </style>
 <div id="page-canculator">
@@ -19,10 +21,21 @@ td.op-current{
 	        <div class="md-card-content">
 	            <div class="uk-grid" data-uk-grid-margin>
 	                <div class="uk-width-1-1">
-	                    <ul class="uk-tab op-sheet-tabs-js" data-uk-tab="{connect:'#tab_sheet'}">
-	                        <li class="uk-active"><a href="#">Sheet Editor</a></li>
-	                    </ul>
-                        <?php View('sheet/layout/sheetToolbar.tpl') ?>
+
+	                    <ul class="uk-tab">
+                            <?php $i = 1; foreach( $listSheets as $sheetNav ) { 
+                                
+                                $active = '';
+                                if( !empty( $sheet ) ) {
+                                    if( $sheet[0]['id'] == $sheetNav['id'] ) {
+                                        $active = 'uk-active';
+                                    }
+                                }
+
+                                echo '<li class="'.$active.'"><a href="'. url('/view-sheet/'.$sheetNav['id']) .'">Sheet '.($i++).'</a></li>';
+                            } ?>
+                        </ul>
+                        <?php View('sheet/layout/sheetToolbar.tpl', ['mdUser' => $mdUser]) ?>
                         <div class="op-fx">
                             <div class="op-fx--icon">
                                 <div class="op-icon op-inline-block" style="user-select: none;">
@@ -43,7 +56,7 @@ td.op-current{
                                 <?php
                             }
                         ?>
-	                    <ul id="tab_sheet" class="uk-switcher uk-margin op-sheet-tabs-content-js">
+	                    <ul id="tab_sheet" class="uk-margin op-sheet-tabs-content-js">
 	                        <li>
                                 <div class="op-sheet-js style-5" id="op-sheet-0"></div>
                             </li>
@@ -55,34 +68,38 @@ td.op-current{
 	</div>
     <!--  op-add-canculator-js -->
 	<div class="md-fab-wrapper">
-        <a class="md-fab md-fab-accent md-fab-small" href="<?php echo url('/sheet') ?>" data-uk-tooltip="{pos:'left'}"  title="Add new sheet">
-            <i class="material-icons">&#xE145;</i>
+        <a class="md-fab md-fab-accent md-fab-small op-save-sheets-js" href="#" data-uk-tooltip="{pos:'left'}"  title="Save sheet">
+            <i class="material-icons">insert_drive_file</i>
         </a>
     </div>
     <div id="style_switcher">
-        <div id="style_switcher_toggle"><i class="material-icons">&#xE8B8;</i></div>
+        <div id="style_switcher_toggle" data-uk-tooltip="{pos:'left'}"  title="Submit Data"><i class="material-icons md-24">&#xE163;</i></div>
         <div class="uk-margin-medium-bottom">
-            <h4 class="heading_c uk-margin-bottom">Save Sheet</h4>
-           
+            <h4 class="heading_c uk-margin-bottom">Send Sheet</h4>
+
             <div class="uk-width-medium-1-1 uk-margin-bottom">
                 <label>Title</label>
-                <input <?php echo $submitFormRule ?> type="text" class="md-input" value="<?php echo isset( $sheet[0]['sheet_title'] ) ? $sheet[0]['sheet_title'] : '' ?>" name="op_sheet_title" />
+                <input type="text" class="md-input" name="op_mes_title">
             </div>
 
             <div class="uk-width-medium-1-1 uk-margin-bottom">
-                <label>Description</label>
-                <textarea <?php echo $submitFormRule ?> cols="30" rows="4" class="md-input" name="op_sheet_description"><?php echo isset( $sheet[0]['sheet_description'] ) ? $sheet[0]['sheet_description'] : '' ?></textarea>
+                <label>Messages</label>
+                <textarea cols="30" rows="4" class="md-input" name="op_mes_description"></textarea>
             </div>
-            <?php if( ( !empty( $sheet ) && 1 == $sheet[0]['sheet_status'] ) or ( 3 == $infoUser['meta']['user_role'] ) or ( 2 == $infoUser['meta']['user_role'] ) or ( 1 == $infoUser['meta']['user_role'] ) ): ?>
-            <button type="button" class="md-btn op-save-sheets-js"> Save </button>
-            <?php endif; ?>
-            <?php 
-                if( !empty( $sheet ) ) {
-                    ?>
-                    <button type="button" class="md-btn op-save-sheets-new-js" data-type="new"> Save New </button>
-                    <?php
-                }
-            ?>
+
+            <div class="uk-width-medium-1-1 uk-margin-bottom">
+                <label for="op_receiver">Send To</label>
+                <select id="op_receiver" name="op_receiver" data-md-selectize>
+                    <option value="">Select...</option>
+                    <?php foreach ($mdUser->getAll() as $key => $value) {
+                        if( 1 == $value['user_role'] ){
+                            echo '<option value="' . $value['id'] . '">' . $value['user_name'] . '</option>';
+                        }
+                    } ?>
+                </select>
+            </div>
+
+            <button type="button" class="md-btn op-send-sheet-js"> Send </button> 
         </div>
     </div>
     <div class="uk-notify uk-notify-bottom-right op-notify-js" style="display: none;"></div>

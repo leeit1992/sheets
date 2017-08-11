@@ -63,7 +63,7 @@
                         <div class="uk-modal" id="modal_message_<?php echo $value['id'] ?>">
                             <div class="uk-modal-dialog">
                                 <div class="uk-modal-header">
-                                    <h3 class="uk-modal-title"><i class="material-icons md-24">&#xE554;</i> Messages</h3>
+                                    <h3 class="uk-modal-title"><i class="material-icons md-24">&#xE554;</i> <?php echo ucfirst($value['op_message_title']) ?></h3></h3>
                                 </div>
                                 <p><?php echo $value['op_messages'] ?></p>
                                 <div>

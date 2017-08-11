@@ -21,7 +21,6 @@
                             <li class="uk-active"><a href="#">Basic</a></li>
                             <li><a href="#">Account</a></li>
                             <?php endif;  ?>
-                            <li><a href="#">Role</a></li>
                         </ul>
                         <ul id="user_edit_tabs_content" class="uk-switcher uk-margin">
                             <?php 
@@ -36,10 +35,7 @@
                                     );
                                     View('user/layout/addUserAccount.tpl', ['user' => $user] );
                                 }
-
-                                View('user/layout/addUserRole.tpl', ['user' => $user] );
                             ?>
-                          
                         </ul>
                     </div>
                 </div>
@@ -98,7 +94,6 @@
 
                                 View('user/layout/addUserButton.tpl');
                             }
-                            
                         ?>
                     </div>
                 </div>
@@ -110,5 +105,6 @@
 
 <?php 
 registerScrips( array(
+    'spectrum' => assets('bower_components/spectrum/spectrum.js'),
     'page-admin-user' => assets('js/page-admin-user.min.js'),
 ) );

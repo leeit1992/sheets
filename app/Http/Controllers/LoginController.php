@@ -6,6 +6,7 @@ use Atl\Validation\Validation;
 
 use App\Http\Components\Controller as baseController;
 use App\Model\UserModel;
+use App\Model\SheetModel;
 use PHPMailer;
 
 class LoginController extends baseController{
@@ -13,6 +14,7 @@ class LoginController extends baseController{
 	public function __construct(){
 		parent::__construct();
 		$this->mdUser = new UserModel;
+		$this->mdSheet = new SheetModel;
 	}
 
 	public function login(){
@@ -50,14 +52,29 @@ class LoginController extends baseController{
 			
 			if( !empty( $checkUser ) ) {
 				if( 1 == $checkUser[0]['user_status'] ) {
+
+					$userMeta = $user->getAllMetaData( $checkUser[0]['id'] );
+
 					Session()->set('op_user_id', $checkUser[0]['id']);
 					Session()->set('op_user_name', $checkUser[0]['user_name']);
 					Session()->set('op_user_email', $checkUser[0]['user_email']);
-					Session()->set('op_user_meta',  $user->getAllMetaData( $checkUser[0]['id'] ) );
+					Session()->set('op_user_meta', $userMeta );
 
 					$this->mdLogs->add( $this->mdLogs->logTemplate( ' User <b> ' . $checkUser[0]['user_email'] . ' </b>', 'Login' ) );
 
-					redirect( url( '/' ) );
+					if( 1 == $userMeta['user_role'] ) {
+						redirect( url( '/' ) );
+					}
+
+					if( 2 == $userMeta['user_role'] or 3 == $userMeta['user_role'] ) {
+						$listSheets = $this->mdSheet->getBy(['sheet_author' => $checkUser[0]['id']]);
+						if( !empty( $listSheets ) ) {
+							redirect( url( '/view-sheet/'. $listSheets[0]['id'] ) );
+						}else{
+							die;
+						}
+					}
+					
 				}else{
 					$error[] = 'error';
 					Session()->getFlashBag()->set('loginError', 'Account is not activated. Go to mail to receive activation mail !');
@@ -91,9 +108,15 @@ class LoginController extends baseController{
 		if( !empty( $request->get('formdata') ) ) {
 			parse_str($request->get('formdata'), $formData);
 			
+			
+			$userCode = $this->slug( $formData['register_username'] . '-' . $formData['register_code'] );
+			$userCode = strtoupper( $userCode );
+
 			// Save user.
 			$emailExists = $this->mdUser->getUserBy( 'user_email', $formData['register_email'] );
-			if( empty( $emailExists ) ) {
+			$codelExists = $this->mdUser->getUserBy( 'user_code', $userCode );
+
+			if( empty( $emailExists ) && empty( $codelExists ) ) {
 				$status = true;
 
 				/**
@@ -108,9 +131,20 @@ class LoginController extends baseController{
 						'user_registered'   => date("Y-m-d H:i:s"),
 						'user_status'       => 0,
 						'user_display_name' => ucfirst($formData['register_username']),
-						'user_token'        => $token
+						'user_token'        => $token,
+						'user_code'         => $userCode,
+						'user_color'        => $formData['register_color'],
 					]
 				);
+
+				for ($i=0; $i < 10; $i++) { 
+					$this->addSheetDefault(
+						$lastID,
+						[
+							'sheetTitle' => $this->slug( $formData['register_username'] . '-' . $i )
+						]
+					);
+				}
 
 				/**
 				 * Add meta data for user.
@@ -153,13 +187,46 @@ class LoginController extends baseController{
 				$output = 'Register success.';
 			}else{
 				$status = false;
-				$output = 'Email already exists.';
+
+				if( !empty( $emailExists ) ) {
+					$output = 'Email already exists.';
+				}
+
+				if( !empty( $codelExists ) ) {
+					$output = 'Code already exists.';
+				}
+				
 			}
 
 			echo json_encode([
 				'status' => $status,
 				'output' => $output
 			]);
+		}
+	}
+
+	public function addSheetDefault( $uerId, $args ){
+		$lastID = $this->mdSheet->save(
+			[
+				'sheet_title'   => $args['sheetTitle'],
+				'sheet_description' => '',
+				'sheet_content' => '[]',
+				'sheet_author'  => $uerId,
+				'sheet_datetime' => date("Y-m-d H:i:s"),
+				'sheet_status'  => 1
+			]
+		);
+
+		/**
+		 * Add meta data for user.
+		 */
+		$sheetMeta = [
+			'sheet_meta' => '[]',
+		];
+
+		// Loop add add | update meta data.
+		foreach ($sheetMeta as $mtaKey => $metaValue) {
+			$this->mdSheet->setMetaData( $lastID, $mtaKey, $metaValue );
 		}
 
 	}
