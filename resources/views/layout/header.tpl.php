@@ -53,11 +53,9 @@ if( isset( $userInfo['meta']['user_avatar'] ) ) {
         <div class="header_main_content">
             <nav class="uk-navbar">
                 <!-- main sidebar switch -->
-                <?php if( 1 == $userInfo['meta']['user_role'] or 3 == $userInfo['meta']['user_role'] ) : ?>
                 <a href="#" id="sidebar_main_toggle" class="op-switch-screen-js sSwitch sSwitch_left">
                     <span class="sSwitchIcon"></span>
                 </a>
-                <?php endif; ?>
                 <!-- secondary sidebar switch -->
                 <a href="#" id="sidebar_secondary_toggle" class="sSwitch sSwitch_right sidebar_secondary_check">
                     <span class="sSwitchIcon"></span>

@@ -59,6 +59,8 @@ $route->get('/filter-messages','MessagesController@filterMessages');
 $route->post('/update-inbox','MessagesController@updateInbox');
 $route->get('/autoload-inbox','MessagesController@autoLoadInbox');
 $route->post('/accept-sheet','MessagesController@acceptSheet');
+$route->post('/sendback-inbox','MessagesController@sendBackInbox');
+$route->post('/cancel-order','MessagesController@cancelOrder');
 
 /*=====  End of Massages  ======*/
 

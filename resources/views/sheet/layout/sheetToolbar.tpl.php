@@ -79,6 +79,8 @@
         </div>
     </div>
     <div class="op-toolbar-separator op-inline-block" style="user-select: none;">&nbsp;</div>
+
+    <?php if( 1 == $infoUser['meta']['user_role'] ) : ?>
     <div class="op-toolbar-menu-button op-toolbar-color-menu-button op-inline-block op-toolbar-menu-button">
         <div class="op-toolbar-menu-button-outer-box" data-uk-tooltip="{pos:'bottom'}" data-uk-modal="{target:'#op_sheet_order'}" title="Add Orderer">
             <div class="op-icon op-inline-block" style="user-select: none;">
@@ -89,6 +91,7 @@
         </div>
     </div>
     <div class="op-toolbar-separator op-inline-block" style="user-select: none;">&nbsp;</div>
+    <?php endif; ?>
     <!-- <div class="op-toolbar-menu-button op-toolbar-color-menu-button op-inline-block op-toolbar-menu-button">
         <div class="op-toolbar-menu-button-outer-box" data-uk-tooltip="{pos:'bottom'}" data-uk-modal="{target:'#op_sheet_filter'}" title="Filter">
             <div class="op-icon op-inline-block" style="user-select: none;">

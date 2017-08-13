@@ -194,7 +194,6 @@ var OP_CANCULATOR = Backbone.View.extend({
         this.opSheet = new Handsontable($sheet, {
             // readOnly: true,
             data: sheetContent,
-
             startRows: 100,
             rowHeaders: true,
             colHeaders: true,
@@ -222,7 +221,6 @@ var OP_CANCULATOR = Backbone.View.extend({
             ],
             //comments: [{row: 2, col: 2, comment: "Test comment"}],
             columns: self.model.colType(),
-            contextMenu: true,
             rowHeaders: true,
             // fixedRowsTop: 1,
             colWidths: 150,
@@ -237,6 +235,7 @@ var OP_CANCULATOR = Backbone.View.extend({
             width: width - 30,
             height: window.outerHeight - 258,
             formulas: true,
+            contextMenu: ( 2 == OPDATA.user.meta.user_role) ? false : true,
             afterInit: function() {
                 $("#HandsontableCopyPaste").css('position','absolute');
                 $("#HandsontableCopyPaste").css('top',0);
@@ -259,10 +258,10 @@ var OP_CANCULATOR = Backbone.View.extend({
                         this.OpDataSheets = JSON.parse( sheetMeta.val() );
                     }
                 }
-            
+
                 setTimeout(function(){
                     var limitRow = sheetContent.length;
-                    if( 2 == OPDATA.user.meta.user_role ){
+                    if( 2 == OPDATA.user.meta.user_role || 3 == OPDATA.user.meta.user_role ){
                         limitRow = 100;
                     }
                     self.setDataAtCell(limitRow-1,18,'');
@@ -366,7 +365,7 @@ var OP_CANCULATOR = Backbone.View.extend({
                     cellProperties.readOnly = true;
                 }
 
-                if( 17 == col ) {
+                if( 18 == col ) {
                     cellProperties.readOnly = false;
                 }
 
@@ -374,7 +373,7 @@ var OP_CANCULATOR = Backbone.View.extend({
                     cellProperties.readOnly = true;
                 }
 
-                if( 17 == col && 2 == OPDATA.user.meta.user_role ) {
+                if( 18 == col && 2 == OPDATA.user.meta.user_role ) {
                     cellProperties.readOnly = true;
                 }
 
@@ -400,16 +399,18 @@ var OP_CANCULATOR = Backbone.View.extend({
         Handsontable.hooks.add('afterSelectionEnd', function(rst, cst, re, ce) {
             var d = this; 
             var argsCells = new Array;
+            var checkRow = new Array;
             for (var i = cst; i <= ce; i++) {
                 for (var ii = rst; ii <= re; ii++) {
                     argsCells.push({row : ii, col: i});
                 }
             };
 
+            
+
             d.opAfterSelectionEnd = argsCells;
             d.dataCellSelect = {rst, cst, re, ce};
-       
-           // console.log(rst, cst, re, ce);
+            
 
             // Change color background for cell
             $(".op-bg-cell-color").spectrum({
@@ -480,6 +481,10 @@ var OP_CANCULATOR = Backbone.View.extend({
                     instance.setCellMeta(row, col, 'color', dataSheet.color);
                     instance.setCellMeta(row, col, 'codeId', dataSheet.codeId );
                     instance.setCellMeta(row, col, 'sheetId', dataSheet.sheetId );
+
+                    instance.setCellMeta(row, col, 'sIdCtm', dataSheet.sIdCtm );
+                    instance.setCellMeta(row, col, 'rCtm', dataSheet.rCtm );
+                    instance.setCellMeta(row, col, 'cCtm', dataSheet.cCtm );
 
                     if( dataSheet.readOnly && 'true' == dataSheet.readOnly ) {
                         cellProperties.readOnly = true;
@@ -718,29 +723,37 @@ var OP_CANCULATOR = Backbone.View.extend({
             dataUser = JSON.parse( $('textarea[name=op_orderer_'+ordererId+']').val() );
 
         if( ordererId ) {
+
             $.each(d.opAfterSelectionEnd, function(i, v){
-                var metaCurrent = d.getCellMeta(v.row, v.col);
+                if( 0 < d.getDataAtCell(v.row, 0).length ) {
+                    var metaCurrent = d.OpDataSheets[v.row + '-' + v.col];
+                    
+                    if( metaCurrent ) {
+                        $(d.getCell(v.row, v.col)).css({'background': dataUser.user_color});
+                        $(d.getCell(v.row, v.col)).css({'color': '#ffffff'});
 
-                $(d.getCell(v.row, v.col)).css({'background': dataUser.user_color});
-                $(d.getCell(v.row, v.col)).css({'color': '#ffffff'});
+                        // Set meta user order
+                        d.setCellMeta(v.row, v.col, 'background', dataUser.user_color);
+                        d.setCellMeta(v.row, v.col, 'color', '#ffffff');
+                        d.setCellMeta(v.row, v.col, 'codeId', metaCurrent.codeId );
+                        d.setCellMeta(v.row, v.col, 'sheetId', d.sheetId );
 
-                // Set meta user order
-                d.setCellMeta(v.row, v.col, 'background', dataUser.user_color);
-                d.setCellMeta(v.row, v.col, 'color', '#ffffff');
-                d.setCellMeta(v.row, v.col, 'codeId', metaCurrent.codeId );
-                d.setCellMeta(v.row, v.col, 'sheetId', metaCurrent.sheetId );
+                        d.setCellMeta(v.row, v.col, 'sIdCtm', metaCurrent.sIdCtm );
+                        d.setCellMeta(v.row, v.col, 'rCtm', metaCurrent.rCtm );
+                        d.setCellMeta(v.row, v.col, 'cCtm', metaCurrent.cCtm );
 
-                var cellMeta = d.getCellMeta(v.row, v.col);
+                        var cellMeta = d.getCellMeta(v.row, v.col);
 
-                d.OpDataSheets[ v.row + '-' + v.col ] = cellMeta;    
+                        d.OpDataSheets[ v.row + '-' + v.col ] = cellMeta;    
 
-                // Set user order.
-                if( 2 == v.col ) {
-                    d.setDataAtCell(v.row, 2, dataUser.user_name);
-                }
-                  
+                        // Set user order.
+                        if( 2 == v.col ) {
+                            d.setDataAtCell(v.row, 2, dataUser.user_name);
+                        }
+                    }
+                }  
             });
-
+            
             metaSelect = this.getCellMetaSelect(d);
 
             var 

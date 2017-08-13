@@ -274,6 +274,17 @@ class MessagesController extends baseController{
 				$currentDataSheet = array();
 			}
 
+			// Data sheet from inbox
+			$dataSheetInbox = json_decode($infoMes[0]['op_data_sheet']);
+
+			// remove emptry
+			foreach ($dataSheetInbox as $key => $value) {
+				if( empty( $value[0] ) ) {
+					unset($dataSheetInbox[$key]);
+				}
+			}
+			$totalRow = count($dataSheetInbox);
+
 			// Get current sheet meta data
 			if( is_array( json_decode($infoSheet[0]['sheet_meta'], true) ) ) {
 				$currentMetaSheet = json_decode($infoSheet[0]['sheet_meta'], true);
@@ -283,38 +294,85 @@ class MessagesController extends baseController{
 
 			$newMetaSheet = array();
 			$dataSheetMetaInbox = json_decode($infoMes[0]['op_data_sheet_meta']);
+	
+			$ccol = 0;
+			$crow = 0;
 			foreach ($dataSheetMetaInbox as $key => $value) {
-				$newMetaSheet[] = $value;
-				
-			}
+				$_crow = 0;
+				$_ccol = $ccol;
 			
-			$dataSheetInbox = json_decode($infoMes[0]['op_data_sheet']);
+				if( $_crow < $totalRow ) {
+					$_crow = $crow += 1;
+				}
+
+				if( $crow == $totalRow ) {
+					$crow = 0;
+					$_ccol = $ccol++;
+					
+				}
+
+				if( 20 == $ccol) {
+					$ccol = 0;
+				}
+
+				$newMetaSheet[($_crow-1).'-'.$_ccol] = $value;
+			}
+
 			$nextKey = 0;
-			$nextRow = count($currentDataSheet);
+			$nextRow = count($dataSheetInbox);
+			
 			foreach ($dataSheetInbox as $key => $value) {
+
 				$_nextRow = $nextRow++;
+				$newDataSheetUpdate = [];
 				foreach ($value as $_key => $_value) {
 					$metaOrder = $nextKey++;
+					if( 19 == $metaOrder ) {
+						$nextKey = 0;
+					}
 
-					if( isset( $newMetaSheet[$metaOrder] ) ) {
+					$newDataSheetUpdate[$metaOrder] = $newMetaSheet[$key . '-' . $metaOrder];
+
+				}
+
+				$currentDataSheet[] = [
+					'data' => $value,
+					'meta' => $newDataSheetUpdate
+				];
+			}
+
+			$newSaveSheetData = [];
+			foreach ($currentDataSheet as $row => $value) {
+
+				$data = $value;
+
+				if( isset( $value['data'] ) ) {
+
+					$data  = $value['data'];
+
+					foreach ($value['meta'] as $col => $valueM) {
+						$keyMeta = $row . '-' . $col;
+
+						$valueM->sIdCtm = $valueM->sheetId; // Sheet id of customer
+						$valueM->rCtm = $valueM->row; // Sheet row of customer
+						$valueM->cCtm = $valueM->col; // Sheet col of customer
+						$valueM->row = $row;
+						$valueM->col = $col;
+						$valueM->background = '';
+						$valueM->color = '';
 						
-						$newMetaSheet[$metaOrder]->row = $_nextRow;
-						$newMetaSheet[$metaOrder]->col = $_key;
-						$newMetaSheet[$metaOrder]->background = '';
-						$newMetaSheet[$metaOrder]->color = '';
-
-						$currentMetaSheet[$_nextRow . '-' . $_key] = $newMetaSheet[$metaOrder];
+						$currentMetaSheet[$keyMeta] = $valueM;
 
 					}
 				}
 
-				$currentDataSheet[] = $value;
+				$newSaveSheetData[$row] = $data;
 			}
 
 
 			$this->mdSheet->save(
 				[
-					'sheet_content' => json_encode($currentDataSheet),
+					'sheet_content' => json_encode($newSaveSheetData),
 				],
 				$request->get('sheetId')
 			);
@@ -372,6 +430,153 @@ class MessagesController extends baseController{
 		}
 
 		echo json_encode($newMes);
+	}
+
+	public function sendBackInbox(Request $request){
+		
+		$infoMes = $this->mdMessages->getBy( 
+						[
+							'id' => $request->get('mesId')
+						]
+					);
+
+		if( !empty( $infoMes ) ) {
+			$dataSheetInbox = json_decode($request->get('sheetData'));
+
+			// remove emptry
+			foreach ($dataSheetInbox as $key => $value) {
+				if( empty( $value[0] ) ) {
+					unset($dataSheetInbox[$key]);
+				}
+			}
+
+			$this->mdMessages->save(
+				[
+					'op_data_sheet' => json_encode($dataSheetInbox),
+				],
+				$request->get('mesId')
+			);
+
+
+			$totalRow = count($dataSheetInbox);
+
+			$newMetaSheet = [];
+			$dataSheetMetaInbox = json_decode($infoMes[0]['op_data_sheet_meta'], true);
+			
+			$ccol = 0;
+			$crow = 0;
+			foreach ($dataSheetMetaInbox as $key => $value) {
+				$_crow = 0;
+				$_ccol = $ccol;
+			
+				if( $_crow < $totalRow ) {
+					$_crow = $crow += 1;
+				}
+
+				if( $crow == $totalRow ) {
+					$crow = 0;
+					$_ccol = $ccol++;
+					
+				}
+
+				if( 20 == $ccol) {
+					$ccol = 0;
+				}
+
+				$newMetaSheet[($_crow-1).'-'.$_ccol] = $value;
+			}
+				
+			$nextKey = 0;
+			$nextRow = count($dataSheetInbox);
+			$newDataSheetUpdate = [];
+			foreach ($dataSheetInbox as $key => $value) {
+
+				$_nextRow = $nextRow++;
+				foreach ($value as $_key => $_value) {
+					$metaOrder = $nextKey++;
+					if( 19 == $metaOrder ) {
+						$nextKey = 0;
+					}
+
+					if( isset( $newMetaSheet[$key . '-' . $metaOrder] ) ) {
+					
+						if( 'Out' == $_value || 'Oke' == $_value ) {
+
+							$newDataSheetUpdate[] = [
+								'data' => $_value,
+								'meta' => $newMetaSheet[$key . '-' . $metaOrder]
+							];
+						}
+					}
+				}
+			}
+
+			foreach ($newDataSheetUpdate as $key => $value) {
+
+				if( isset( $value['meta']['sheetId'] ) ) {
+
+					$infoSheetAdmin = $this->mdSheet->getBy( 
+									[
+										'id' => $value['meta']['sheetId']
+									]
+								);
+					$infoSheetCustommer = $this->mdSheet->getBy( 
+									[
+										'id' => $value['meta']['sIdCtm']
+									]
+								);
+
+				
+					if( !empty( $infoSheetAdmin ) ) {
+						$getSheetAdmin = json_decode($infoSheetAdmin[0]['sheet_content'], true);
+
+						foreach ($getSheetAdmin as $row => $cols) {
+								
+							if( $value['meta']['row'] == $row ){
+
+								$getSheetAdmin[$row][18] = $value['data'];
+							}
+						}
+						$this->mdSheet->save(
+							[
+								'sheet_content' => json_encode($getSheetAdmin),
+							],
+							$value['meta']['sheetId']
+						);
+					}
+
+					if( !empty( $infoSheetCustommer ) ) {
+						$getSheetCustomer = json_decode($infoSheetCustommer[0]['sheet_content'], true);
+
+						foreach ($getSheetCustomer as $row => $cols) {
+								
+							if( $value['meta']['rCtm'] == $row ){
+
+								$getSheetCustomer[$row][18] = $value['data'];
+							}
+						}
+						$this->mdSheet->save(
+							[
+								'sheet_content' => json_encode($getSheetCustomer),
+							],
+							$value['meta']['sIdCtm']
+						);
+					}
+				}
+			}
+		}
+	}
+
+	public function cancelOrder(Request $request){
+		$infoMes = $this->mdMessages->getBy( 
+						[
+							'id' => $request->get('mesId')
+						]
+					);
+		
+		if( !empty( $infoMes ) ) {
+
+		}
 	}
 
 }

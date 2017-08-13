@@ -117,10 +117,10 @@
                         <label for="register_email">Code Custom</label>
                         <input type="text" class="md-input input-count atl-required-js" name="register_code" style="text-transform: uppercase" maxlength="3" />
                     </div>
-                    <div class="uk-form-row">
+                    <!-- <div class="uk-form-row">
                         <label for="register_email">Account Color</label>
                         <input type="text" name="register_color" class="op-user-color" />
-                    </div>
+                    </div> -->
                     <div class="uk-margin-medium-top">
                         <button type="submit" class="md-btn md-btn-primary md-btn-block md-btn-large">Sign Up</button>
                     </div>

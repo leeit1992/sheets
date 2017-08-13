@@ -67,17 +67,17 @@ class AdminDataMenu
                 'display' => '',
                 'submenu' => [
                     [
-                        'label' => 'Create data sheet',
+                        'label' => 'Data sheet',
                         'link'  => url('/sheet'),
                         'display' => '',
                         'conditionOpen' => ['handleSheet'],
                     ],
-                    [
-                        'label' => 'Sheets management',
-                        'link'  => url('/sheets-manage'),
-                        'display' => '',
-                        'conditionOpen' => ['manageSheets'],
-                    ]
+                    // [
+                    //     'label' => 'Sheets management',
+                    //     'link'  => url('/sheets-manage'),
+                    //     'display' => '',
+                    //     'conditionOpen' => ['manageSheets'],
+                    // ]
                 ]
             ],
 
@@ -87,12 +87,12 @@ class AdminDataMenu
                 'conditionOpen' => ['MessagesController'],
                 'display' => '',
                 'submenu' => [
-                    [   
-                        'label' => 'Message sent',
-                        'link'  => url('/message-send'),
-                        'display' => '',
-                        'conditionOpen' => ['messageSend'],
-                    ],
+                    // [   
+                    //     'label' => 'Message sent',
+                    //     'link'  => url('/message-send'),
+                    //     'display' => '',
+                    //     'conditionOpen' => ['messageSend'],
+                    // ],
                     [
                         'label' => 'Inbox',
                         'link'  => url('/massages-manage'),

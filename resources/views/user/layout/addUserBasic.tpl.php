@@ -45,10 +45,12 @@ if( !empty($user) ) {
                 <label>User Code</label>
                 <input <?php echo $inputDis ?> type="text" class="md-input input-count atl-required-js" value="<?php echo $userCode ?>" name="atl_user_code" style="text-transform: uppercase" maxlength="3" />
             </div>
+            <?php if( 1 == $infoUser['meta']['user_role'] ) : ?>
             <div class="uk-width-1-2">
                 <label>User Color</label>
                 <input type="text" <?php echo $inputDis ?> name="atl_user_color" value="<?php echo isset( $user['user_color'] ) ? $user['user_color'] : '' ?>" class="op-user-color" />
             </div>
+            <?php endif; ?>
         </div>
   
         <h3 class="full_width_in_card heading_c">

@@ -35,7 +35,7 @@ body>.content-preloader{
                                 echo '<li class="'.$active.'"><a href="'. url('/view-sheet/'.$sheetNav['id']) .'">Sheet '.($i++).'</a></li>';
                             } ?>
                         </ul>
-                        <?php View('sheet/layout/sheetToolbar.tpl', ['mdUser' => $mdUser]) ?>
+                        <?php View('sheet/layout/sheetToolbar.tpl', ['mdUser' => $mdUser, 'infoUser' => $infoUser]) ?>
                         <div class="op-fx">
                             <div class="op-fx--icon">
                                 <div class="op-icon op-inline-block" style="user-select: none;">
@@ -72,6 +72,7 @@ body>.content-preloader{
             <i class="material-icons">insert_drive_file</i>
         </a>
     </div>
+    <?php if( 1 != $infoUser['meta']['user_role'] ) : ?>
     <div id="style_switcher">
         <div id="style_switcher_toggle" data-uk-tooltip="{pos:'left'}"  title="Submit Data"><i class="material-icons md-24">&#xE163;</i></div>
         <div class="uk-margin-medium-bottom">
@@ -102,6 +103,7 @@ body>.content-preloader{
             <button type="button" class="md-btn op-send-sheet-js"> Send </button> 
         </div>
     </div>
+    <?php endif; ?>
     <div class="uk-notify uk-notify-bottom-right op-notify-js" style="display: none;"></div>
 </div>
 

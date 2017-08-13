@@ -1,3 +1,9 @@
+<?php 
+$readonly = 'readonly';
+if( 1 == $infoUser['meta']['user_role']  ) {
+    $readonly = '';
+}
+?>
 <div id="atl-page-handle-user">
     <form action="<?php echo url('/validate-user') ?>" method="post" id="atl-form-user" enctype="multipart/form-data">
         <div class="uk-grid" data-uk-grid-margin>
@@ -25,15 +31,15 @@
                         <ul id="user_edit_tabs_content" class="uk-switcher uk-margin">
                             <?php 
                                 if( empty( $user ) )  {
-                                    View('user/layout/addUserAccount.tpl', ['user' => $user] );
+                                    View('user/layout/addUserAccount.tpl', ['user' => $user, 'infoUser' => $infoUser] );
                                     View('user/layout/addUserBasic.tpl', 
-                                        ['meta' => $meta, 'user' => $user, 'social' => $social] 
+                                        ['meta' => $meta, 'user' => $user, 'social' => $social, 'infoUser' => $infoUser]
                                     );
                                 }else{
                                     View('user/layout/addUserBasic.tpl', 
-                                        ['meta' => $meta, 'user' => $user, 'social' => $social]
+                                        ['meta' => $meta, 'user' => $user, 'social' => $social, 'infoUser' => $infoUser]
                                     );
-                                    View('user/layout/addUserAccount.tpl', ['user' => $user] );
+                                    View('user/layout/addUserAccount.tpl', ['user' => $user, 'infoUser' => $infoUser] );
                                 }
                             ?>
                         </ul>
@@ -44,6 +50,7 @@
                 <div class="md-card">
                     <div class="md-card-content">
                         <h3 class="heading_c uk-margin-medium-bottom">Other settings</h3>
+                        <?php if( 1 == $infoUser['meta']['user_role'] ): ?>
                         <div class="uk-form-row">
                             <?php 
                                 echo $self->renderInput( 
@@ -64,6 +71,7 @@
                             <label for="user_edit_active" class="inline-label">User Active</label>
                         </div>
                         <hr class="md-hr">
+                        
                         <div class="uk-form-row">
                             <h3 class="heading_c uk-margin-bottom">User Role</h3>
                             <select data-md-selectize name="atl_user_role">
@@ -73,7 +81,7 @@
                                 } ?>
                             </select>
                         </div>
-
+                        <?php endif; ?>
                         <?php 
                             if( !empty( $user ) ) {
                                 echo $self->renderInput( 
@@ -88,11 +96,12 @@
                                     array( 
                                         'name' => 'atl_user_avatar', 
                                         'type' => 'hidden', 
-                                        'value' => $meta['user_avatar']
+                                        'value' => isset( $meta['user_avatar'] ) ? $meta['user_avatar'] : ''
                                     ) 
                                 ); 
-
-                                View('user/layout/addUserButton.tpl');
+                                if( 1 == $infoUser['meta']['user_role'] ){
+                                    View('user/layout/addUserButton.tpl');
+                                } 
                             }
                         ?>
                     </div>

@@ -45,16 +45,16 @@ class SheetsController extends baseController{
 				redirect( url('/error-404?url=' . $_SERVER['REDIRECT_URL']) );
 			}
 
-			if( 3 == $this->infoUser['meta']['user_role'] ) {
-				$checkMes = $this->mdMessages->getBy([
-					'op_sheet_id' => $id,
-					'op_user_receiver' => $this->infoUser['id'],
-				]);
+			// if( 3 == $this->infoUser['meta']['user_role'] ) {
+			// 	$checkMes = $this->mdMessages->getBy([
+			// 		'op_sheet_id' => $id,
+			// 		'op_user_receiver' => $this->infoUser['id'],
+			// 	]);
 
-				if( empty( $checkMes ) ) {
-					redirect( url('/error-404?url=' . $_SERVER['REDIRECT_URL']) );
-				}
-			}
+			// 	if( empty( $checkMes ) ) {
+			// 		redirect( url('/error-404?url=' . $_SERVER['REDIRECT_URL']) );
+			// 	}
+			// }
 		}else{
 			$autoRedirect = $this->mdSheet->getBy(['sheet_author' => Session()->get('op_user_id')]);
 

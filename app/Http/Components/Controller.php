@@ -104,19 +104,23 @@ class Controller extends baseController{
 				'/ajax-manage-user',
 				'/validate-user',
 				'/delete-user',
-				'/logs'
+				'/logs',
+				'/filter-logs',
+				'/clear-logs',
 			];
 		}
 
 		if( 2 == $userMeta['user_role'] ) {
 			$module = [
-				'/edit-user/{id}'
+				'/edit-user/{id}',
+				'/validate-user',
 			];
 		}
 
 		if( 3 == $userMeta['user_role'] ) {
 			$module = [
-				'/edit-user/{id}'
+				'/edit-user/{id}',
+				'/validate-user',
 			];
 		}
 

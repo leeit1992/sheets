@@ -95,6 +95,7 @@ class UserController extends baseController{
 				'user'   => !empty( $infoUser[0] ) ? $infoUser[0] : array(),
 				'meta'   => $metaData,
 				'actionName' => ( !$id ) ? 'Created User' : $infoUser[0]['user_name'],
+				'infoUser' => $this->infoUser,
 				'social' => $userSocial,
 				'mdUser' => $this->mdUser,
 				'notify' => Session()->getFlashBag()->get('userFormNotice'),
@@ -136,7 +137,7 @@ class UserController extends baseController{
 					
 					$userCode = $this->slug( $formData['atl_user_name'] . '-' . $formData['atl_user_code'] );
 					$userCode = strtoupper( $userCode );
-					$usercolor = $formData['atl_user_color'];
+					$usercolor = isset( $formData['atl_user_color'] ) ? $formData['atl_user_color'] : '';
 
 					if( isset( $formData['atl_user_id'] ) ) {
 						$currentUser = $this->mdUser->getUserBy( 'id', $formData['atl_user_id'] );
@@ -147,17 +148,24 @@ class UserController extends baseController{
 					/**
 					 * Insert | Update user.
 					 */
-					$lastID = $this->mdUser->save( 
-						[
+					
+					$argsSave = [
 							'user_name'         => empty( $formData['atl_user_name'] ) ? $formData['atl_user_email'] : $formData['atl_user_name'],
 							'user_password'     => $this->isValidMd5($formData['atl_user_pass']) ? $formData['atl_user_pass'] : md5( $formData['atl_user_pass'] ),
-							'user_email'        => $formData['atl_user_email'],
 							'user_registered'   => date("Y-m-d H:i:s"),
-							'user_status'       => !empty( $formData['atl_user_status'] ) ? $formData['atl_user_status'] : 0,
+
 							'user_display_name' => empty( $formData['atl_user_name'] ) ? $formData['atl_user_email'] : $formData['atl_user_name'],
 							'user_code'         => $userCode,
 							'user_color'        => $usercolor,
-						],
+						];
+
+					if( !isset( $formData['atl_user_id'] ) or 1 == $this->infoUser['meta']['user_role'] ) {
+						$argsSave['user_email'] = $formData['atl_user_email'];
+						$argsSave['user_status'] = !empty( $formData['atl_user_status'] ) ? $formData['atl_user_status'] : 0;
+					}
+
+					$lastID = $this->mdUser->save( 
+						$argsSave,
 						isset( $formData['atl_user_id'] ) ? $formData['atl_user_id'] : null
 					);
 					
@@ -196,9 +204,12 @@ class UserController extends baseController{
 						'user_moreinfo' => $formData['atl_user_moreinfo'],
 						'user_phone'    => $formData['atl_user_phone'],
 						'user_social'   => $formData['atl_user_social'],
-						'user_role'     => $formData['atl_user_role'],
 						'user_avatar'   => $linkAvatar,
 					];
+
+					if( !isset( $formData['atl_user_id'] ) or 1 == $this->infoUser['meta']['user_role'] ) {
+						$userMeta['user_role'] = $formData['atl_user_role'];
+					}
 
 					// Loop add add | update meta data.
 					foreach ($userMeta as $mtaKey => $metaValue) {

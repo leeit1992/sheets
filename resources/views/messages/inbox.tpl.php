@@ -61,7 +61,7 @@
                                     $classNotice = 'md-bg-light-blue';
                                 }
                             ?>
-                            <a href="#" class="md-card-list-item-avatar  user_action_image <?php echo $classNotice  ?>">
+                            <a href="#" class="md-card-list-item-avatar user_action_image <?php echo $classNotice  ?>">
                                 <img class="md-user-image" style="height: 34px;" src="<?php echo $avatar ?>" alt="">
                             </a>
                         </div>
@@ -102,11 +102,13 @@
 
                                     <?php if( 1 == $userCurrent['meta']['user_role'] ) : ?>
                                     <a apccet-status="<?php echo $value['op_accept_status'] ?>" data-id="<?php echo $value['id'] ?>" class="md-btn md-btn-flat op-massage-accept" href="#op-massage-accept" data-uk-modal="{center:true}">Accept </a>
+                                    <a data-id="<?php echo $value['id'] ?>" class="md-btn md-btn-flat op-massage-cancel"> Cancel </a>
                                     <?php endif; ?>
                                     <?php if( 3 == $userCurrent['meta']['user_role'] ) : ?>
                                     <a apccet-status="<?php echo $value['op_accept_status'] ?>" data-id="<?php echo $value['id'] ?>" class="md-btn md-btn-flat op-massage-send-back">Send Back </a>
+                                    <a data-id="<?php echo $value['id'] ?>" class="md-btn md-btn-flat uk-modal-close"> Close </a>
                                     <?php endif; ?>
-                                    <a data-id="<?php echo $value['id'] ?>" class="md-btn md-btn-flat op-massage-cancel"> Cancel </a>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -116,8 +118,10 @@
                 <ul class="op-list-result"></ul>
             </div> 
         </div>
+        <?php if( 1 == $userCurrent['meta']['user_role'] ) : ?>
         <?php View('messages/layout/popinAcceptOrder.tpl', [ 'listSheets' => $listSheets ]) ?>
         <?php View('messages/layout/popinSend.tpl', [ 'userCurrent' => $userCurrent, 'mdUser' => $mdUser, 'listSheets' => $listSheets ]) ?>
+        <?php endif; ?>
     </div>
     <div class="uk-notify uk-notify-bottom-right op-notify-js" style="display: none;"></div>
 </div>

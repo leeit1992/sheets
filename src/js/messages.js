@@ -20,6 +20,7 @@
 			'click .op-massage-accept': 'acceptSheetInbox',
 			'click .op-accept-data': 'acceptSheetData',
 			'click .op-massage-send-back': 'sheetOrdererSendBack',
+			'click .op-massage-cancel': 'cancelOrder',
 			'change .op-mes-search, .op-mes-filter-by-user, .op-mes-filter-by-date': 'filterMessages'
 		},
 
@@ -269,7 +270,7 @@
 				id = $(e.currentTarget).attr('data-id'),
 				apccetStatus = $(e.currentTarget).attr('apccet-status');
 			
-			if( 1 == apccetStatus ) {lo
+			if( 1 == apccetStatus ) {
 				$(".uk-close").trigger('click');
 				UIkit.modal.alert('This data has been added to personal data.!');
 				return false;
@@ -299,8 +300,42 @@
 			});
 		},
 
-		sheetOrdererSendBack : function(){
-			console.log(this.opSheet.getData());
+		sheetOrdererSendBack : function(e){
+			var self = this,
+				id = $(e.currentTarget).attr('data-id');
+			altair_helpers.content_preloader_show();
+			$.ajax({
+				url: OPDATA.adminUrl + '/sendback-inbox',
+				type: "POST",
+				data: {
+					sheetData: JSON.stringify(this.opSheet.getData()),
+					mesId : id
+				},
+				success: function(res) {
+					altair_helpers.content_preloader_hide();
+					UIkit.modal.alert('Send back success!');
+				} 
+			});
+		},
+
+		cancelOrder : function(){
+			var self = this,
+				id = $(e.currentTarget).attr('data-id');
+
+			altair_helpers.content_preloader_show();
+
+			$.ajax({
+				url: OPDATA.adminUrl + '/cancel-order',
+				type: "POST",
+				data: {
+					mesId : id
+				},
+				success: function(res) {
+					altair_helpers.content_preloader_hide();
+					UIkit.modal.alert('Cancel success!');
+				} 
+			});
+
 		}
 
 	});

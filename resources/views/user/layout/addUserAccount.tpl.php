@@ -1,9 +1,16 @@
+<?php 
+$readonly = 'readonly';
+if( 1 == $infoUser['meta']['user_role']  ) {
+    $readonly = '';
+}
+
+?>
 <li>
     <div class="uk-margin-top">
         <div class="uk-grid" data-uk-grid-margin>
             <div class="uk-width-medium-1-1">
                 <label for="user_edit_uname_control">Email</label>
-                <input class="md-input atl-required-js" type="email" name="atl_user_email" value="<?php echo isset( $user['user_email'] ) ? $user['user_email'] : '' ?>" />
+                <input <?php echo $readonly ?> class="md-input atl-required-js" type="email" name="atl_user_email" value="<?php echo isset( $user['user_email'] ) ? $user['user_email'] : '' ?>" />
             </div>
             <div class="uk-width-medium-1-2">
                 
