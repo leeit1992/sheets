@@ -74,10 +74,11 @@
                                 ?>
                             </span>
                         </div>
-                        <div class="md-card-list-item-subject">
+                       
+                        <div class="md-card-list-item-subject" style="width: 16%;display: inline-block;float: left;">
                             <span>
                                 <?php
-                                    $link = '<span><a class="op-check-message" data-id="'.$value['id'].'" data-type="inbox" data-uk-modal="{target:\'#modal_message_'.$value['id'].'\'}" href="#">' . ucfirst($value['op_message_title']) .'</a></span>';
+                                    $link = '<span><a class="op-check-message" data-status="'.$value['op_status'].'" data-id="'.$value['id'].'" data-type="inbox" data-uk-modal="{target:\'#modal_message_'.$value['id'].'\'}" href="#">' . ucfirst($value['op_message_title']) .'</a></span>';
                                     if( 1 == $value['op_status'] ){
                                         echo '<strong style="">' . $link . '</strong>';
                                     }else{
@@ -86,6 +87,24 @@
                                 ?> 
                             </span>   
                         </div>
+
+                        <div class="md-card-list-item-status" style="display: inline-block;padding-top: 8px;">
+                            
+                            <?php
+                                if( 1 == $value['op_status'] ){
+                                    echo '<span class="uk-badge uk-badge-warning">Waiting</span>';
+                                }
+                           
+                                if( 3 == $value['op_status'] ){
+                                    echo '<span class="uk-badge uk-badge-success">Accept</span>';
+                                }
+                                if( 4 == $value['op_status'] ){
+                                    echo '<span class="uk-badge uk-badge-danger">Cancel</span>';
+                                }
+                            ?> 
+                            
+                        </div>
+
                         <div class="uk-modal" id="modal_message_<?php echo $value['id'] ?>">
                             <div class="uk-modal-dialog op-inbox-sheet-wrap" style="width: 100%;">
                                 <button class="uk-modal-close uk-close" type="button"></button>

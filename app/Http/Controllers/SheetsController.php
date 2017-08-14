@@ -175,6 +175,7 @@ class SheetsController extends baseController{
 				'op_user_send'  => Session()->get('op_user_id'),
 				'op_user_receiver' => $request->get('receiver'),
 				'op_sheet_id'   => $request->get('sheetId'),
+				'op_sheet_id'   => $request->get('sheetId'),
 				'op_datetime'   => date("Y-m-d H:i:s"),
 				'op_status'     => 1,
 				'op_type'       => 'inbox',

@@ -18,27 +18,6 @@ class MessagesController extends baseController{
 		$this->mdSheet = new SheetModel;
 	}
 
-	public function messageSend(){
-		$condition['op_user_send'] = Session()->get('op_user_id');
-		$condition['op_type']      = 'send';
-		$condition['ORDER'] = [
-						'id' => 'DESC'
-					];
-
-		$listMessages = $this->mdMessages->getBy( 
-			$condition
-		);
-		return $this->loadTemplate(
-			'messages/messageSend.tpl',
-			[
-				'listMessages' => $listMessages,
-				'mdUser'  => $this->mdUser,
-				'listSheets' => $this->mdSheet->getBy(['sheet_author' => Session()->get('op_user_id')]),
-				'userCurrent' => $this->infoUser
-			]
-		);
-	}
-
 	public function writeMessages(Request $request){
 
 		if(  $request->Get('formData') ) {
@@ -86,14 +65,22 @@ class MessagesController extends baseController{
 
 	}
 
-	public function manageMessages(){
+	public function messageNotice(){
+		$this->manageMessages( 'notice' );
+	}
+
+	public function manageMessages( $type = null ){
+		
+		if( !$type ) {
+			$type = 'inbox';
+		}
 		
 		registerStyle( [
 		    'handsontable' => assets('bower_components/handsontable/handsontable.full.min.css'),
 		] ); 
 
 		$condition['op_user_receiver'] = Session()->get('op_user_id');
-		$condition['op_type'] = 'inbox';
+		$condition['op_type'] = $type;
 		$condition['ORDER'] = [
 						'id' => 'DESC'
 					];
@@ -103,23 +90,6 @@ class MessagesController extends baseController{
 		);
 
 		$listSheets = $this->mdSheet->getBy(['sheet_author' => Session()->get('op_user_id')]);
-
-		// if( 1 == $this->infoUser['meta']['user_role'] ) {
-		// 	$listSheets = $this->mdSheet->getBy();
-		// }
-
-		// if( 3 == $this->infoUser['meta']['user_role'] ) {
-		// 	$mesIds = array();
-		// 	foreach ($listMessages as $key => $value) {
-		// 		$mesIds[] = $value['op_sheet_id'];
-		// 	}
-
-		// 	$listSheets = $this->mdSheet->getBy(
-		// 		["OR" => [
-		// 			'sheet_author' => Session()->get('op_user_id'),
-		// 		]]
-		// 	);
-		// }
 
 		// Load layout.
 		return $this->loadTemplate(
@@ -246,11 +216,14 @@ class MessagesController extends baseController{
 	}
 
 	public function updateInbox(Request $request){
-		$this->mdMessages->save(
-			[
-				'op_status'    => 2,
-			], $request->get('id')
-		);
+		if( 1 == $request->get('mStatus') ) {
+			$this->mdMessages->save(
+				[
+					'op_status'    => 2,
+				], $request->get('id')
+			);
+		}
+		
 	}
 
 	public function acceptSheet(Request $request){
@@ -259,6 +232,25 @@ class MessagesController extends baseController{
 							'id' => $request->get('mesId')
 						]
 					);
+		// Send notice inbox to user.
+		$this->mdMessages->save(
+			[
+				'op_messages'   => 'Your data has been moderated and accepted.',
+				'op_message_title'  => 'System notice.',
+				'op_user_send'  => Session()->get('op_user_id'),
+				'op_user_receiver' => $infoMes[0]['op_user_send'],
+				'op_sheet_id'   => $infoMes[0]['op_sheet_id'],
+				'op_datetime'   => date("Y-m-d H:i:s"),
+				'op_status'     => 1,
+				'op_type'       => 'notice',
+				'op_data_sheet' => $infoMes[0]['op_data_sheet'],
+				'op_data_sheet_meta' => $infoMes[0]['op_data_sheet_meta'],
+			]
+		);
+
+		// Change status messages
+		$this->mdMessages->save( ['op_status' => 3], $request->get('mesId') );
+
 		$infoSheet = $this->mdSheet->getBy( 
 						[
 							'id' => $request->get('sheetId')
@@ -369,6 +361,9 @@ class MessagesController extends baseController{
 				$newSaveSheetData[$row] = $data;
 			}
 
+			// $newSaveSheetData[] = [
+			// 	null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null
+			// ];
 
 			$this->mdSheet->save(
 				[
@@ -457,6 +452,21 @@ class MessagesController extends baseController{
 				$request->get('mesId')
 			);
 
+			// Send notice inbox to user.
+			$this->mdMessages->save(
+				[
+					'op_messages'   => 'Confim items.',
+					'op_message_title'  => 'System notice.',
+					'op_user_send'  => Session()->get('op_user_id'),
+					'op_user_receiver' => $infoMes[0]['op_user_send'],
+					'op_sheet_id'   => $infoMes[0]['op_sheet_id'],
+					'op_datetime'   => date("Y-m-d H:i:s"),
+					'op_status'     => 1,
+					'op_type'       => 'notice',
+					'op_data_sheet' => $request->get('sheetData'),
+					'op_data_sheet_meta' => $infoMes[0]['op_data_sheet_meta'],
+				]
+			);
 
 			$totalRow = count($dataSheetInbox);
 
@@ -489,6 +499,7 @@ class MessagesController extends baseController{
 			$nextKey = 0;
 			$nextRow = count($dataSheetInbox);
 			$newDataSheetUpdate = [];
+			$sIdsCtm = [];
 			foreach ($dataSheetInbox as $key => $value) {
 
 				$_nextRow = $nextRow++;
@@ -502,12 +513,35 @@ class MessagesController extends baseController{
 					
 						if( 'Out' == $_value || 'Oke' == $_value ) {
 
+							$sIdsCtm[$newMetaSheet[$key . '-' . $metaOrder]['sIdCtm']] = $newMetaSheet[$key . '-' . $metaOrder]['sIdCtm'];
 							$newDataSheetUpdate[] = [
 								'data' => $_value,
 								'meta' => $newMetaSheet[$key . '-' . $metaOrder]
 							];
 						}
 					}
+				}
+			}
+
+			foreach ($sIdsCtm as $sIdCtm) {
+				$getAuthor = $this->mdSheet->getBy(['id' => $sIdCtm]);
+
+				if( !empty( $getAuthor ) ) {
+					// Send notice inbox to user.
+					$this->mdMessages->save(
+						[
+							'op_messages'   => 'Confim items.',
+							'op_message_title'  => 'System notice.',
+							'op_user_send'  => Session()->get('op_user_id'),
+							'op_user_receiver' => $getAuthor[0]['sheet_author'],
+							'op_sheet_id'   => $infoMes[0]['op_sheet_id'],
+							'op_datetime'   => date("Y-m-d H:i:s"),
+							'op_status'     => 1,
+							'op_type'       => 'notice',
+							'op_data_sheet' => $request->get('sheetData'),
+							'op_data_sheet_meta' => $infoMes[0]['op_data_sheet_meta'],
+						]
+					);
 				}
 			}
 
@@ -573,8 +607,42 @@ class MessagesController extends baseController{
 							'id' => $request->get('mesId')
 						]
 					);
-		
+		$this->mdMessages->save( ['op_status' => 4], $request->get('mesId') );
+
 		if( !empty( $infoMes ) ) {
+			$sheetMetaInbox = json_decode($infoMes[0]['op_data_sheet_meta'], true);
+			$firstMeta = [];
+			foreach ($sheetMetaInbox as $first) {
+				$firstMeta = $first;
+				break;
+			}
+	
+			$infoMetaSheet = $this->mdSheet->getMetaData( $firstMeta['sheetId'], 'sheet_meta');
+			$infoMetaSheet = json_decode($infoMetaSheet, true);
+			foreach ($sheetMetaInbox as $key => $value) {
+				if( isset( $infoMetaSheet[$key] ) ) {
+					$infoMetaSheet[$key]['background'] = '';
+					$infoMetaSheet[$key]['color'] = '';
+					$infoMetaSheet[$key]['readOnly'] = 'false';
+				}
+			}
+
+			$this->mdSheet->setMetaData( $firstMeta['sheetId'], 'sheet_meta', json_encode($infoMetaSheet));
+
+			$this->mdMessages->save(
+				[
+					'op_messages'   => 'Your outgoing data is rejected.',
+					'op_message_title'  => 'System notice.',
+					'op_user_send'  => Session()->get('op_user_id'),
+					'op_user_receiver' => $infoMes[0]['op_user_send'],
+					'op_sheet_id'   => $firstMeta['sheetId'],
+					'op_datetime'   => date("Y-m-d H:i:s"),
+					'op_status'     => 1,
+					'op_type'       => 'inbox',
+					'op_data_sheet' => $infoMes[0]['op_data_sheet'],
+					'op_data_sheet_meta' => $infoMes[0]['op_data_sheet_meta'],
+				]
+			);
 
 		}
 	}

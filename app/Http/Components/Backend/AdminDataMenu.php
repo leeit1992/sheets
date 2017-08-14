@@ -87,12 +87,12 @@ class AdminDataMenu
                 'conditionOpen' => ['MessagesController'],
                 'display' => '',
                 'submenu' => [
-                    // [   
-                    //     'label' => 'Message sent',
-                    //     'link'  => url('/message-send'),
-                    //     'display' => '',
-                    //     'conditionOpen' => ['messageSend'],
-                    // ],
+                    [   
+                        'label' => 'Notice',
+                        'link'  => url('/message-notice'),
+                        'display' => '',
+                        'conditionOpen' => ['messageNotice'],
+                    ],
                     [
                         'label' => 'Inbox',
                         'link'  => url('/massages-manage'),

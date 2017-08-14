@@ -247,6 +247,7 @@
 		checkInbox: function(e) {
 			var self = this,
 				id = $(e.currentTarget).attr('data-id'),
+				mStatus = $(e.currentTarget).attr('data-status'),
 				sheetData = $('.op-data-mes-' + id).val(),
 				sheetMeta = $('.op-meta-mes-' + id).val();
 
@@ -260,6 +261,7 @@
 				type: "POST",
 				data: {
 					id: id,
+					mStatus: mStatus,
 				},
 				success: function(res) {} 
 			});
@@ -318,7 +320,7 @@
 			});
 		},
 
-		cancelOrder : function(){
+		cancelOrder : function(e){
 			var self = this,
 				id = $(e.currentTarget).attr('data-id');
 

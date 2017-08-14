@@ -52,7 +52,7 @@ $route->post('/send-sheet','SheetsController@sendSheet');
 ================================*/
 
 $route->get('/massages-manage','MessagesController@manageMessages');
-$route->get('/message-send','MessagesController@messageSend');
+$route->get('/message-notice','MessagesController@messageNotice');
 $route->post('/write-messages','MessagesController@writeMessages');
 $route->post('/delete-messages','MessagesController@removeMessages');
 $route->get('/filter-messages','MessagesController@filterMessages');
