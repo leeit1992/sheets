@@ -1,8 +1,8 @@
-<div class="md-fab-wrapper">
+<!-- <div class="md-fab-wrapper">
     <a class="md-fab md-fab-accent" href="#mailbox_new_message" data-uk-modal="{center:true}">
         <i class="material-icons">&#xE150;</i>
     </a>
-</div>
+</div> -->
 <div class="uk-modal" id="mailbox_new_message">
     <div class="uk-modal-dialog">
         <button class="uk-modal-close uk-close" type="button"></button>

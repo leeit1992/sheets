@@ -99,75 +99,47 @@
         }
     }
 
-    if( undefined != typeof socket ) {
-        socket.on('user-' + OPDATA.user.id, function(data) {
-            $.ajax({
-                url: OPDATA.adminUrl + '/autoload-inbox',
-                type: "GET",
-                data: {
-                    userId: OPDATA.user.id,
-                },
-                success: function(result) {
-                    var dataResult = JSON.parse(result);
-                    $(".op-number-notice").text(dataResult.length);
-
-                    $(".op-list-notice-box").html('');
-                    $("#op-list-message-notice").html('');
-                    
-                    $.each(dataResult, function(i, el) {
-                        $(".op-list-notice-box").append('\
-                        <li>\
-                            <div class="md-list-addon-element">\
-                                <a href="#" class="user_action_image">\
-                                    <img class="md-user-image" style="height: 34px;" src="'+el.user_avatar+'" alt="">\
-                                </a>\
-                            </div>\
-                            <div class="md-list-content">\
-                                <a class="op-check-message" data-id="'+el.id+'" data-uk-modal="{target:\'#modal_message_head_'+el.id+'\'}" href="#">\
-                                    <span class="md-list-heading">'+el.user_name+'.</span>\
-                                    <span class="uk-text-small uk-text-muted">'+el.op_message_title+'.</span>\
-                                </a>\
-                            </div>\
-                        </li>\
-                        ');
-                        
-                        $("#op-list-message-notice").append('\
-                            <div class="uk-modal" id="modal_message_head_'+el.id+'">\
-                                <div class="uk-modal-dialog">\
-                                    <div class="uk-modal-header">\
-                                        <h3 class="uk-modal-title"><i class="material-icons md-24">&#xE554;</i> '+el.op_message_title+'</h3></h3>\
-                                    </div>\
-                                    <p>'+el.op_messages+'</p>\
-                                    <div>\
-                                        <p><i class="uk-icon-file-excel-o"></i> <a target="_blank" href="'+el.linkSheet+'">File Sheet</a></p>\
-                                    </div>\
-                                    <div class="uk-modal-footer uk-text-right">\
-                                        <a class="md-btn md-btn-flat op-massage-forward" href="'+el.linkInbox+'">Goto Inbox </a>\
-                                        <button type="button" class="md-btn md-btn-flat uk-modal-close">Close</button>\
-                                    </div>\
-                                </div>\
-                            </div>\
-                        ');
-                    });
-
-                    $("body").append('<audio src="' + OPDATA.adminUrl + '/public/audio/newnotice.mp3" autoplay></audio>');
-                }
-            });
-        });
-    }
-    
-
-    $(document).on('click', '.op-check-message', function() {
-        var self = this,
-            id = $(this).attr('data-id');
-
+    socket.on('user-' + OPDATA.user.id, function(data) {
         $.ajax({
-            url: OPDATA.adminUrl + '/update-inbox',
-            type: "POST",
+            url: OPDATA.adminUrl + '/autoload-inbox',
+            type: "GET",
             data: {
-                id: id,
+                userId: OPDATA.user.id,
+            },
+            success: function(result) {
+                var dataResult = JSON.parse(result);
+                $(".op-number-notice").text(dataResult.length);
+
+                $(".op-list-notice-box").html('');
+                $("#op-list-message-notice").html('');
+                
+                $.each(dataResult, function(i, el) {
+                    var inboxLink = OPDATA.adminUrl + 'massages-manage?show=' + el.id;
+                    if( 'notice' == el.op_type ) {
+                        inboxLink = OPDATA.adminUrl + 'message-notice?show=' + el.id;
+                    }
+
+                    $(".op-list-notice-box").append('\
+                    <li>\
+                        <div class="md-list-addon-element">\
+                            <a href="'+inboxLink+'" class="user_action_image">\
+                                <img class="md-user-image" style="height: 34px;" src="'+el.user_avatar+'" alt="">\
+                            </a>\
+                        </div>\
+                        <div class="md-list-content">\
+                            <a href="'+inboxLink+'">\
+                                <span class="md-list-heading">'+el.user_name+'.</span>\
+                                <span class="uk-text-small uk-text-muted">'+el.op_message_title+'.</span>\
+                            </a>\
+                        </div>\
+                    </li>\
+                    ');
+                });
+
+                $("body").append('<audio src="' + OPDATA.adminUrl + '/public/audio/newnotice.mp3" autoplay></audio>');
             }
         });
     });
+   
 
 })(jQuery);

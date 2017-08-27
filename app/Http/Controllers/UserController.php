@@ -171,7 +171,7 @@ class UserController extends baseController{
 					
 					if( !isset( $formData['atl_user_id'] ) ) {
 						for ($i = 0; $i < 10; $i++) { 
-							$this->addSheetDefault($formData['atl_user_id'], ['sheetTitle' => $formData['atl_user_name'] . ' ' . $i ]);
+							$this->addSheetDefault($lastID, ['sheetTitle' => $formData['atl_user_name'] . ' ' . $i ]);
 						}
 					}
 					

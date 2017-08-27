@@ -28,9 +28,27 @@ var OP_CANCULATOR_MODEL = Backbone.Model.extend({
         this.createView();
     },
 
+
+    // self.formatTextHead('A','User Code'),
+    // self.formatTextHead('B','Date'),
+    // self.formatTextHead('C','Buyer'),
+    // self.formatTextHead('D','Name items'),
+    // self.formatTextHead('E','Code Items'),
+    // self.formatTextHead('F','Size'),
+    // self.formatTextHead('G','Color'),
+    // self.formatTextHead('H','Quantity'),
+    // self.formatTextHead('I','Price On Website'),
+    // self.formatTextHead('J','Ship Web'),
+    // self.formatTextHead('K','Coupon'),
+    // self.formatTextHead('L','Price Order'),
+    // self.formatTextHead('M','Link Items'),
+    // self.formatTextHead('N','Status'),
+    // self.formatTextHead('O','Day In Stock'),
+    // self.formatTextHead('P','Weight'),
+
     colType: function(){
         return [
-            { // Trạng Thái
+            { // user code
                 editor: 'select',
                 selectOptions: [OPDATA.user.all_info.user_code]
             },
@@ -201,23 +219,21 @@ var OP_CANCULATOR = Backbone.View.extend({
                 self.formatTextHead('A','User Code'),
                 self.formatTextHead('B','Date'),
                 self.formatTextHead('C','Buyer'),
-                self.formatTextHead('D','Collector'),
-                self.formatTextHead('E','Name items'),
-                self.formatTextHead('F','Code Items'),
-                self.formatTextHead('G','Size'),
-                self.formatTextHead('H','Color'),
-                self.formatTextHead('I','Quantity'),
-                self.formatTextHead('J','Price On Website'),
-                self.formatTextHead('K','Ship Web'),
-                self.formatTextHead('L','Sale'),
-                self.formatTextHead('M','Price Order'),
-                self.formatTextHead('N','Into Money'),
+                self.formatTextHead('D','Name items'),
+                self.formatTextHead('E','Code Items'),
+                self.formatTextHead('F','Size'),
+                self.formatTextHead('G','Color'),
+                self.formatTextHead('H','Quantity'),
+                self.formatTextHead('I','Price On Website'),
+                self.formatTextHead('J','Ship Web'),
+                self.formatTextHead('K','Coupon'),
+                self.formatTextHead('L','Price Order'),
+                self.formatTextHead('M','Link Items'),
+                self.formatTextHead('N','Status'),
                 self.formatTextHead('O','Day In Stock'),
-                self.formatTextHead('P','Tracking Number'),
-                self.formatTextHead('Q','Weight'),
-                self.formatTextHead('R','Link Items'),
-                self.formatTextHead('S','Status'),
-                self.formatTextHead('T',''),
+                self.formatTextHead('P','Weight'),
+                
+                self.formatTextHead('Q',''),
             ],
             //comments: [{row: 2, col: 2, comment: "Test comment"}],
             columns: self.model.colType(),
@@ -668,6 +684,8 @@ var OP_CANCULATOR = Backbone.View.extend({
 
             $(".op-save-sheets-js").trigger('click');
 
+            socket.emit('notice-inbox', $("select[name=op_receiver]").val());
+
             setTimeout(function(){
                 $('.op-notify-js', self.el).fadeOut();
             }, 2000);
@@ -777,6 +795,7 @@ var OP_CANCULATOR = Backbone.View.extend({
                 $('.op-notify-js', self.el).html(output).show();
                 $(".uk-close").trigger('click');
 
+                socket.emit('notice-inbox', ordererId);
 
                 setTimeout(function(){
                     $('.op-notify-js', self.el).fadeOut();

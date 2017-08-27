@@ -133,7 +133,7 @@ class LoginController extends baseController{
 						'user_display_name' => ucfirst($formData['register_username']),
 						'user_token'        => $token,
 						'user_code'         => $userCode,
-						'user_color'        => $formData['register_color'],
+						'user_color'        => isset( $formData['register_color'] ) ? $formData['register_color'] : '',
 					]
 				);
 

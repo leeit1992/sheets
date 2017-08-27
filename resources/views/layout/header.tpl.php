@@ -23,10 +23,10 @@
 				)
 		);
 	?>
-   <!--  <script src="http://127.0.0.1:8080/socket.io/socket.io.js" type="text/javascript" ></script>
-    <script type="text/javascript" src="<?php echo url('/socket.js'); ?>"></script> -->
+    <script src="http://127.0.0.1:8080/socket.io/socket.io.js" type="text/javascript" ></script>
+    <script type="text/javascript" src="<?php echo url('/socket.js'); ?>"></script>
     <script type="text/javascript">
-        //var socket = io.connect('http://127.0.0.1:8080');
+        var socket = io.connect('http://127.0.0.1:8080');
         window.OPDATA = {
             adminUrl: "<?php echo url('/'); ?>",
             user: <?php echo json_encode(  $userInfo ) ?>
@@ -92,25 +92,7 @@ if( isset( $userInfo['meta']['user_avatar'] ) ) {
                 <button class="header_main_search_btn uk-button-link"><i class="md-icon material-icons">&#xE8B6;</i></button>
             </form>
         </div>
-        <div id="op-list-message-notice">
-        <?php foreach ($listMessages as $key => $value) : ?>
-            <div class="uk-modal" id="modal_message_head_<?php echo $value['id'] ?>">
-                <div class="uk-modal-dialog">
-                    <div class="uk-modal-header">
-                        <h3 class="uk-modal-title"><i class="material-icons md-24">&#xE554;</i> <?php echo ucfirst($value['op_message_title']) ?></h3></h3>
-                    </div>
-                    <p><?php echo $value['op_messages'] ?></p>
-                    <div>
-                        <p><i class="uk-icon-file-excel-o"></i> <a target="_blank" href="<?php echo url('/view-sheet/' . $value['op_sheet_id']) ?>">File Sheet</a></p>
-                    </div>
-                    <div class="uk-modal-footer uk-text-right">
-                        <a class="md-btn md-btn-flat op-massage-forward" href="<?php echo url('/massages-manage?inbox=' . $value['id'] ) ?>">Goto Inbox </a>
-                        <button type="button" class="md-btn md-btn-flat uk-modal-close">Close</button>
-                    </div>
-                </div>
-            </div>           
-        <?php endforeach; ?>
-        </div>
+
     </header>
     <!-- main header end -->
 

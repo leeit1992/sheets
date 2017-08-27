@@ -11,11 +11,25 @@
                     <select class="op-mes-filter-by-user" data-type-mes="<?php echo $type ?>" data-type="filter-user" data-md-selectize data-md-selectize-bottom>
                         <option value="">Member</option>
                         <?php foreach ($mdUser->getAll() as $key => $value) {
-                            if( 1 == $value['user_role'] && 2 == $userCurrent['meta']['user_role'] ){
-                                echo '<option value="' . $value['id'] . '">' . $value['user_name'] . '</option>';
-                            }else{
-                                echo '<option value="' . $value['id'] . '">' . $value['user_name'] . '</option>';
+                            if( 2 == $userCurrent['meta']['user_role'] || 3 == $userCurrent['meta']['user_role'] ) 
+                            {
+                                if( 1 == $value['user_role'] or 3 == $value['user_role'] ){
+                                    echo '<option value="' . $value['id'] . '">' . $value['user_name'] . '</option>';
+                                }
                             }
+
+                            if( 1 == $userCurrent['meta']['user_role'] ) {
+                                if( 2 == $value['user_role'] or 3 == $value['user_role'] ){
+                                    echo '<option value="' . $value['id'] . '">' . $value['user_name'] . '</option>';
+                                }
+                            }
+
+                            if( 1 == $userCurrent['meta']['user_role'] ) {
+                                if( 2 == $value['user_role'] or 3 == $value['user_role'] ){
+                                    echo '<option value="' . $value['id'] . '">' . $value['user_name'] . '</option>';
+                                }
+                            }
+                            
                         } ?>
                     </select>
                 </div>

@@ -29,7 +29,7 @@
     </div>
     <div class="md-card-list-wrapper" id="mailbox">
         <div class="uk-width-large-8-10 uk-container-center">
-            <?php View('messages/layout/filter.tpl', [ 'mdUser' => $mdUser, 'listSheets' => $listSheets, 'type' => 'inbox' ]) ?>
+            <?php View('messages/layout/filter.tpl', [ 'mdUser' => $mdUser, 'listSheets' => $listSheets, 'type' => $pageType, 'userCurrent' => $userCurrent ]) ?>
             <div class="md-card-list">
                 <div class="md-card-list-header heading_list">All Messages</div>
                 <ul class="op-list-current hierarchical_slide">
@@ -118,16 +118,24 @@
                                     <div class="op-sheet-inbox-show-<?php echo $value['id'] ?>"></div>
                                 </div>
                                 <div class="uk-modal-footer uk-text-right">
-
+                                <?php if( 'inbox' == $pageType ) : ?>
                                     <?php if( 1 == $userCurrent['meta']['user_role'] ) : ?>
-                                    <a apccet-status="<?php echo $value['op_accept_status'] ?>" data-id="<?php echo $value['id'] ?>" class="md-btn md-btn-flat op-massage-accept" href="#op-massage-accept" data-uk-modal="{center:true}">Accept </a>
-                                    <a data-id="<?php echo $value['id'] ?>" class="md-btn md-btn-flat op-massage-cancel"> Cancel </a>
+                                   
+                                    <?php if( 4 != $value['op_status'] ) : ?>
+                                    <a apccet-status="<?php echo $value['op_accept_status'] ?>" data-id="<?php echo $value['id'] ?>" user-send-id="<?php echo $value['op_user_send'] ?>" class="md-btn md-btn-flat op-massage-accept" href="#op-massage-accept" data-uk-modal="{center:true}">Accept </a>
+                                    <?php endif; ?>
+
+                                    <?php if( 1 != $value['op_accept_status'] && 4 != $value['op_status'] ) : ?>
+                                    <a data-id="<?php echo $value['id'] ?>" user-send="<?php echo $value['op_user_send'] ?>" class="md-btn md-btn-flat op-massage-cancel"> Cancel Order </a>
+                                    <?php endif; ?>
+
+                                    <a class="md-btn md-btn-flat uk-modal-close"> Close </a>
                                     <?php endif; ?>
                                     <?php if( 3 == $userCurrent['meta']['user_role'] ) : ?>
                                     <a apccet-status="<?php echo $value['op_accept_status'] ?>" data-id="<?php echo $value['id'] ?>" class="md-btn md-btn-flat op-massage-send-back">Send Back </a>
                                     <a data-id="<?php echo $value['id'] ?>" class="md-btn md-btn-flat uk-modal-close"> Close </a>
                                     <?php endif; ?>
-                                    
+                                <?php endif; ?> 
                                 </div>
                             </div>
                         </div>
@@ -138,7 +146,7 @@
             </div> 
         </div>
         <?php if( 1 == $userCurrent['meta']['user_role'] ) : ?>
-        <?php View('messages/layout/popinAcceptOrder.tpl', [ 'listSheets' => $listSheets ]) ?>
+        <?php View('messages/layout/popinAcceptOrder.tpl', [ 'listSheets' => $listSheets, 'pageType' => $pageType ]) ?>
         <?php View('messages/layout/popinSend.tpl', [ 'userCurrent' => $userCurrent, 'mdUser' => $mdUser, 'listSheets' => $listSheets ]) ?>
         <?php endif; ?>
     </div>

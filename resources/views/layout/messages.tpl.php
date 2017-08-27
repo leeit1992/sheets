@@ -16,15 +16,21 @@
                             if( isset( $user[0]['user_avatar'] ) ) {
                                 $avatar = url($user[0]['user_avatar']);
                             }
+                            $inboxLink = url('/massages-manage');
+                            if( 'notice' == $value['op_type'] ) {
+                                $inboxLink = url('/message-notice');
+                            }
                         ?>
+
                         <li>
                             <div class="md-list-addon-element">
-                                <a href="#" class="user_action_image">
+                                <a href="<?php echo $inboxLink ?>?show=<?php echo $value['id'] ?>" class="user_action_image">
                                     <img class="md-user-image" style="height: 34px;" src="<?php echo $avatar ?>" alt="">
                                 </a>
                             </div>
                             <div class="md-list-content">
-                                <a class="op-check-message" data-id="<?php echo $value['id'] ?>" data-uk-modal="{target:'#modal_message_head_<?php echo $value['id'] ?>'}" href="#">
+                                <a href="<?php echo $inboxLink ?>?show=<?php echo $value['id'] ?>">
+
                                     <span class="md-list-heading"><?php echo isset($user[0]) ? $user[0]['user_name'] : '' ?>.</span>
                                     <span class="uk-text-small uk-text-muted"><?php echo $value['op_message_title'] ?>.</span>
                                 </a>

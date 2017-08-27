@@ -30,7 +30,6 @@ class Controller extends baseController{
 		$listMessages = $this->mdMessages->getBy( 
 			[
 				'op_user_receiver' => Session()->get('op_user_id'),
-				'op_type' => 'inbox',
 				'op_status' => 1,
 				'ORDER' => [
 						'id' => 'DESC'

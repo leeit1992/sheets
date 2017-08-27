@@ -50,6 +50,30 @@
 				}
 			});
 
+			var getUrlParameter = function getUrlParameter(sParam) {
+		        var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+		            sURLVariables = sPageURL.split('&'),
+		            sParameterName,
+		            i;
+
+		        for (i = 0; i < sURLVariables.length; i++) {
+		            sParameterName = sURLVariables[i].split('=');
+
+		            if (sParameterName[0] === sParam) {
+		                return sParameterName[1] === undefined ? true : sParameterName[1];
+		            }
+		        }
+		    };
+
+		    var mesIDSocket = getUrlParameter('show');
+		    if( typeof mesIDSocket != undefined ) {
+		    	var currentBox = $(".op-mes-item-" + mesIDSocket).find('.op-check-message')[0];
+        		
+		       	setTimeout(function(){
+		       		$(currentBox).trigger('click');
+		       	},1000)
+		    }
+
 		},
 
 		formatTextHead: function(text, text2) {
@@ -109,6 +133,8 @@
                 	setTimeout(function(){
 	                    self.setDataAtCell(sheetData.length,18,'');
 	                }, 500 ); 
+
+
 	            },
 	            cells: function (row, col, prop) {
 	                var cellProperties = {};
@@ -270,6 +296,7 @@
 		acceptSheetInbox: function(e){
 			var self = this,
 				id = $(e.currentTarget).attr('data-id'),
+				user_send = $(e.currentTarget).attr('user-send-id'),
 				apccetStatus = $(e.currentTarget).attr('apccet-status');
 			
 			if( 1 == apccetStatus ) {
@@ -279,12 +306,16 @@
 			}
 
 			$(".op-accept-data").attr('data-id', id);
+			$(".op-accept-data").attr('user-send', user_send);
 		},
 
 		acceptSheetData: function(e){
 			var self = this,
-				id = $(e.currentTarget).attr('data-id');
+				id = $(e.currentTarget).attr('data-id'),
+				user_send = $(e.currentTarget).attr('user-send');
+
 			altair_helpers.content_preloader_show();
+
 			$.ajax({
 				url: OPDATA.adminUrl + '/accept-sheet',
 				type: "POST",
@@ -298,6 +329,7 @@
 					$("#modal_message_" + id).find('.op-massage-accept').attr('apccet-status',1);
 					$(".uk-close").trigger('click');
 					UIkit.modal.alert('Accept Success!');
+					socket.emit('notice-inbox', user_send);
 				}
 			});
 		},
@@ -314,6 +346,14 @@
 					mesId : id
 				},
 				success: function(res) {
+					var result = JSON.parse(res);
+
+					if( result.socketId ) {
+						$.each(result.socketId, function(i, el){
+							socket.emit('notice-inbox', el);
+						});
+					}
+
 					altair_helpers.content_preloader_hide();
 					UIkit.modal.alert('Send back success!');
 				} 
@@ -322,6 +362,7 @@
 
 		cancelOrder : function(e){
 			var self = this,
+				user_send = $(e.currentTarget).attr('user-send'),
 				id = $(e.currentTarget).attr('data-id');
 
 			altair_helpers.content_preloader_show();
@@ -335,6 +376,8 @@
 				success: function(res) {
 					altair_helpers.content_preloader_hide();
 					UIkit.modal.alert('Cancel success!');
+					socket.emit('notice-inbox', user_send);
+					$(".uk-close").trigger('click');
 				} 
 			});
 

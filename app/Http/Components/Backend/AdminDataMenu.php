@@ -96,7 +96,7 @@ class AdminDataMenu
                     [
                         'label' => 'Inbox',
                         'link'  => url('/massages-manage'),
-                        'display' => '',
+                        'display' => ( 2 == $userMeta['user_role'] ) ? 'none' : '',
                         'conditionOpen' => ['manageMessages'],
                     ]
                 ]

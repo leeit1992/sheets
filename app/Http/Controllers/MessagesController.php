@@ -95,6 +95,7 @@ class MessagesController extends baseController{
 		return $this->loadTemplate(
 			'messages/inbox.tpl',
 			[
+				'pageType' => $type,
 				'listMessages' => $listMessages,
 				'mdUser'  => $this->mdUser,
 				'listSheets' => $listSheets,
@@ -161,7 +162,8 @@ class MessagesController extends baseController{
 				if( 'inbox' == $request->get('typeMes') ) {
 					$condition['op_user_send'] = $request->get('value');
 				}else{
-					$condition['op_user_receiver'] = $request->get('value');
+					$condition['op_user_send'] = $request->get('value');
+					$condition['op_user_receiver'] = Session()->get('op_user_id');
 				}
 
 				$condition['op_type'] = $request->get('typeMes');
@@ -352,6 +354,7 @@ class MessagesController extends baseController{
 						$valueM->col = $col;
 						$valueM->background = '';
 						$valueM->color = '';
+						$valueM->readOnly = 'false';
 						
 						$currentMetaSheet[$keyMeta] = $valueM;
 
@@ -396,7 +399,6 @@ class MessagesController extends baseController{
 	public function autoLoadInbox(Request $request){
 
 		$condition['op_user_receiver'] = $request->get('userId');
-		$condition['op_type'] = 'inbox';
 		$condition['op_status'] = 1;
 		$condition['ORDER'] = [
 					'id' => 'DESC'
@@ -421,6 +423,7 @@ class MessagesController extends baseController{
 				'user_avatar' => $avatar,
 				'linkSheet' => url('/view-sheet/' . $value['op_sheet_id']),
 				'linkInbox' => url('/massages-manage?inbox=' . $value['id'] ),
+				'op_type' => $value['op_type']
 			];
 		}
 
@@ -428,7 +431,7 @@ class MessagesController extends baseController{
 	}
 
 	public function sendBackInbox(Request $request){
-		
+		$socketId = [];
 		$infoMes = $this->mdMessages->getBy( 
 						[
 							'id' => $request->get('mesId')
@@ -467,6 +470,7 @@ class MessagesController extends baseController{
 					'op_data_sheet_meta' => $infoMes[0]['op_data_sheet_meta'],
 				]
 			);
+			$socketId[] = $infoMes[0]['op_user_send'];
 
 			$totalRow = count($dataSheetInbox);
 
@@ -542,6 +546,8 @@ class MessagesController extends baseController{
 							'op_data_sheet_meta' => $infoMes[0]['op_data_sheet_meta'],
 						]
 					);
+
+					$socketId[] = $getAuthor[0]['sheet_author'];
 				}
 			}
 
@@ -599,6 +605,11 @@ class MessagesController extends baseController{
 				}
 			}
 		}
+
+		echo json_encode([
+			'status' => true,
+			'socketId' => $socketId
+		]);
 	}
 
 	public function cancelOrder(Request $request){
