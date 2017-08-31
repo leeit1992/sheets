@@ -401,8 +401,7 @@
           Handsontable.NumericCell.renderer = formulaRenderer;
         }
         
-        
-
+      
         instance.addHook('afterChange', afterChange);
         instance.addHook('beforeAutofillInsidePopulate', beforeAutofillInsidePopulate);
 

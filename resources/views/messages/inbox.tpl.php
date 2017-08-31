@@ -18,7 +18,7 @@
                             <a href="#" class="md-icon material-icons">&#xE5D4;</a>
                             <div class="uk-dropdown uk-dropdown-flip uk-dropdown-small">
                                 <ul class="uk-nav">
-                                    <li><a class="op-remove-all-mes" data-rm="inbox" href="#"><i class="material-icons">&#xE872;</i> Delete All</a></li>
+                                    <li><a class="op-remove-all-mes" data-rm="inbox" href="#"><i class="material-icons">&#xE872;</i> Delete All </a></li>
                                 </ul>
                             </div>
                         </div>
@@ -119,22 +119,19 @@
                                 </div>
                                 <div class="uk-modal-footer uk-text-right">
                                 <?php if( 'inbox' == $pageType ) : ?>
-                                    <?php if( 1 == $userCurrent['meta']['user_role'] ) : ?>
+                                    <?php if( 1 == $userCurrent['meta']['user_role'] || 3 == $userCurrent['meta']['user_role']) : ?>
                                    
                                     <?php if( 4 != $value['op_status'] ) : ?>
                                     <a apccet-status="<?php echo $value['op_accept_status'] ?>" data-id="<?php echo $value['id'] ?>" user-send-id="<?php echo $value['op_user_send'] ?>" class="md-btn md-btn-flat op-massage-accept" href="#op-massage-accept" data-uk-modal="{center:true}">Accept </a>
                                     <?php endif; ?>
 
-                                    <?php if( 1 != $value['op_accept_status'] && 4 != $value['op_status'] ) : ?>
+                                    <?php if( 1 != $value['op_accept_status'] && 4 != $value['op_status'] && 3 != $userCurrent['meta']['user_role'] ) : ?>
                                     <a data-id="<?php echo $value['id'] ?>" user-send="<?php echo $value['op_user_send'] ?>" class="md-btn md-btn-flat op-massage-cancel"> Cancel Order </a>
                                     <?php endif; ?>
 
                                     <a class="md-btn md-btn-flat uk-modal-close"> Close </a>
                                     <?php endif; ?>
-                                    <?php if( 3 == $userCurrent['meta']['user_role'] ) : ?>
-                                    <a apccet-status="<?php echo $value['op_accept_status'] ?>" data-id="<?php echo $value['id'] ?>" class="md-btn md-btn-flat op-massage-send-back">Send Back </a>
-                                    <a data-id="<?php echo $value['id'] ?>" class="md-btn md-btn-flat uk-modal-close"> Close </a>
-                                    <?php endif; ?>
+                    
                                 <?php endif; ?> 
                                 </div>
                             </div>
@@ -145,8 +142,8 @@
                 <ul class="op-list-result"></ul>
             </div> 
         </div>
-        <?php if( 1 == $userCurrent['meta']['user_role'] ) : ?>
-        <?php View('messages/layout/popinAcceptOrder.tpl', [ 'listSheets' => $listSheets, 'pageType' => $pageType ]) ?>
+        <?php if( 1 == $userCurrent['meta']['user_role'] || 3 == $userCurrent['meta']['user_role'] ) : ?>
+        <?php View('messages/layout/popinAcceptOrder.tpl', [ 'listSheets' => $listSheets, 'pageType' => $pageType, 'userCurrent' => $userCurrent ]) ?>
         <?php View('messages/layout/popinSend.tpl', [ 'userCurrent' => $userCurrent, 'mdUser' => $mdUser, 'listSheets' => $listSheets ]) ?>
         <?php endif; ?>
     </div>

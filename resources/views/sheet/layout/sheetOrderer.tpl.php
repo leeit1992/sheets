@@ -4,9 +4,9 @@
 }
 </style>
 
-<div class="uk-modal uk-open" id="op_sheet_order" aria-hidden="false" style="display: none; overflow-y: auto;">
+<div class="uk-modal" id="op_sheet_order" aria-hidden="true">
     <div class="uk-modal-dialog" style="top: 116px;">
-        <button class="uk-modal-close uk-close" type="button"></button>
+        <button class="uk-modal-close uk-close atl-close" type="button"></button>
         <div class="uk-modal-header">
             <h3 class="uk-modal-title">Add Orderer</h3>
         </div>
@@ -81,7 +81,7 @@
         </div>
         <div class="uk-modal-footer uk-text-right">
             <button type="button" class="md-btn md-btn-flat md-btn-flat-primary op-apply-orderer">Apply</button>
-            <button type="button" class="md-btn md-btn-flat uk-modal-close">Close</button>
+            <button type="button" class="md-btn md-btn-flat uk-modal-close atl-close">Close</button>
         </div>
     </div>
 </div>

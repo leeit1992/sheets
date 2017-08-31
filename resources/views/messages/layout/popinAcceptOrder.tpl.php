@@ -14,9 +14,21 @@
             <div class="uk-margin-medium-bottom">
                 <label for="op_sheet_accept">Accept To</label>
                 <select id="op_sheet_accept" name="op_sheet_accept" data-md-selectize>
-                    <?php $sheetI = 1; foreach ($listSheets as $key => $value) {
-                        echo '<option value="' . $value['id'] . '">Sheet ' . ($sheetI++) . '</option>';
-                    } ?>
+                    <?php $sheetI = 1; 
+                        $sheetI = 1; 
+                        if( 6 < date('m') ) {
+                            $sheetI = 7;
+                        }
+
+                        $titleSheet = 'Month';
+                        if( 1 == $infoUser['meta']['user_role'] ) {
+                            $sheetI = 1; 
+                            $titleSheet = 'Sheet';
+                        }
+                    foreach ($listSheets as $key => $value) {
+                        echo '<option value="' . $value['id'] . '">'. $titleSheet . ' ' . ($sheetI++) . '</option>';
+                    } 
+                    ?>
                 </select>
             </div>
  

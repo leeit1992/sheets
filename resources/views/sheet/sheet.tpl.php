@@ -15,6 +15,9 @@ body>.content-preloader{
     z-index: 9999 !important;
 }
 </style>
+<script type="text/javascript">
+    window.sheetShareStatus = <?php echo ($sheetShareStatus) ? $sheetShareStatus : 0 ?>
+</script>
 <div id="page-canculator">
 	<div id="op-content-sheets">
 		<div class="md-card uk-margin-medium-bottom">
@@ -23,8 +26,21 @@ body>.content-preloader{
 	                <div class="uk-width-1-1">
 
 	                    <ul class="uk-tab">
-                            <?php $i = 1; foreach( $listSheets as $sheetNav ) { 
-                                
+                            <?php
+
+                            $i = 1; 
+                            if( 6 < date('m') ) {
+                                $i = 7;
+                            }
+
+                            $titleSheet = 'Month';
+                            if( 1 == $infoUser['meta']['user_role'] ) {
+                                $i = 0; 
+                                $titleSheet = 'Sheet';
+                            }
+                             
+                            foreach( $listSheets as $sheetNav ) { 
+                                $_i = $i++;
                                 $active = '';
                                 if( !empty( $sheet ) ) {
                                     if( $sheet[0]['id'] == $sheetNav['id'] ) {
@@ -32,10 +48,10 @@ body>.content-preloader{
                                     }
                                 }
 
-                                echo '<li class="'.$active.'"><a href="'. url('/view-sheet/'.$sheetNav['id']) .'">Sheet '.($i++).'</a></li>';
+                                echo '<li class="'.$active.'"><a href="'. url('/view-sheet/'.$sheetNav['id']) .'">'.$titleSheet.' '.($_i).'</a></li>';
                             } ?>
                         </ul>
-                        <?php View('sheet/layout/sheetToolbar.tpl', ['mdUser' => $mdUser, 'infoUser' => $infoUser]) ?>
+                        <?php View('sheet/layout/sheetToolbar.tpl', ['mdUser' => $mdUser, 'infoUser' => $infoUser, 'sheet' => $sheet] ) ?>
                         <div class="op-fx">
                             <div class="op-fx--icon">
                                 <div class="op-icon op-inline-block" style="user-select: none;">
@@ -72,7 +88,7 @@ body>.content-preloader{
             <i class="material-icons">insert_drive_file</i>
         </a>
     </div>
-    <?php if( 1 != $infoUser['meta']['user_role'] ) : ?>
+    <?php if( 1 != $infoUser['meta']['user_role'] && !$sheetShareStatus ) : ?>
     <div id="style_switcher">
         <div id="style_switcher_toggle" data-uk-tooltip="{pos:'left'}"  title="Submit Data"><i class="material-icons md-24">&#xE163;</i></div>
         <div class="uk-margin-medium-bottom">
@@ -106,8 +122,28 @@ body>.content-preloader{
     <?php endif; ?>
     <div class="uk-notify uk-notify-bottom-right op-notify-js" style="display: none;"></div>
 </div>
+</style><!-- Ugly Hack due to jsFiddle issue: http://goo.gl/BUfGZ -->
+
+<script src="http://handsontable.github.io/handsontable-ruleJS/lib/jquery/jquery-1.10.2.js"></script>
+<script src="http://handsontable.github.io/handsontable-ruleJS/lib/handsontable/handsontable.full.js"></script>
 
 <?php
+// registerScrips([
+//     'spectrum' => assets('bower_components/spectrum/spectrum.js'),
+//     'handsontable' => 'http://handsontable.github.io/handsontable-ruleJS/lib/handsontable/handsontable.full.js',
+//     'lodash' => 'http://handsontable.github.io/handsontable-ruleJS/lib/RuleJS/lib/lodash/lodash.js',
+//     'underscore.string' => 'http://handsontable.github.io/handsontable-ruleJS/lib/RuleJS/lib/underscore.string/underscore.string.js',
+//     'moment' => 'http://handsontable.github.io/handsontable-ruleJS/lib/RuleJS/lib/moment/moment.js',
+//     'numeral' => 'http://handsontable.github.io/handsontable-ruleJS/lib/RuleJS/lib/numeral/numeral.js',
+//     'numeric' => 'http://handsontable.github.io/handsontable-ruleJS/lib/RuleJS/lib/numericjs/numeric.js',
+//     'md5' => 'http://handsontable.github.io/handsontable-ruleJS/lib/RuleJS/lib/js-md5/md5.js',
+//     'jstat' => 'http://handsontable.github.io/handsontable-ruleJS/lib/RuleJS/lib/jstat/jstat.js',
+//     'formula' => 'http://handsontable.github.io/handsontable-ruleJS/lib/RuleJS/lib/formulajs/formula.js',
+//     'parser' => 'http://handsontable.github.io/handsontable-ruleJS/lib/RuleJS/js/parser.js',
+//     'ruleJS' => 'http://handsontable.github.io/handsontable-ruleJS/lib/RuleJS/js/ruleJS.js',
+//     'handsontable.formula' => 'http://handsontable.github.io/handsontable-ruleJS/lib/handsontable/handsontable.formula.js',
+//     'canculator'   => assets('js/canculator-debug.js'),
+// ]);
 registerScrips([
 	'handsontable' => assets('bower_components/handsontable/handsontable.full.min.js'),
     'spectrum' => assets('bower_components/spectrum/spectrum.js'),

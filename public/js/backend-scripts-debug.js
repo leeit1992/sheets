@@ -44,58 +44,52 @@
 
         colSheetFormat: function(){
             return [
-                        { // Trạng Thái
-                            editor: 'select',
-                            selectOptions: [OPDATA.user.all_info.user_code]
-                        },
-                        { // Ngày/Tháng
-                          type: 'date',
-                          dateFormat: 'DD/MM/YYYY',
-                          correctFormat: true,
-                          defaultDate: '01/01/2017'
-                        },
-                        { /** Người Mua **/ },
-                        { /** Người Order **/ },
-                        { /** Tên Mặt Hàng **/ },
-                        { /** Mã Hàng **/ },
+                { // User Code
+                    editor: 'select',
+                    selectOptions: [OPDATA.user.all_info.user_code]
+                },
+                { // Date
+                  type: 'date',
+                  dateFormat: 'DD/MM/YYYY',
+                  correctFormat: true,
+                  defaultDate: '01/01/2017'
+                },
+                { /** Buyer **/ },
+                { /** Name items **/ },
+                { /** Code Items **/ },
 
-                        { // Size
-                            type: 'numeric',
-                        },
-                        { /** Mầu **/ },
-                        { //Số Lượng
-                            type: 'numeric',
-                        },
-                        { // Giá Web
-                            type: 'numeric',
-                        },
-                        
-                        { /** Ship Web **/ },
-                        { /** Giảm Giá **/ },
+                { // Size
+                    type: 'numeric',
+                },
+                { /** Color **/ },
+                { //Quantity
+                    type: 'numeric',
+                },
+                { // Price On Website
+                    type: 'numeric',
+                },
+                
+                { /** Ship Web **/ },
+                { /** Coupon **/ },
 
-                        { // Giá Order
-                            type: 'numeric',
-                        },
-                        { // Thành Tiền
-                            type: 'numeric',
-                        },
-                        { // Ngày Hàng Về
-                            type: 'date',
-                            dateFormat: 'DD/MM/YYYY',
-                            correctFormat: true,
-                            defaultDate: '01/01/2017'
-                        },
-                        { /** Tracking Number **/ },
-                        { // Cân Nặng
-                            type: 'numeric'
-                        },
-                        { /** Link Hàng **/ },
-                        { // Trạng Thái
-                            editor: 'select',
-                            selectOptions: ['Oke', 'Out']
-                        },
-                        { /** Link Hàng **/ }
-                    ];
+                { // Price Order
+                    type: 'numeric',
+                },
+                { /** Link Items **/ },
+                { // Status
+                    editor: 'select',
+                    selectOptions: ['Oke', 'Out']
+                },
+                { //Day In Stock
+                    type: 'date',
+                    dateFormat: 'DD/MM/YYYY',
+                    correctFormat: true,
+                    defaultDate: '01/01/2017'
+                },
+                { // Weight
+                    type: 'numeric'
+                }
+            ]
         }
     }
 

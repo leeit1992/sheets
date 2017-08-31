@@ -42,6 +42,7 @@ $route->get('/sheets-manage','SheetsController@manageSheets');
 $route->post('/save-sheets','SheetsController@saveSheets');
 $route->get('/get-sheets','SheetsController@getSheets');
 $route->post('/send-sheet','SheetsController@sendSheet');
+$route->post('/share-sheet','SheetsController@shareSheet');
 
 /*=====  End of Sheets  ======*/
 

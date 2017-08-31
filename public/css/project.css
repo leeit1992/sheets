@@ -73,6 +73,14 @@
   left: 2px;
   top: -961px; }
 
+.op-icon-send-back {
+  left: 2px;
+  top: -1359px; }
+
+.op-icon-share-sheet {
+  left: 2px;
+  top: -1213px; }
+
 .op-toolbar-menu-button {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
@@ -235,9 +243,6 @@
     height: 50px; }
   #page-canculator .colHeader p, #op-page-handle-massages .colHeader p {
     margin: 0; }
-
-.sidebar_main_swipe .htCommentsContainer {
-  display: none; }
 
 #style_switcher {
   width: 50%;

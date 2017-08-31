@@ -27,6 +27,7 @@ class SheetsController extends baseController{
 		] ); 
 
 		$sheets = array();
+		$sheetShareStatus = false;
 
 		if( $id ) {
 			$condition = [ 
@@ -41,20 +42,28 @@ class SheetsController extends baseController{
 				$condition
 			);
 
-			if( empty( $sheets ) ) {
-				redirect( url('/error-404?url=' . $_SERVER['REDIRECT_URL']) );
+			$sheetShare = $this->mdSheet->getBy( 
+				['id' => $id]
+			);
+
+			if( isset( $sheetShare[0]['sheet_share'] ) ) {
+				$listShare = json_decode( $sheetShare[0]['sheet_share'] );
+
+				if( in_array(Session()->get('op_user_id'), $listShare) ) {
+					$sheets = $sheetShare;
+					$sheetShareStatus = true;
+				}else{
+					if( empty( $sheets ) ) {
+						redirect( url('/error-404?url=' . $_SERVER['REDIRECT_URL']) );
+					}
+				}
+
+			}else{
+				if( empty( $sheets ) ) {
+					redirect( url('/error-404?url=' . $_SERVER['REDIRECT_URL']) );
+				}
 			}
 
-			// if( 3 == $this->infoUser['meta']['user_role'] ) {
-			// 	$checkMes = $this->mdMessages->getBy([
-			// 		'op_sheet_id' => $id,
-			// 		'op_user_receiver' => $this->infoUser['id'],
-			// 	]);
-
-			// 	if( empty( $checkMes ) ) {
-			// 		redirect( url('/error-404?url=' . $_SERVER['REDIRECT_URL']) );
-			// 	}
-			// }
 		}else{
 			$autoRedirect = $this->mdSheet->getBy(['sheet_author' => Session()->get('op_user_id')]);
 
@@ -75,7 +84,8 @@ class SheetsController extends baseController{
 				'sheet'  => $sheets,
 				'mdUser' => $this->mdUser,
 				'mdMessages' => $this->mdMessages,
-				'listSheets' => $listSheets
+				'listSheets' => $listSheets,
+				'sheetShareStatus' => $sheetShareStatus,
 			]
 		);
 	}
@@ -116,9 +126,23 @@ class SheetsController extends baseController{
 			$sheetId = $request->get('sheetId');
 		}
 
+		$currentDataSheet = $request->get('sheetData');
+
+		if( 1 == $this->infoUser['meta']['user_role'] ) {
+			$currentDataSheet = json_decode($request->get('sheetData'));
+				
+			// remove emptry
+			foreach ($currentDataSheet as $key => $value) {
+				if( empty( $value[0] ) ) {
+					unset($currentDataSheet[$key]);
+				}
+			}
+		}
+		
+
 		$lastID = $this->mdSheet->save(
 			[
-				'sheet_content' => $request->get('sheetData'),
+				'sheet_content' => json_encode($currentDataSheet),
 				'sheet_author'  => $author,
 				'sheet_datetime' => date("Y-m-d H:i:s"),
 				'sheet_status'  => 1
@@ -189,6 +213,35 @@ class SheetsController extends baseController{
 		$log = 'User <b>' . $this->infoUser['name'] . '</b> send message to User <b>' . $userInfo[0]['user_name'] . '</b>';
 		// Set notice success
 		$this->mdLogs->add($this->mdLogs->logTemplate( $log, 'Messages'));
+	}
+
+	public function shareSheet(Request $request){
+		$this->mdSheet->save(
+			[
+				'sheet_share' => json_encode($request->get('listID')),
+			],
+			$request->get('sheetId')
+		);
+
+		foreach ($request->get('listID') as $userId) {
+			$this->mdMessages->save(
+				[
+					'op_messages'   => 'You have been share with link <a href="'.url('/view-sheet/' . $request->get('sheetId')).'">Here</a>',
+					'op_message_title'  => 'Notice System',
+					'op_user_send'  => Session()->get('op_user_id'),
+					'op_user_receiver' => $userId,
+					'op_sheet_id'   => '',
+					'op_datetime'   => date("Y-m-d H:i:s"),
+					'op_status'     => 1,
+					'op_type'       => 'notice',
+				]
+			);
+		}
+
+		echo json_encode([
+			'status' => true,
+			'socketId' => $request->get('listID')
+		]);
 	}
 
 }
