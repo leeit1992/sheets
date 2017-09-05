@@ -105,11 +105,10 @@ class MessagesController extends baseController{
 	}
 
 	public function removeMessages(Request $request){
-		if( 'send' == $request->get('type') ) {
+		if( 'notice' == $request->get('type') ) {
 			$check = $this->mdMessages->getBy( 
 				[
 					'op_user_send' => Session()->get('op_user_id'),
-					'op_type' => 'send'
 				]
 			);
 
@@ -121,7 +120,6 @@ class MessagesController extends baseController{
 			$check = $this->mdMessages->getBy( 
 				[
 					'op_user_receiver' => Session()->get('op_user_id'),
-					'op_type' => 'inbox'
 				]
 			);
 			
