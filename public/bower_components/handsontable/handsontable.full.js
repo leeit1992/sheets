@@ -11,10 +11,10 @@
  */
 /*jslint white: true, browser: true, plusplus: true, indent: 4, maxerr: 50 */
 
-//var Handsontable = { //class namespace
-//  plugins: {}, //plugin namespace
-//  helper: {} //helper namespace
-//};
+var Handsontable = { //class namespace
+ plugins: {}, //plugin namespace
+ helper: {} //helper namespace
+};
 
 var Handsontable = function (rootElement, userSettings) {
   userSettings = userSettings || {};
@@ -4300,7 +4300,7 @@ Handsontable.plugins = {};
       computedStyle = Handsontable.Dom.getComputedStyle(elem);
       if (computedStyle.prop !== "" && computedStyle.prop !== void 0) {
         return computedStyle.prop;
-      }
+      }WalkontableCellCoords
       return void 0;
     }
   };
@@ -16802,8 +16802,9 @@ Handsontable.plugins = {};
         deltas = getDeltas(start, end, _data, direction);
 
         Handsontable.hooks.run(this.instance, 'beforeAutofill', start, end, _data);
+        
         this.instance.populateFromArray(start.row, start.col, _data, end.row, end.col, 'autofill', null, direction, deltas);
-
+        console.log(deltas)
         this.instance.selection.setRangeStart(new WalkontableCellCoords(drag[0], drag[1]));
         this.instance.selection.setRangeEnd(new WalkontableCellCoords(drag[2], drag[3]));
 

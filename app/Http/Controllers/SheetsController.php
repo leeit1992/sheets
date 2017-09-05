@@ -23,7 +23,6 @@ class SheetsController extends baseController{
 		registerStyle( [
 		    'handsontable' => assets('bower_components/handsontable/handsontable.full.min.css'),
 		    'spectrum'     => assets('bower_components/spectrum/spectrum.css'),
-		    'samples'     => 'http://handsontable.github.io/handsontable-ruleJS/css/samples.css',
 		] ); 
 
 		$sheets = array();

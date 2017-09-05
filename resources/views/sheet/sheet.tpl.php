@@ -122,38 +122,41 @@ body>.content-preloader{
     <?php endif; ?>
     <div class="uk-notify uk-notify-bottom-right op-notify-js" style="display: none;"></div>
 </div>
-</style><!-- Ugly Hack due to jsFiddle issue: http://goo.gl/BUfGZ -->
 
-<script src="http://handsontable.github.io/handsontable-ruleJS/lib/jquery/jquery-1.10.2.js"></script>
-<script src="http://handsontable.github.io/handsontable-ruleJS/lib/handsontable/handsontable.full.js"></script>
 
 <?php
+
 // registerScrips([
+//     'pikaday' => assets('bower_components/handsontable/plugin/pikaday.js'),
+//     // 'handsontable' => assets('bower_components/handsontable/handsontable.full2.min.js'),
+//     'handsontable.full' => assets('bower_components/handsontable/handsontable.full.js'),
 //     'spectrum' => assets('bower_components/spectrum/spectrum.js'),
-//     'handsontable' => 'http://handsontable.github.io/handsontable-ruleJS/lib/handsontable/handsontable.full.js',
-//     'lodash' => 'http://handsontable.github.io/handsontable-ruleJS/lib/RuleJS/lib/lodash/lodash.js',
-//     'underscore.string' => 'http://handsontable.github.io/handsontable-ruleJS/lib/RuleJS/lib/underscore.string/underscore.string.js',
-//     'moment' => 'http://handsontable.github.io/handsontable-ruleJS/lib/RuleJS/lib/moment/moment.js',
-//     'numeral' => 'http://handsontable.github.io/handsontable-ruleJS/lib/RuleJS/lib/numeral/numeral.js',
-//     'numeric' => 'http://handsontable.github.io/handsontable-ruleJS/lib/RuleJS/lib/numericjs/numeric.js',
-//     'md5' => 'http://handsontable.github.io/handsontable-ruleJS/lib/RuleJS/lib/js-md5/md5.js',
-//     'jstat' => 'http://handsontable.github.io/handsontable-ruleJS/lib/RuleJS/lib/jstat/jstat.js',
-//     'formula' => 'http://handsontable.github.io/handsontable-ruleJS/lib/RuleJS/lib/formulajs/formula.js',
-//     'parser' => 'http://handsontable.github.io/handsontable-ruleJS/lib/RuleJS/js/parser.js',
-//     'ruleJS' => 'http://handsontable.github.io/handsontable-ruleJS/lib/RuleJS/js/ruleJS.js',
-//     'handsontable.formula' => 'http://handsontable.github.io/handsontable-ruleJS/lib/handsontable/handsontable.formula.js',
+//     'lodash' => assets('bower_components/handsontable/plugin/lodash.js'),
+//     'underscore.string' => assets('bower_components/handsontable/plugin/underscore.string.js'),
+//     'moment' => assets('bower_components/handsontable/plugin/moment.js'),
+//     'numeral' => assets('bower_components/handsontable/plugin/numeral.js'),
+//     'numeric' => assets('bower_components/handsontable/plugin/numeric.js'),
+//     'md5' => assets('bower_components/handsontable/plugin/md5.js'),
+//     'jstat' => assets('bower_components/handsontable/plugin/jstat.js'),
+//     'formula' => assets('bower_components/handsontable/plugin/formula.js'),
+//     'parser' => assets('bower_components/handsontable/plugin/parser.js'),
+//     'ruleJS' => assets('bower_components/handsontable/plugin/ruleJS.js'),
+//     'handsontable.formula' => assets('bower_components/handsontable/plugin/handsontable.formula.js'),
 //     'canculator'   => assets('js/canculator-debug.js'),
 // ]);
+
 registerScrips([
-	'handsontable' => assets('bower_components/handsontable/handsontable.full.min.js'),
+    // 'pikaday' => assets('bower_components/handsontable/plugin/pikaday.js'),
+    'handsontable' => assets('bower_components/handsontable/handsontable.full2.min.js'),
+	// 'handsontable.full' => assets('bower_components/handsontable/handsontable.full.js'),
     'spectrum' => assets('bower_components/spectrum/spectrum.js'),
-    'lodash' => assets('bower_components/handsontable/plugin/lodash.js'),
-    'underscore.string' => assets('bower_components/handsontable/plugin/underscore.string.js'),
-    'moment' => assets('bower_components/handsontable/plugin/moment.js'),
+ //    'lodash' => assets('bower_components/handsontable/plugin/lodash.js'),
+ //    'underscore.string' => assets('bower_components/handsontable/plugin/underscore.string.js'),
+ //    'moment' => assets('bower_components/handsontable/plugin/moment.js'),
     'numeral' => assets('bower_components/handsontable/plugin/numeral.js'),
     'numeric' => assets('bower_components/handsontable/plugin/numeric.js'),
-    'md5' => assets('bower_components/handsontable/plugin/md5.js'),
-    'jstat' => assets('bower_components/handsontable/plugin/jstat.js'),
+ //    'md5' => assets('bower_components/handsontable/plugin/md5.js'),
+ //    'jstat' => assets('bower_components/handsontable/plugin/jstat.js'),
     'formula' => assets('bower_components/handsontable/plugin/formula.js'),
     'parser' => assets('bower_components/handsontable/plugin/parser.js'),
     'ruleJS' => assets('bower_components/handsontable/plugin/ruleJS.js'),

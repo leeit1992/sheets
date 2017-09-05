@@ -32,7 +32,9 @@ var OP_CANCULATOR_MODEL = Backbone.Model.extend({
         return [
             { // User Code
                 editor: 'select',
-                selectOptions: [OPDATA.user.all_info.user_code]
+                selectOptions: function(r,c){
+                    return [ OPDATA.user.all_info.user_code + '-' + OPDATA.date + '-' + (r  + 1)];
+                },
             },
             { // Date
               type: 'date',
@@ -184,12 +186,11 @@ var OP_CANCULATOR = Backbone.View.extend({
             sheetContent = JSON.parse(sheetContent.val());
             sheetMeta    = JSON.parse(sheetMeta.val());
 
-
             $.each(sheetMeta, function(e, v){
                 if( v.comment ) {
                     sheetComment.push({row: v.row, col: v.col, comment: {value: v.comment.value}})
                 }
-            });
+            })
         }else{
             var sheetContent = [
                 // [
@@ -202,6 +203,17 @@ var OP_CANCULATOR = Backbone.View.extend({
             sheetComment = [];
         }
 
+        Handsontable.TextCell = {
+            editor: Handsontable.mobileBrowser ? Handsontable.editors.MobileTextEditor : Handsontable.editors.TextEditor,
+            renderer: Handsontable.renderers.TextRenderer,
+        };
+
+        Handsontable.NumericCell = {
+            editor: Handsontable.editors.NumericEditor,
+            renderer: Handsontable.renderers.NumericRenderer,
+            validator: Handsontable.NumericValidator,
+            dataType: 'number'
+        };
 
         this.opSheet = new Handsontable($sheet, {
             readOnly: ( window.sheetShareStatus ) ? true : false,
@@ -245,6 +257,7 @@ var OP_CANCULATOR = Backbone.View.extend({
             contextMenu: ( 2 == OPDATA.user.meta.user_role) ? false : true,
             comments: true,
             afterInit: function() {
+                
                 $("#HandsontableCopyPaste").css('position','absolute');
                 $("#HandsontableCopyPaste").css('top',0);
 
@@ -276,6 +289,15 @@ var OP_CANCULATOR = Backbone.View.extend({
                         self.setDataAtCell(limitRow-1,16,'');
                     }, 500 );  
                 }
+            },
+
+            AfterAutofill: function(startRow, startCol, fillData, endRow, endCol, pluginName, ff, directionOfDrag, deltas, self)
+            {
+
+                var test = new Array();
+             
+                test.push([this.getSourceDataArray(startRow - 1,startCol)[startRow - 1][startCol]])
+                return test;
             },
 
             afterFilter: function(conditionsStack){
@@ -349,10 +371,6 @@ var OP_CANCULATOR = Backbone.View.extend({
 
             },
 
-            afterRenderer: function(td, row, col, prop, value){
-                // console.log(row, col);
-            },
-
             afterSelection: function(r, c){
                 var self = this,
                     data = this.getDataAtCell(r,c),
@@ -370,7 +388,7 @@ var OP_CANCULATOR = Backbone.View.extend({
             },
 
             cells: function (row, col, prop) {
-                var cellProperties = {};
+                var cellProperties = this;
                 if( 2 == this.instance.sheetStatus && ( 2 == OPDATA.user.meta.user_role || 3 == OPDATA.user.meta.user_role )  ) {
                     cellProperties.readOnly = true;
                 }
@@ -394,15 +412,18 @@ var OP_CANCULATOR = Backbone.View.extend({
                 cellProperties.renderer = window.firstRowRenderer;
                 return cellProperties;
             },
+        
             cell: sheetComment
         });
+
 
         Handsontable.hooks.add('afterChange', function(changes) {
             var d = this; 
 
             if( changes ) {
-               var change = changes[0];
 
+               var change = changes[0];
+                d.setCellMeta(change[0], change[1], 'fomulas', change[3]);
                 if( 13 == change[1] ){
                     if( "Out" == change[3] ){
                         $(d.getCell(change[0], change[1])).css({'color': '#FF9800'});
@@ -410,10 +431,14 @@ var OP_CANCULATOR = Backbone.View.extend({
                         d.OpDataSheets[ change[0] + '-' + change[1] ] = d.getCellMeta(change[0], change[1]);
                     }
                 } 
+
+                if( 12 == change[1] ){
+                    d.setDataAtCell(5,3, '123');
+                }
+
             }
-            
-  
-        })
+        });
+
 
         Handsontable.hooks.add('afterSelectionEnd', function(rst, cst, re, ce) {
             var d = this; 
@@ -473,6 +498,7 @@ var OP_CANCULATOR = Backbone.View.extend({
             });
 
         });   
+
     },
 
     fixWidthCanculator: function() {
@@ -485,7 +511,8 @@ var OP_CANCULATOR = Backbone.View.extend({
     setColor: function() {
         window.firstRowRenderer = function(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
-            
+            Handsontable.TextCell.renderer.apply(this, arguments);
+           
             if( instance.OpDataSheets ) {
                 if( instance.OpDataSheets[row + '-' + col] ) {
                     var dataSheet       = instance.OpDataSheets[row + '-' + col];
@@ -522,7 +549,6 @@ var OP_CANCULATOR = Backbone.View.extend({
                     }
                 }
             }
-
         }
     },
 

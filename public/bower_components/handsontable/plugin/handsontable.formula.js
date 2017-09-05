@@ -170,18 +170,19 @@
 
     var beforeAutofillInsidePopulate = function(index, direction, data, deltas, iterators, selected) {
       var instance = this;
-
-      var r = index.row,
-          c = index.col,
+      var r = 0,
+          c = 0,
           value = data[r][c],
           delta = 0,
           rlength = data.length, // rows
           clength = data ? data[0].length : 0; //cols
-
+      
+      iterators = index;
       if (value[0] === '=') { // formula
 
         if (['down', 'up'].indexOf(direction) !== -1) {
-          delta = rlength * iterators.row;
+     
+          delta = rlength * iterators.row + 1;
         } else if (['right', 'left'].indexOf(direction) !== -1) {
           delta = clength * iterators.col;
         }
@@ -192,7 +193,6 @@
         }
 
       } else { // other value
-
         // increment or decrement  values for more than 2 selected cells
         if (rlength >= 2 || clength >= 2) {
 
@@ -396,12 +396,9 @@
 
         Handsontable.cellTypes['formula'] = formulaCell;
 
-        if( Handsontable.TextCell ) {
-          Handsontable.TextCell.renderer = formulaRenderer;
-          Handsontable.NumericCell.renderer = formulaRenderer;
-        }
-        
-      
+        Handsontable.TextCell.renderer = formulaRenderer;
+        Handsontable.NumericCell.renderer = formulaRenderer;
+
         instance.addHook('afterChange', afterChange);
         instance.addHook('beforeAutofillInsidePopulate', beforeAutofillInsidePopulate);
 

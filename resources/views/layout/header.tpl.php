@@ -29,7 +29,8 @@
         var socket = io.connect('http://127.0.0.1:8080');
         window.OPDATA = {
             adminUrl: "<?php echo url('/'); ?>",
-            user: <?php echo json_encode(  $userInfo ) ?>
+            user: <?php echo json_encode(  $userInfo ) ?>,
+            date: '<?php echo date('m') ?>'
         }
     </script>
 	
