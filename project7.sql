@@ -11,7 +11,7 @@
  Target Server Version : 50542
  File Encoding         : utf-8
 
- Date: 08/13/2017 23:52:50 PM
+ Date: 09/05/2017 08:42:45 AM
 */
 
 SET NAMES utf8;
@@ -27,7 +27,7 @@ CREATE TABLE `op_logs` (
   `logs` text,
   `log_datetime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=547 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 --  Table structure for `op_messages`
@@ -46,8 +46,9 @@ CREATE TABLE `op_messages` (
   `op_data_sheet` longtext CHARACTER SET latin1,
   `op_data_sheet_meta` longtext CHARACTER SET latin1,
   `op_accept_status` tinyint(4) DEFAULT NULL,
+  `op_user_start_send` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=172 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=450 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 --  Table structure for `op_sheetmeta`
@@ -59,7 +60,7 @@ CREATE TABLE `op_sheetmeta` (
   `meta_key` varchar(255) DEFAULT NULL,
   `meta_value` longtext,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=150 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 --  Table structure for `op_sheets`
@@ -73,8 +74,9 @@ CREATE TABLE `op_sheets` (
   `sheet_author` int(11) DEFAULT NULL,
   `sheet_datetime` datetime DEFAULT NULL,
   `sheet_status` tinyint(2) DEFAULT NULL,
+  `sheet_share` text COLLATE utf8_unicode_ci,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=92 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=188 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 --  Table structure for `op_usermeta`
@@ -86,7 +88,7 @@ CREATE TABLE `op_usermeta` (
   `meta_key` varchar(255) DEFAULT NULL,
   `meta_value` longtext,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=92 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=139 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 --  Table structure for `op_users`
@@ -104,6 +106,6 @@ CREATE TABLE `op_users` (
   `user_code` varchar(50) DEFAULT NULL,
   `user_color` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=latin1;
 
 SET FOREIGN_KEY_CHECKS = 1;
