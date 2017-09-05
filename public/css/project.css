@@ -243,6 +243,8 @@
     height: 50px; }
   #page-canculator .colHeader p, #op-page-handle-massages .colHeader p {
     margin: 0; }
+  #page-canculator .htCore td, #op-page-handle-massages .htCore td {
+    white-space: nowrap; }
 
 #style_switcher {
   width: 50%;

@@ -246,8 +246,8 @@ var OP_CANCULATOR = Backbone.View.extend({
             // rowHeights: 30,
             manualColumnMove: true,
             manualRowMove: true,
-            manualColumnResize: true,
-            manualRowResize: true,
+            manualColumnResize: false,
+            manualRowResize: false,
             minSpareRows: true,
             filters: true,
             dropdownMenu: ['filter_by_condition', 'filter_action_bar'],
@@ -433,7 +433,22 @@ var OP_CANCULATOR = Backbone.View.extend({
                 } 
 
                 if( 12 == change[1] ){
-                    d.setDataAtCell(5,3, '123');
+
+                    $.ajax({
+                        url: OPDATA.adminUrl + '/lech',
+                        type: "GET",
+                        data: {
+                            link: d.getDataAtCell(change[0],change[1]),
+                        },
+                        success: function(res) {
+                            var dataResult = JSON.parse(res);
+                           d.setDataAtCell(change[0],3, dataResult.title);
+                           d.setDataAtCell(change[0],8, dataResult.price);
+                           d.setDataAtCell(change[0],7, 1);
+                        } 
+                    });
+
+                    
                 }
 
             }
