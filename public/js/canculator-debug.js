@@ -732,6 +732,24 @@ var OP_CANCULATOR = Backbone.View.extend({
         }
 
         if( 3 == OPDATA.user.meta.user_role ){
+
+            var checkDataOpen = new Array();
+
+            $.each(this.opSheet.opAfterSelectionEnd, function(i, v){
+                if( 3 == v.col || 1 == v.col ) {
+            
+                    if( null == d.getDataAtCell(v.row, v.col) ) {
+                        checkDataOpen.push(1);
+                    }
+                }
+            });
+
+            if( 0 < checkDataOpen.length ) {
+                UIkit.modal.alert('Send sheet Error. <p>Please choose row data and please do not leave it blank row data !</p>');
+                $("#style_switcher").removeClass('switcher_active')
+                return false;
+            }
+
             if( $(e.currentTarget).closest('#style_switcher').hasClass('switcher_active') ) {
                 $.each(this.opSheet.opAfterSelectionEnd, function(i, v){
                     $(d.getCell(v.row, v.col)).css({'background': '#85817a'});
