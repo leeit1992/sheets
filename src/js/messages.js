@@ -158,7 +158,7 @@
 
 			altair_helpers.content_preloader_show();
 			$.ajax({
-				url: OPDATA.adminUrl + '/write-messages',
+				url: OPDATA.adminUrl + 'write-messages',
 				type: "POST",
 				data: data,
 				success: function(res) {
@@ -192,7 +192,7 @@
 				parrent = $('.op-mes-item-' + mesId);
 
 			$.ajax({
-				url: OPDATA.adminUrl + '/delete-messages',
+				url: OPDATA.adminUrl + 'delete-messages',
 				type: "POST",
 				data: {
 					id: mesId,
@@ -218,7 +218,7 @@
 			});
 
 			$.ajax({
-				url: OPDATA.adminUrl + '/delete-messages',
+				url: OPDATA.adminUrl + 'delete-messages',
 				type: "POST",
 				data: {
 					id: mesId,
@@ -251,7 +251,7 @@
 			}
 
 			$.ajax({
-				url: OPDATA.adminUrl + '/filter-messages',
+				url: OPDATA.adminUrl + 'filter-messages',
 				type: "GET",
 				data: {
 					value: $(e.currentTarget).val(),
@@ -281,7 +281,7 @@
 			}
 			
 			$.ajax({
-				url: OPDATA.adminUrl + '/update-inbox',
+				url: OPDATA.adminUrl + 'update-inbox',
 				type: "POST",
 				data: {
 					id: id,
@@ -315,7 +315,7 @@
 			altair_helpers.content_preloader_show();
 
 			$.ajax({
-				url: OPDATA.adminUrl + '/accept-sheet',
+				url: OPDATA.adminUrl + 'accept-sheet',
 				type: "POST",
 				data: {
 					mesId: id,
@@ -337,7 +337,7 @@
 				id = $(e.currentTarget).attr('data-id');
 			altair_helpers.content_preloader_show();
 			$.ajax({
-				url: OPDATA.adminUrl + '/sendback-inbox',
+				url: OPDATA.adminUrl + 'sendback-inbox',
 				type: "POST",
 				data: {
 					sheetData: JSON.stringify(this.opSheet.getData()),
@@ -366,7 +366,7 @@
 			altair_helpers.content_preloader_show();
 
 			$.ajax({
-				url: OPDATA.adminUrl + '/cancel-order',
+				url: OPDATA.adminUrl + 'cancel-order',
 				type: "POST",
 				data: {
 					mesId : id

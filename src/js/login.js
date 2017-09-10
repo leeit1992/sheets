@@ -100,7 +100,7 @@
 			altair_helpers.content_preloader_show();
 
 			$.ajax({
-				url: OPDATA.adminUrl + '/register-user',
+				url: OPDATA.adminUrl + 'register-user',
 				type: "POST",
 				data: { formdata: formdata },
 				success: function(res) {

@@ -33,7 +33,7 @@
 				type = $(e.currentTarget).attr('data-type');
 
 			$.ajax({
-				url: OPDATA.adminUrl + '/filter-logs',
+				url: OPDATA.adminUrl + 'filter-logs',
 				type: "GET",
 				data: {
 					key: key,
@@ -63,7 +63,7 @@
 				id = $(e.currentTarget).attr('data-id');
 
 			$.ajax({
-				url: OPDATA.adminUrl + '/remove-log',
+				url: OPDATA.adminUrl + 'remove-log',
 				type: "POST",
 				data: {
 					id: id,
@@ -77,7 +77,7 @@
 
 		clearLogs: function(){
 			$.ajax({
-				url: OPDATA.adminUrl + '/clear-logs',
+				url: OPDATA.adminUrl + 'clear-logs',
 				type: "POST",
 				data: {
 					type: 'clear',

@@ -136,12 +136,14 @@ class SheetsController extends baseController{
 					unset($currentDataSheet[$key]);
 				}
 			}
+
+			$currentDataSheet = json_encode($currentDataSheet);
 		}
 		
 
 		$lastID = $this->mdSheet->save(
 			[
-				'sheet_content' => json_encode($currentDataSheet),
+				'sheet_content' => $currentDataSheet,
 				'sheet_author'  => $author,
 				'sheet_datetime' => date("Y-m-d H:i:s"),
 				'sheet_status'  => 1

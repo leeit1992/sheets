@@ -95,7 +95,7 @@
 
     socket.on('user-' + OPDATA.user.id, function(data) {
         $.ajax({
-            url: OPDATA.adminUrl + '/autoload-inbox',
+            url: OPDATA.adminUrl + 'autoload-inbox',
             type: "GET",
             data: {
                 userId: OPDATA.user.id,
@@ -130,7 +130,7 @@
                     ');
                 });
 
-                $("body").append('<audio src="' + OPDATA.adminUrl + '/public/audio/newnotice.mp3" autoplay></audio>');
+                $("body").append('<audio src="' + OPDATA.adminUrl + 'public/audio/newnotice.mp3" autoplay></audio>');
             }
         });
     });

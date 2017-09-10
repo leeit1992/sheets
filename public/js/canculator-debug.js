@@ -435,7 +435,7 @@ var OP_CANCULATOR = Backbone.View.extend({
                 if( 12 == change[1] ){
 
                     $.ajax({
-                        url: OPDATA.adminUrl + '/lech',
+                        url: OPDATA.adminUrl + 'lech',
                         type: "GET",
                         data: {
                             link: d.getDataAtCell(change[0],change[1]),
@@ -690,19 +690,44 @@ var OP_CANCULATOR = Backbone.View.extend({
 
         var self = this, 
             d = this.opSheet;
+
         if( 2 == OPDATA.user.meta.user_role ){
+            var checkDataOpen = new Array();
+
             $.each(this.opSheet.opAfterSelectionEnd, function(i, v){
+                if( 3 == v.col || 1 == v.col ) {
+            
+                    if( null == d.getDataAtCell(v.row, v.col) ) {
+                        checkDataOpen.push(1);
+                    }
+                }
+            });
 
-                $(d.getCell(v.row, v.col)).css({'background': '#85817a'});
-                $(d.getCell(v.row, v.col)).css({'color': '#ffffff'});
-                d.setCellMeta(v.row, v.col, 'background', ' #85817a');
-                d.setCellMeta(v.row, v.col, 'color', '#ffffff');
-                d.setCellMeta(v.row, v.col, 'codeId', OPDATA.user.all_info.user_code + '-' + d.sheetId + '-' + window.ATLLIB.makeid() );
-                d.setCellMeta(v.row, v.col, 'sheetId', d.sheetId );
+            if( 0 < checkDataOpen.length ) {
+                UIkit.modal.alert('Send sheet Error. <p>Please choose row data and please do not leave it blank row data !</p>');
+                $("#style_switcher").removeClass('switcher_active')
+                return false;
+            }
 
-                var cellMeta = d.getCellMeta(v.row, v.col);
+            $.each(this.opSheet.opAfterSelectionEnd, function(i, v){
+                if( d.getDataAtCell(v.row, 3) ) {
 
-                d.OpDataSheets[ v.row + '-' + v.col ] = cellMeta;     
+                    if( 0 == v.col ) {
+                        d.setDataAtCell(v.row, v.col, OPDATA.user.all_info.user_code + '-' + OPDATA.date + '-' + (v.row  + 1))
+                    }
+
+                    $(d.getCell(v.row, v.col)).css({'background': '#85817a'});
+                    $(d.getCell(v.row, v.col)).css({'color': '#ffffff'});
+                    d.setCellMeta(v.row, v.col, 'background', ' #85817a');
+                    d.setCellMeta(v.row, v.col, 'color', '#ffffff');
+                    d.setCellMeta(v.row, v.col, 'codeId', OPDATA.user.all_info.user_code + '-' + d.sheetId + '-' + window.ATLLIB.makeid() );
+                    d.setCellMeta(v.row, v.col, 'sheetId', d.sheetId );
+
+                    var cellMeta = d.getCellMeta(v.row, v.col);
+
+                    d.OpDataSheets[ v.row + '-' + v.col ] = cellMeta;    
+                }
+                 
             });
         }
 
@@ -741,9 +766,22 @@ var OP_CANCULATOR = Backbone.View.extend({
 
         metaSelect = this.getCellMetaSelect(d);
 
+        var sendStatus = new Array();
+
+        $.each(rowSend, function(r, c){
+            if( !c[3] || !c[1]) {
+                sendStatus.push(1);
+            }
+        });
+
+        if( 0 < sendStatus.length ) {
+            UIkit.modal.alert('Send sheet Error. <p>Please choose row data and please do not leave it blank row data !</p>');
+            return false;
+        }
+       
         if(3 == OPDATA.user.meta.user_role) {
             $.ajax({
-                url: OPDATA.adminUrl + '/sendback-inbox',
+                url: OPDATA.adminUrl + 'sendback-inbox',
                 type: "POST",
                 data: {
                     sheetData: JSON.stringify(rowSend),
@@ -854,6 +892,8 @@ var OP_CANCULATOR = Backbone.View.extend({
             ordererId = $(e.currentTarget).attr('data-id'),
             dataUser = JSON.parse( $('textarea[name=op_orderer_'+ordererId+']').val() );
 
+        var sendStatus = new Array();
+
         if( ordererId ) {
 
             $.each(d.opAfterSelectionEnd, function(i, v){
@@ -927,9 +967,16 @@ var OP_CANCULATOR = Backbone.View.extend({
         var self     = this,
             d = this.opSheet;
 
+        var checkDataOpen = this.checkSelectBeforeSend(d.opAfterSelectionEnd);
+
+        if( 0 != checkDataOpen.length ) {
+               $(".atl-close").trigger('click');
+            return false;
+        }
+
         $.each(d.opAfterSelectionEnd, function(i, v){
 
-                if( 0 < d.getDataAtCell(v.row, 0).length ) {
+                if( null != d.getDataAtCell(v.row, 0) ) {
 
                     var metaCurrent = d.OpDataSheets[v.row + '-' + v.col];
                     
@@ -972,8 +1019,9 @@ var OP_CANCULATOR = Backbone.View.extend({
                 d.dataCellSelect.ce
             );
         metaSelect = this.getCellMetaSelect(d);
+
         $.ajax({
-            url: OPDATA.adminUrl + '/sendback-inbox',
+            url: OPDATA.adminUrl + 'sendback-inbox',
             type: "POST",
             data: {
                 sheetData: JSON.stringify(rowSend),
@@ -1001,7 +1049,7 @@ var OP_CANCULATOR = Backbone.View.extend({
         var listID = $("#op_sheet_share_list").val();
 
         $.ajax({
-            url: OPDATA.adminUrl + '/share-sheet',
+            url: OPDATA.adminUrl + 'share-sheet',
             type: "POST",
             data: {
                 listID: listID,
@@ -1021,6 +1069,26 @@ var OP_CANCULATOR = Backbone.View.extend({
             } 
         });
 
+    },
+
+    checkSelectBeforeSend : function(opAfterSelectionEnd){
+        var checkDataOpen = new Array();
+        var d = this.opSheet;
+
+        $.each(opAfterSelectionEnd, function(i, v){
+            if( 3 == v.col || 1 == v.col ) {
+        
+                if( null == d.getDataAtCell(v.row, v.col) ) {
+                    checkDataOpen.push(1);
+                }
+            }
+        });
+
+        if( 0 < checkDataOpen.length ) {
+            UIkit.modal.alert('Send sheet Error. <p>Please choose row data and please do not leave it blank row data !</p>');
+        }
+
+        return checkDataOpen;
     }
 
 });

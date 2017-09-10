@@ -21,7 +21,7 @@
                         }
 
                         $titleSheet = 'Month';
-                        if( 1 == $infoUser['meta']['user_role'] ) {
+                        if( 1 == $userCurrent['meta']['user_role'] ) {
                             $sheetI = 1; 
                             $titleSheet = 'Sheet';
                         }

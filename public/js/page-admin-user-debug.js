@@ -126,7 +126,7 @@
 
 			altair_helpers.content_preloader_show();
 			$.ajax({
-				url: OPDATA.adminUrl + '/validate-user',
+				url: OPDATA.adminUrl + 'validate-user',
 				type: "POST",
 				data: formdata,
 				processData: false,
@@ -150,7 +150,7 @@
 							$('.atl-notify-js', self.el).fadeOut();
 						}, 3000);
 					} else {
-						window.location = location.href = OPDATA.adminUrl + '/edit-user/' + dataResult.id;
+						window.location = location.href = OPDATA.adminUrl + 'edit-user/' + dataResult.id;
 					}
 
 				}
@@ -172,7 +172,7 @@
 				roleStatus: $('a', e.currentTarget).attr('data-role')
 			};
 
-			$.get(OPDATA.adminUrl + '/ajax-manage-user', data, function(result) {
+			$.get(OPDATA.adminUrl + 'ajax-manage-user', data, function(result) {
 
 				var dataResult = JSON.parse(result);
 				$(".atl-list-user-js", self.el).html(dataResult.output);
@@ -191,7 +191,7 @@
 				var data = {
 					id: dataID
 				};
-				$.post(OPDATA.adminUrl + '/delete-user', data, function(result) {
+				$.post(OPDATA.adminUrl + 'delete-user', data, function(result) {
 
 					$(e.currentTarget).closest('tr').remove();
 
@@ -226,7 +226,7 @@
 				var data = {
 					id: argsID
 				};
-				$.post(OPDATA.adminUrl + '/delete-user', data, function(result) {
+				$.post(OPDATA.adminUrl + 'delete-user', data, function(result) {
 					var dataResult = JSON.parse(result);
 					$.each(argsID, function(i, el) {
 						$(".atl-user-item-" + el).remove();
@@ -267,7 +267,7 @@
 				altair_helpers.content_preloader_hide();
 			}
 
-			$.get(OPDATA.adminUrl + '/ajax-manage-user', data, function(result) {
+			$.get(OPDATA.adminUrl + 'ajax-manage-user', data, function(result) {
 				var dataResult = JSON.parse(result);
 				$(".atl-list-user-js", self.el).html(dataResult.output);
 				altair_helpers.content_preloader_hide();
