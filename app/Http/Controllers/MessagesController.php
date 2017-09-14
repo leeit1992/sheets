@@ -353,6 +353,13 @@ class MessagesController extends baseController{
 
 			if( empty( $currentDataSheet ) ) {
 				$currentDataSheet = $sheetDataMegeArgs;
+			}	
+
+			if( !empty( $currentMetaSheet ) ) {
+				if( count( $listRowEmpty ) != $totalRow ) {
+					$firstValue = array_keys($listRowEmpty);
+					unset($listRowEmpty[$firstValue[0]]);
+				}	
 			}
 
 			if( !empty( $currentDataSheet ) ) {

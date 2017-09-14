@@ -111,6 +111,16 @@
         </div>
     </div>
     <div class="op-toolbar-separator op-inline-block" style="user-select: none;">&nbsp;</div>
+    <div class="op-toolbar-menu-button op-toolbar-color-menu-button op-inline-block op-toolbar-menu-button">
+        <div class="op-toolbar-menu-button-outer-box" data-uk-tooltip="{pos:'bottom'}" data-uk-modal="{target:'#op_sheet_transfer'}" title="Transfer sheet">
+            <div class="op-icon op-inline-block" style="user-select: none;">
+                <div class="op-icon-img-container op-icon-img op-icon-transfer-sheet" style="user-select: none;">&nbsp;</div>
+
+            </div>
+            <div class="op-toolbar-combo-button-dropdown op-inline-block " style="user-select: none;">&nbsp;</div>
+        </div>
+    </div>
+    <div class="op-toolbar-separator op-inline-block" style="user-select: none;">&nbsp;</div>
     <?php endif; ?>
     <!-- <div class="op-toolbar-menu-button op-toolbar-color-menu-button op-inline-block op-toolbar-menu-button">
         <div class="op-toolbar-menu-button-outer-box" data-uk-tooltip="{pos:'bottom'}" data-uk-modal="{target:'#op_sheet_filter'}" title="Filter">
@@ -126,4 +136,5 @@
 <?php View('sheet/layout/sheetOrderer.tpl', ['mdUser' => $mdUser]) ?>
 <?php View('sheet/layout/sheetSendback.tpl', ['mdUser' => $mdUser]) ?>
 <?php View('sheet/layout/sheetShare.tpl', ['mdUser' => $mdUser, 'sheet' => $sheet]) ?>
+<?php View('sheet/layout/sheetTransfer.tpl', ['mdSheet' => $mdSheet, 'sheet' => $sheet]) ?>
 <?php endif; ?>

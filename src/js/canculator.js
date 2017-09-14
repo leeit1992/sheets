@@ -129,6 +129,7 @@ var OP_CANCULATOR = Backbone.View.extend({
         'click #op_sheet_order .atl-close': 'closeSetOrderer',
         'click .op-apply-sendback': 'adminSendBack',
         'click .op-apply-share-sheet': 'shareSheet',
+        'click .op-apply-transfer-sheet': 'transferSheet',
     },
 
     initialize: function() {
@@ -1088,6 +1089,49 @@ var OP_CANCULATOR = Backbone.View.extend({
             } 
         });
 
+    },
+
+    transferSheet: function(){
+        
+        var self = this, 
+            d = this.opSheet;
+
+        if( undefined == d.dataCellSelect ) {
+            UIkit.modal.alert('Please choose row before transfer sheet.');
+            return false;
+        }
+
+        if( undefined == d.dataCellSelect ) {
+            UIkit.modal.alert('Please choose row before transfer sheet.');
+            return false;
+        }
+
+        var 
+            metaSelect = {},
+            rowSend = d.getSourceDataArray(
+                d.dataCellSelect.rst,
+                d.dataCellSelect.cst,
+                d.dataCellSelect.re,
+                d.dataCellSelect.ce
+            );
+        var sheetId = $("#op_sheet_transfer_list").val();
+        metaSelect = this.getCellMetaSelect(d);
+
+        altair_helpers.content_preloader_show();
+        $.ajax({
+            url: OPDATA.adminUrl + 'transfer-sheet',
+            type: "POST",
+            data: {
+                sheetData: JSON.stringify(rowSend),
+                sheetMeta: JSON.stringify(metaSelect),
+                sheetId: sheetId,
+            },
+            success: function(res) {
+                $(".uk-modal-close").trigger('click');
+                altair_helpers.content_preloader_hide();
+                UIkit.modal.alert('Transfer success!');
+            } 
+        });
     },
 
     checkSelectBeforeSend : function(opAfterSelectionEnd){

@@ -51,7 +51,7 @@ body>.content-preloader{
                                 echo '<li class="'.$active.'"><a href="'. url('/view-sheet/'.$sheetNav['id']) .'">'.$titleSheet.' '.($_i).'</a></li>';
                             } ?>
                         </ul>
-                        <?php View('sheet/layout/sheetToolbar.tpl', ['mdUser' => $mdUser, 'infoUser' => $infoUser, 'sheet' => $sheet] ) ?>
+                        <?php View('sheet/layout/sheetToolbar.tpl', ['mdUser' => $mdUser, 'infoUser' => $infoUser, 'sheet' => $sheet, 'mdSheet' => $mdSheet] ) ?>
                         <div class="op-fx">
                             <div class="op-fx--icon">
                                 <div class="op-icon op-inline-block" style="user-select: none;">

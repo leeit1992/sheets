@@ -80,6 +80,7 @@ class SheetsController extends baseController{
 			'sheet/sheet.tpl',
 			[
 				'infoUser' => $this->infoUser,
+				'mdSheet' => $this->mdSheet,
 				'sheet'  => $sheets,
 				'mdUser' => $this->mdUser,
 				'mdMessages' => $this->mdMessages,
@@ -244,6 +245,194 @@ class SheetsController extends baseController{
 			'status' => true,
 			'socketId' => $request->get('listID')
 		]);
+	}
+
+	public function transferSheet(Request $request){
+		$infoSheet = $this->mdSheet->getBy( 
+						[
+							'id' => $request->get('sheetId')
+						]
+					);
+		$dataSheetInbox = json_decode($request->get('sheetData'));
+		$totalRow = count($dataSheetInbox);
+
+		// Get current sheet data
+		if( is_array( json_decode($infoSheet[0]['sheet_content']) ) ) {
+
+			$currentDataSheet = json_decode($infoSheet[0]['sheet_content']);
+			// Get row empty
+			$listRowEmpty = $this->getRowEmpty($currentDataSheet, $totalRow);
+
+		}else{
+			$currentDataSheet = array();
+		}
+
+		// Get current sheet meta data
+		if( is_array( json_decode($infoSheet[0]['sheet_meta'], true) ) ) {
+			$currentMetaSheet = json_decode($infoSheet[0]['sheet_meta'], true);
+		}else{
+			$currentMetaSheet = array();
+		}
+
+		$newMetaSheet = array();
+		$dataSheetMetaInbox = json_decode($request->get('sheetMeta'));
+
+		$ccol = 0;
+		$crow = 0;
+		foreach ($dataSheetMetaInbox as $key => $value) {
+			$_crow = 0;
+			$_ccol = $ccol;
+		
+			if( $_crow < $totalRow ) {
+				$_crow = $crow += 1;
+			}
+
+			if( $crow == $totalRow ) {
+				$crow = 0;
+				$_ccol = $ccol++;
+				
+			}
+
+			if( 16 == $ccol) {
+				$ccol = 0;
+			}
+
+			$newMetaSheet[($_crow-1).'-'.$_ccol] = $value;
+		}
+
+		// Merge sheet to meta sheet
+		$nextKey = 0;
+		$nextRow = count($dataSheetInbox);
+		$sheetDataMegeArgs = [];
+		foreach ($dataSheetInbox as $key => $value) {
+
+			$_nextRow = $nextRow++;
+			$newDataSheetUpdate = [];
+			foreach ($value as $_key => $_value) {
+				$metaOrder = $nextKey++;
+				if( 15 == $metaOrder ) {
+					$nextKey = 0;
+				}
+				
+				$newDataSheetUpdate[$metaOrder] = $newMetaSheet[$key . '-' . $metaOrder];
+			}
+
+			$sheetDataMegeArgs[] = [
+				'data' => $value,
+				'meta' => $newDataSheetUpdate
+			];
+		}
+
+		if( empty( $currentDataSheet ) ) {
+			$currentDataSheet = $sheetDataMegeArgs;
+		}
+
+		if( !empty( $currentMetaSheet ) ) {
+			if( count( $listRowEmpty ) != $totalRow ) {
+				$firstValue = array_keys($listRowEmpty);
+				unset($listRowEmpty[$firstValue[0]]);
+			}
+			
+		}
+		
+		if( !empty( $currentDataSheet ) ) {
+			$iDinbox = 0;
+			foreach ($listRowEmpty as $key => $value) {
+				$_iDinbox = $iDinbox++;
+
+				if( empty( $currentMetaSheet ) ) {
+					$key = $key - 1;
+				}
+			
+				$currentDataSheet[$key] = $sheetDataMegeArgs[$_iDinbox];
+				
+			}
+		}
+
+		$newSaveSheetData = [];
+		foreach ($currentDataSheet as $row => $value) {
+
+			$data = $value;
+
+			if( isset( $value['data'] ) ) {
+
+				$data  = $value['data'];
+
+				foreach ($value['meta'] as $col => $valueM) {
+					$keyMeta = $row . '-' . $col;
+
+					$valueM->rCtm = $valueM->row; // Sheet row of customer
+					$valueM->cCtm = $valueM->col; // Sheet col of customer
+					$valueM->row = $row;
+					$valueM->col = $col;
+					$valueM->background = '';
+					$valueM->color = '';
+					
+					$currentMetaSheet[$keyMeta] = $valueM;
+
+					
+					if( 1 == $this->infoUser['meta']['user_role'] ) {
+						$valueM->sIdCtm = $valueM->sheetId; // Sheet id of customer
+						$valueM->readOnly = 'false';
+					}
+
+				}
+			}
+
+			$newSaveSheetData[$row] = $data;
+		}
+
+		$this->mdSheet->save(
+				[
+					'sheet_content' => json_encode($newSaveSheetData),
+				],
+				$request->get('sheetId')
+			);
+
+		/**
+		 * Add meta data for user.
+		 */
+		$sheetMeta = [
+			'sheet_meta' => json_encode($currentMetaSheet),
+		];
+
+		// Loop add add | update meta data.
+		foreach ($sheetMeta as $mtaKey => $metaValue) {
+			$this->mdSheet->setMetaData( $request->get('sheetId'), $mtaKey, $metaValue );
+		}
+
+	}
+
+	public function getRowEmpty($currentDataSheet, $totalRow){
+		$listRowEmpty = [];
+		foreach ($currentDataSheet as $key => $value) {
+			if( empty( $value[0] ) && 
+				empty( $value[1] ) && 
+				empty( $value[2] ) && 
+				empty( $value[3] ) ) 
+			{	
+				if( count($listRowEmpty) < $totalRow ){
+					if( empty( $listRowEmpty[$key] ) ) {
+						for($i = 0; $i < $totalRow; $i++){
+							
+							if( null != $currentDataSheet[$key+$i][1] ) {
+								$listRowEmpty = [];
+							}
+
+							$listRowEmpty[$key + 1 + $i] = $key + 1 + $i;
+						}
+
+						if( null != $currentDataSheet[$totalRow + $key][1] ) {
+							$listRowEmpty = [];
+						}
+					}
+					
+				}
+				
+			}
+		}
+
+		return $listRowEmpty;
 	}
 
 }
