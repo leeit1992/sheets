@@ -227,11 +227,24 @@ class MessagesController extends baseController{
 	}
 
 	public function acceptSheet(Request $request){
+		$listRowEmpty = [];
+
 		$infoMes = $this->mdMessages->getBy( 
 						[
 							'id' => $request->get('mesId')
 						]
 					);
+		// Data sheet from inbox
+		$dataSheetInbox = json_decode($infoMes[0]['op_data_sheet']);
+
+		// remove emptry
+		foreach ($dataSheetInbox as $key => $value) {
+			if( empty( $value[0] ) ) {
+				unset($dataSheetInbox[$key]);
+			}
+		}
+		$totalRow = count($dataSheetInbox);
+
 		// Send notice inbox to user.
 		$this->mdMessages->save(
 			[
@@ -258,33 +271,24 @@ class MessagesController extends baseController{
 					);
 
 		if( !empty( $infoMes ) && !empty( $infoSheet ) ) {
-
+			$listRowEmpty = [];
 			// Get current sheet data
 			if( is_array( json_decode($infoSheet[0]['sheet_content']) ) ) {
+
 				$currentDataSheet = json_decode($infoSheet[0]['sheet_content']);
 				
 				// remove emptry
-				foreach ($currentDataSheet as $key => $value) {
-					if( empty( $value[0] ) ) {
-						unset($currentDataSheet[$key]);
-					}
-				}
+				// foreach ($currentDataSheet as $key => $value) {
+				// 	if( empty( $value[0] ) ) {
+				// 		unset($currentDataSheet[$key]);
+				// 	}
+				// }
+				// Get row empty
+				$listRowEmpty = $this->getRowEmpty($currentDataSheet, $totalRow);
 
 			}else{
 				$currentDataSheet = array();
 			}
-
-			// Data sheet from inbox
-			$dataSheetInbox = json_decode($infoMes[0]['op_data_sheet']);
-
-			// remove emptry
-			foreach ($dataSheetInbox as $key => $value) {
-				if( empty( $value[0] ) ) {
-					unset($dataSheetInbox[$key]);
-				}
-			}
-
-			$totalRow = count($dataSheetInbox);
 
 			// Get current sheet meta data
 			if( is_array( json_decode($infoSheet[0]['sheet_meta'], true) ) ) {
@@ -319,9 +323,10 @@ class MessagesController extends baseController{
 				$newMetaSheet[($_crow-1).'-'.$_ccol] = $value;
 			}
 
+			// Merge sheet to meta sheet
 			$nextKey = 0;
 			$nextRow = count($dataSheetInbox);
-			
+			$sheetDataMegeArgs = [];
 			foreach ($dataSheetInbox as $key => $value) {
 
 				$_nextRow = $nextRow++;
@@ -335,10 +340,32 @@ class MessagesController extends baseController{
 					$newDataSheetUpdate[$metaOrder] = $newMetaSheet[$key . '-' . $metaOrder];
 				}
 
-				$currentDataSheet[] = [
+				// $currentDataSheet[] = [
+				// 	'data' => $value,
+				// 	'meta' => $newDataSheetUpdate
+				// ];
+		
+				$sheetDataMegeArgs[] = [
 					'data' => $value,
 					'meta' => $newDataSheetUpdate
 				];
+			}
+
+			if( empty( $currentDataSheet ) ) {
+				$currentDataSheet = $sheetDataMegeArgs;
+			}
+
+			if( !empty( $currentDataSheet ) ) {
+				$iDinbox = 0;
+				foreach ($listRowEmpty as $key => $value) {
+					$_iDinbox = $iDinbox++;
+
+					if( empty( $currentMetaSheet ) ) {
+						$key = $key - 1;
+					}
+					
+					$currentDataSheet[$key] = $sheetDataMegeArgs[$_iDinbox];
+				}
 			}
 
 			$newSaveSheetData = [];
@@ -376,7 +403,6 @@ class MessagesController extends baseController{
 
 				$newSaveSheetData[$row] = $data;
 			}
-
 
 			$this->mdSheet->save(
 				[
@@ -810,6 +836,38 @@ class MessagesController extends baseController{
 			);
 
 		}
+	}
+
+	public function getRowEmpty($currentDataSheet, $totalRow){
+		$listRowEmpty = [];
+		foreach ($currentDataSheet as $key => $value) {
+			if( empty( $value[0] ) && 
+				empty( $value[1] ) && 
+				empty( $value[2] ) && 
+				empty( $value[3] ) ) 
+			{	
+				if( count($listRowEmpty) < $totalRow ){
+					if( empty( $listRowEmpty[$key] ) ) {
+						for($i = 0; $i < $totalRow; $i++){
+							
+							if( null != $currentDataSheet[$key+$i][1] ) {
+								$listRowEmpty = [];
+							}
+
+							$listRowEmpty[$key + 1 + $i] = $key + 1 + $i;
+						}
+
+						if( null != $currentDataSheet[$totalRow + $key][1] ) {
+							$listRowEmpty = [];
+						}
+					}
+					
+				}
+				
+			}
+		}
+
+		return $listRowEmpty;
 	}
 
 }

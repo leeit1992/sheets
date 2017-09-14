@@ -256,6 +256,7 @@ var OP_CANCULATOR = Backbone.View.extend({
             formulas: true,
             contextMenu: ( 2 == OPDATA.user.meta.user_role) ? false : true,
             comments: true,
+
             afterInit: function() {
                 
                 $("#HandsontableCopyPaste").css('position','absolute');
@@ -281,14 +282,16 @@ var OP_CANCULATOR = Backbone.View.extend({
                 }
 
                 if( 2 == OPDATA.user.meta.user_role || 3 == OPDATA.user.meta.user_role ){
-                    setTimeout(function(){
-                        var limitRow = sheetContent.length;
-                        
-                        limitRow = 100;
-                        
-                        self.setDataAtCell(limitRow-1,16,'');
-                    }, 500 );  
+                    
                 }
+
+                setTimeout(function(){
+                    var limitRow = sheetContent.length;
+                    
+                    limitRow = 100;
+                    
+                    self.setDataAtCell(limitRow-1,16,'');
+                }, 500 );  
             },
 
             AfterAutofill: function(startRow, startCol, fillData, endRow, endCol, pluginName, ff, directionOfDrag, deltas, self)
@@ -446,9 +449,7 @@ var OP_CANCULATOR = Backbone.View.extend({
                            d.setDataAtCell(change[0],8, dataResult.price);
                            d.setDataAtCell(change[0],7, 1);
                         } 
-                    });
-
-                    
+                    });  
                 }
 
             }

@@ -141,7 +141,8 @@ class LoginController extends baseController{
 					$this->addSheetDefault(
 						$lastID,
 						[
-							'sheetTitle' => $this->slug( $formData['register_username'] . '-' . $i )
+							'sheetTitle' => $this->slug( $formData['register_username'] . '-' . $i ),
+							'sheetContent' => $this->autoCreatDataSheetEmpty()
 						]
 					);
 				}
@@ -210,7 +211,7 @@ class LoginController extends baseController{
 			[
 				'sheet_title'   => $args['sheetTitle'],
 				'sheet_description' => '',
-				'sheet_content' => '[]',
+				'sheet_content' => isset( $args['sheetContent'] ) ? json_encode($args['sheetContent']) : '[]',
 				'sheet_author'  => $uerId,
 				'sheet_datetime' => date("Y-m-d H:i:s"),
 				'sheet_status'  => 1

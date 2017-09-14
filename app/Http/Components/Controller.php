@@ -219,4 +219,30 @@ class Controller extends baseController{
         $str = $lower ? strtolower($str) : $str;
         return $str;
     }
+
+    public function autoCreatDataSheetEmpty(){
+    	$data = [];
+		for ($i = 0; $i <= 100; $i++) { 
+			$data[] = [
+					    null,
+					    null,
+					    null,
+					    null,
+					    null,
+					    null,
+					    null,
+					    null,
+					    null,
+					    null,
+					    null,
+					    null,
+					    null,
+					    null,
+					    null,
+					    null
+					 ];
+		}
+
+		return $data;
+    }
 }

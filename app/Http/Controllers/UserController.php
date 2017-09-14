@@ -171,7 +171,12 @@ class UserController extends baseController{
 					
 					if( !isset( $formData['atl_user_id'] ) ) {
 						for ($i = 0; $i < 6; $i++) { 
-							$this->addSheetDefault($lastID, ['sheetTitle' => $formData['atl_user_name'] . ' ' . $i ]);
+							$this->addSheetDefault($lastID, 
+								[
+									'sheetTitle' => $formData['atl_user_name'] . ' ' . $i,
+									'sheetContent' => $this->autoCreatDataSheetEmpty()
+								]
+							);
 						}
 					}
 					
@@ -332,7 +337,7 @@ class UserController extends baseController{
 			[
 				'sheet_title'   => $args['sheetTitle'],
 				'sheet_description' => '',
-				'sheet_content' => '[]',
+				'sheet_content' => isset( $args['sheetContent'] ) ? json_encode($args['sheetContent']) : '[]',
 				'sheet_author'  => $uerId,
 				'sheet_datetime' => date("Y-m-d H:i:s"),
 				'sheet_status'  => 1

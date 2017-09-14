@@ -127,18 +127,19 @@ class SheetsController extends baseController{
 
 		$currentDataSheet = $request->get('sheetData');
 
-		if( 1 == $this->infoUser['meta']['user_role'] ) {
-			$currentDataSheet = json_decode($request->get('sheetData'));
-				
-			// remove emptry
-			foreach ($currentDataSheet as $key => $value) {
-				if( empty( $value[0] ) ) {
-					unset($currentDataSheet[$key]);
-				}
-			}
+		// if( 1 == $this->infoUser['meta']['user_role'] ) {
+		// 	$currentDataSheetDecode = json_decode($request->get('sheetData'));
+			
+		// 	// remove emptry
+		// 	foreach ($currentDataSheetDecode as $key => $value) {
+		// 		if( empty( $value[1] ) && empty( $value[3] ) ) {
+		// 			unset($currentDataSheetDecode[$key]);
+		// 		}
+		// 	}
+			
+		// 	$currentDataSheet = json_encode($currentDataSheetDecode, true);
 
-			$currentDataSheet = json_encode($currentDataSheet);
-		}
+		// }
 		
 
 		$lastID = $this->mdSheet->save(
