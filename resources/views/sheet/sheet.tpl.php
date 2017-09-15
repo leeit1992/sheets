@@ -35,7 +35,7 @@ body>.content-preloader{
 
                             $titleSheet = 'Month';
                             if( 1 == $infoUser['meta']['user_role'] ) {
-                                $i = 0; 
+                                $i = 1; 
                                 $titleSheet = 'Sheet';
                             }
                              

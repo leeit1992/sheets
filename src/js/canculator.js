@@ -413,6 +413,10 @@ var OP_CANCULATOR = Backbone.View.extend({
                     }
                 }
 
+                if( 1 == OPDATA.user.meta.user_role ) {
+                    cellProperties.readOnly = false;
+                }
+
                 cellProperties.renderer = window.firstRowRenderer;
                 return cellProperties;
             },

@@ -351,10 +351,6 @@ class MessagesController extends baseController{
 				];
 			}
 
-			if( empty( $currentDataSheet ) ) {
-				$currentDataSheet = $sheetDataMegeArgs;
-			}	
-
 			if( !empty( $currentMetaSheet ) ) {
 				if( count( $listRowEmpty ) != $totalRow ) {
 					$firstValue = array_keys($listRowEmpty);
@@ -366,9 +362,10 @@ class MessagesController extends baseController{
 				$iDinbox = 0;
 				foreach ($listRowEmpty as $key => $value) {
 					$_iDinbox = $iDinbox++;
+					$key = $key - 1;
 
-					if( empty( $currentMetaSheet ) ) {
-						$key = $key - 1;
+					if( $key < 0 ) {
+						$key = 0;
 					}
 					
 					$currentDataSheet[$key] = $sheetDataMegeArgs[$_iDinbox];

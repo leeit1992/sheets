@@ -23,9 +23,9 @@
                             $sheetI = 1; 
                             $titleSheet = 'Sheet';
                             foreach ($listSheetAuthor as $key => $value) {
-                                if( $sheet[0]['id'] != $value['id'] ){
-                                    echo '<option value="' . $value['id'] . '">'. $titleSheet . ' ' . ($sheetI++) . '</option>';
-                                }
+                                
+                                echo '<option value="' . $value['id'] . '">'. $titleSheet . ' ' . ($sheetI++) . '</option>';
+                                
                             } ?>
                         </select>
                     </p>

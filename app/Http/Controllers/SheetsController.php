@@ -331,8 +331,7 @@ class SheetsController extends baseController{
 			if( count( $listRowEmpty ) != $totalRow ) {
 				$firstValue = array_keys($listRowEmpty);
 				unset($listRowEmpty[$firstValue[0]]);
-			}
-			
+			}	
 		}
 		
 		if( !empty( $currentDataSheet ) ) {
@@ -340,8 +339,10 @@ class SheetsController extends baseController{
 			foreach ($listRowEmpty as $key => $value) {
 				$_iDinbox = $iDinbox++;
 
-				if( empty( $currentMetaSheet ) ) {
-					$key = $key - 1;
+				$key = $key - 1;
+					
+				if( $key < 0 ) {
+					$key = 0;
 				}
 			
 				$currentDataSheet[$key] = $sheetDataMegeArgs[$_iDinbox];
@@ -370,7 +371,7 @@ class SheetsController extends baseController{
 					
 					$currentMetaSheet[$keyMeta] = $valueM;
 
-					
+
 					if( 1 == $this->infoUser['meta']['user_role'] ) {
 						$valueM->sIdCtm = $valueM->sheetId; // Sheet id of customer
 						$valueM->readOnly = 'false';
