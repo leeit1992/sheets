@@ -127,6 +127,21 @@ class SheetModel extends AtlModel
 		]);
 	}
 
+	public function deleteByAuthor( $id ){
+		$listSheet = $this->getBy('sheet_author', $id);
+		foreach ($listSheet as $value) {
+			$this->deleteMetaData( $value['id'] );
+		}
+		
+		return $this->db->delete(
+			$this->table,
+			[
+			"AND" => [
+				"sheet_author" => $id
+			]
+		]);
+	}
+
 	/**
 	 * Handle search by key
 	 * 

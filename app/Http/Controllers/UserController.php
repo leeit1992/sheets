@@ -306,6 +306,7 @@ class UserController extends baseController{
 		$output = $this->mdUser->delete( $id );
 		// Remove metadata
 		$this->mdUser->deleteMetaData( $id );
+		
 		if (is_array($id)) {
 			//Loop list user_id
 			foreach ($id as $value) {
@@ -315,12 +316,15 @@ class UserController extends baseController{
 				if (file_exists($linkAvatar)) {
 					unlink($linkAvatar);
 				}
+
+				$this->mdSheet->deleteByAuthor($value);
 			}
 		}else{
 			$linkAvatar =  FOLDER_UPLOAD . '/avatar_user/avatar-user-' . $id . '.png';
 			if (file_exists($linkAvatar)) {
 				unlink($linkAvatar);
 			}
+			$this->mdSheet->deleteByAuthor($id);
 		}
 		$message['status'] = true;
 		if( empty( $request->get('id') ) ){
