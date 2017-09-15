@@ -48,7 +48,7 @@ class SheetsController extends baseController{
 			if( isset( $sheetShare[0]['sheet_share'] ) ) {
 				$listShare = json_decode( $sheetShare[0]['sheet_share'] );
 
-				if( in_array(Session()->get('op_user_id'), $listShare) ) {
+				if( !empty( $listShare ) && in_array(Session()->get('op_user_id'), $listShare) ) {
 					$sheets = $sheetShare;
 					$sheetShareStatus = true;
 				}else{
