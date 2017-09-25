@@ -783,10 +783,10 @@ var OP_CANCULATOR = Backbone.View.extend({
                 d.dataCellSelect.ce
             );
 
-        if( 0 == $("textarea[name=op_mes_description]").val().length ) {
-            UIkit.modal.alert('Please choose receiver!');
-            return false;
-        }
+        // if( 0 == $("textarea[name=op_mes_description]").val().length ) {
+        //     UIkit.modal.alert('Please choose receiver!');
+        //     return false;
+        // }
 
         metaSelect = this.getCellMetaSelect(d);
 
