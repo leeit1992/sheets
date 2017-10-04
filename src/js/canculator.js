@@ -130,6 +130,8 @@ var OP_CANCULATOR = Backbone.View.extend({
         'click .op-apply-sendback': 'adminSendBack',
         'click .op-apply-share-sheet': 'shareSheet',
         'click .op-apply-transfer-sheet': 'transferSheet',
+        'click .op-apply-add-row-sheet': 'addRowSheet',
+
     },
 
     initialize: function() {
@@ -783,10 +785,10 @@ var OP_CANCULATOR = Backbone.View.extend({
                 d.dataCellSelect.ce
             );
 
-        // if( 0 == $("textarea[name=op_mes_description]").val().length ) {
-        //     UIkit.modal.alert('Please choose receiver!');
-        //     return false;
-        // }
+        if( 0 == $("textarea[name=op_mes_description]").val().length ) {
+            UIkit.modal.alert('Please enter the description!');
+            return false;
+        }
 
         metaSelect = this.getCellMetaSelect(d);
 
@@ -1156,6 +1158,21 @@ var OP_CANCULATOR = Backbone.View.extend({
         }
 
         return checkDataOpen;
+    },
+
+    addRowSheet: function(){
+        var self = this, 
+            d = this.opSheet,
+            numberRows = $("input[name=op_number_row_sheet]").val();
+     
+        if(numberRows == parseInt(numberRows, 10) ) {
+
+            d.setDataAtCell(numberRows,16,' ');
+            $(".uk-modal-close").trigger('click');
+             
+        }else{
+            $('#table').handsontable('setDataAtCell', 0, 0, 'new value');
+        }
     }
 
 });

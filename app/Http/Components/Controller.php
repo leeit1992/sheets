@@ -106,6 +106,7 @@ class Controller extends baseController{
 				'/logs',
 				'/filter-logs',
 				'/clear-logs',
+				'/add-sheet',
 			];
 		}
 

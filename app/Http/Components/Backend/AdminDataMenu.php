@@ -72,6 +72,12 @@ class AdminDataMenu
                         'display' => '',
                         'conditionOpen' => ['handleSheet'],
                     ],
+                    [
+                        'label' => 'Add sheet',
+                        'link'  => url('/add-sheet'),
+                        'display' => ( 2 == $userMeta['user_role'] ) ? 'none' : '',
+                        'conditionOpen' => ['addNewSheet'],
+                    ]
                     // [
                     //     'label' => 'Sheets management',
                     //     'link'  => url('/sheets-manage'),

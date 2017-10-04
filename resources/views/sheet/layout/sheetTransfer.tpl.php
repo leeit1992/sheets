@@ -1,6 +1,6 @@
  <?php
     $listSheetAuthor = $mdSheet->getBy(['sheet_author' => Session()->get('op_user_id')]);
- ?>
+    ?>
 <style type="text/css">
 .uk-datepicker {
     z-index: 9999;
@@ -19,13 +19,26 @@
                 <div class="uk-width-large-1-1">
                     <p>
                         <select id="op_sheet_transfer_list" data-md-selectize>
-                            <?php 
-                            $sheetI = 1; 
+                            <?php
+
+                            $sheetI = 1;
+                            if (6 < date('m')) {
+                                $sheetI = 7;
+                            }
+
+                            $titleSheet = 'Month';
+                            if (1 == $infoUser['meta']['user_role']) {
+                                $sheetI = 1;
+                                $titleSheet = 'Sheet';
+                            }
+                            
                             $titleSheet = 'Sheet';
+                            if (1 != $infoUser['meta']['user_role']) {
+                                $titleSheet = 'Month';
+                            }
+                            
                             foreach ($listSheetAuthor as $key => $value) {
-                                
                                 echo '<option value="' . $value['id'] . '">'. $titleSheet . ' ' . ($sheetI++) . '</option>';
-                                
                             } ?>
                         </select>
                     </p>

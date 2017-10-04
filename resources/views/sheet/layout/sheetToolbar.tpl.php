@@ -80,7 +80,7 @@
     </div> -->
     <div class="op-toolbar-separator op-inline-block" style="user-select: none;">&nbsp;</div>
 
-    <?php if( 1 == $infoUser['meta']['user_role'] ) : ?>
+    <?php if (1 == $infoUser['meta']['user_role']) : ?>
     <div class="op-toolbar-menu-button op-toolbar-color-menu-button op-inline-block op-toolbar-menu-button">
         <div class="op-toolbar-menu-button-outer-box" data-uk-tooltip="{pos:'bottom'}" data-uk-modal="{target:'#op_sheet_order'}" title="Add Orderer">
             <div class="op-icon op-inline-block" style="user-select: none;">
@@ -111,6 +111,9 @@
         </div>
     </div>
     <div class="op-toolbar-separator op-inline-block" style="user-select: none;">&nbsp;</div>
+    
+    <?php endif; ?>
+
     <div class="op-toolbar-menu-button op-toolbar-color-menu-button op-inline-block op-toolbar-menu-button">
         <div class="op-toolbar-menu-button-outer-box" data-uk-tooltip="{pos:'bottom'}" data-uk-modal="{target:'#op_sheet_transfer'}" title="Transfer sheet">
             <div class="op-icon op-inline-block" style="user-select: none;">
@@ -121,7 +124,17 @@
         </div>
     </div>
     <div class="op-toolbar-separator op-inline-block" style="user-select: none;">&nbsp;</div>
-    <?php endif; ?>
+
+    <div class="op-toolbar-menu-button op-toolbar-color-menu-button op-inline-block op-toolbar-menu-button">
+        <div class="op-toolbar-menu-button-outer-box" data-uk-tooltip="{pos:'bottom'}" data-uk-modal="{target:'#op_sheet_add_row'}" title="Add rows sheet">
+            <div class="op-icon op-inline-block" style="user-select: none;">
+                <div class="op-icon-img-container op-icon-img op-icon-add-row-sheet" style="user-select: none;">&nbsp;</div>
+
+            </div>
+            <div class="op-toolbar-combo-button-dropdown op-inline-block " style="user-select: none;">&nbsp;</div>
+        </div>
+    </div>
+    <div class="op-toolbar-separator op-inline-block" style="user-select: none;">&nbsp;</div>
     <!-- <div class="op-toolbar-menu-button op-toolbar-color-menu-button op-inline-block op-toolbar-menu-button">
         <div class="op-toolbar-menu-button-outer-box" data-uk-tooltip="{pos:'bottom'}" data-uk-modal="{target:'#op_sheet_filter'}" title="Filter">
             <div class="op-icon op-inline-block" style="user-select: none;">
@@ -132,9 +145,10 @@
     </div>
     <div class="op-toolbar-separator op-inline-block" style="user-select: none;">&nbsp;</div> -->
 </div>
-<?php if( 1 == $infoUser['meta']['user_role'] ) : ?>
+<?php if (1 == $infoUser['meta']['user_role']) : ?>
 <?php View('sheet/layout/sheetOrderer.tpl', ['mdUser' => $mdUser]) ?>
 <?php View('sheet/layout/sheetSendback.tpl', ['mdUser' => $mdUser]) ?>
 <?php View('sheet/layout/sheetShare.tpl', ['mdUser' => $mdUser, 'sheet' => $sheet]) ?>
-<?php View('sheet/layout/sheetTransfer.tpl', ['mdSheet' => $mdSheet, 'sheet' => $sheet]) ?>
 <?php endif; ?>
+<?php View('sheet/layout/sheetTransfer.tpl', ['mdSheet' => $mdSheet, 'sheet' => $sheet, 'infoUser' => $infoUser]) ?>
+<?php View('sheet/layout/addRowsSheet.tpl', ['mdSheet' => $mdSheet, 'sheet' => $sheet, 'infoUser' => $infoUser]) ?>

@@ -38,6 +38,16 @@ body>.content-preloader{
                                 $i = 1; 
                                 $titleSheet = 'Sheet';
                             }
+
+                            foreach ($listSheetsOther as $sheetOther) {
+                                $active = '';
+                                if( !empty( $sheet ) ) {
+                                    if( $sheet[0]['id'] == $sheetOther['id'] ) {
+                                        $active = 'uk-active';
+                                    }
+                                }
+                                echo '<li class="'.$active.'"><a href="'. url('/view-sheet/'.$sheetOther['id']) .'">'.$sheetOther['sheet_title'].'</a></li>';
+                            }
                              
                             foreach( $listSheets as $sheetNav ) { 
                                 $_i = $i++;

@@ -72,7 +72,13 @@ class SheetsController extends baseController{
 		}
 
 		$listSheets = $this->mdSheet->getBy( [
-			'sheet_author' => Session()->get('op_user_id')
+			'sheet_author' => Session()->get('op_user_id'),
+			'sheet_status' => 1
+		] );
+
+		$listSheetsOther = $this->mdSheet->getBy( [
+			'sheet_author' => Session()->get('op_user_id'),
+			'sheet_status' => 2
 		] );
 
 		// Load layout.
@@ -86,6 +92,7 @@ class SheetsController extends baseController{
 				'mdMessages' => $this->mdMessages,
 				'listSheets' => $listSheets,
 				'sheetShareStatus' => $sheetShareStatus,
+				'listSheetsOther' => $listSheetsOther,
 			]
 		);
 	}
@@ -366,7 +373,7 @@ class SheetsController extends baseController{
 					$valueM->cCtm = $valueM->col; // Sheet col of customer
 					$valueM->row = $row;
 					$valueM->col = $col;
-					$valueM->background = '';
+					// $valueM->background = '';
 					$valueM->color = '';
 					
 					$currentMetaSheet[$keyMeta] = $valueM;
@@ -376,6 +383,7 @@ class SheetsController extends baseController{
 						$valueM->sIdCtm = $valueM->sheetId; // Sheet id of customer
 						$valueM->readOnly = 'false';
 					}
+					$valueM->readOnly = 'false';
 
 				}
 			}
@@ -435,5 +443,56 @@ class SheetsController extends baseController{
 
 		return $listRowEmpty;
 	}
+
+	public function addNewSheet(){
+		// Load layout.
+		return $this->loadTemplate(
+			'sheet/addSheet.tpl',
+			[
+				'listUser' => $this->mdUser->getAll()
+			]
+		);
+	}
+
+	public function handleAddSheet(Request $request){
+		if( $request->get('op_user_id') ) {
+			foreach ($request->get('op_user_id') as $id) {
+				$this->addSheetDefault($id, 
+					[
+						'sheetTitle' => $request->get('op_sheet_name'),
+						'sheetContent' => $this->autoCreatDataSheetEmpty()
+					]
+				);
+			}
+		}
+
+	}
+
+	public function addSheetDefault( $uerId, $args ){
+		$lastID = $this->mdSheet->save(
+			[
+				'sheet_title'   => $args['sheetTitle'],
+				'sheet_description' => '',
+				'sheet_content' => isset( $args['sheetContent'] ) ? json_encode($args['sheetContent']) : '[]',
+				'sheet_author'  => $uerId,
+				'sheet_datetime' => date("Y-m-d H:i:s"),
+				'sheet_status'  => 2
+			]
+		);
+
+		/**
+		 * Add meta data for user.
+		 */
+		$sheetMeta = [
+			'sheet_meta' => '[]',
+		];
+
+		// Loop add add | update meta data.
+		foreach ($sheetMeta as $mtaKey => $metaValue) {
+			$this->mdSheet->setMetaData( $lastID, $mtaKey, $metaValue );
+		}
+
+	}
+
 
 }

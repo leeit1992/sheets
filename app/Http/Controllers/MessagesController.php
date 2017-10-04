@@ -7,871 +7,853 @@ use App\Model\MessagesModel;
 use App\Model\UserModel;
 use App\Model\SheetModel;
 
-class MessagesController extends baseController{
+class MessagesController extends baseController
+{
 
-	public function __construct(){
-		parent::__construct();
-		$this->userAccess();
+    public function __construct()
+    {
+        parent::__construct();
+        $this->userAccess();
 
-		$this->mdMessages = new MessagesModel;
-		$this->mdUser = new UserModel;
-		$this->mdSheet = new SheetModel;
-	}
+        $this->mdMessages = new MessagesModel;
+        $this->mdUser = new UserModel;
+        $this->mdSheet = new SheetModel;
+    }
 
-	public function writeMessages(Request $request){
+    public function writeMessages(Request $request)
+    {
 
-		if(  $request->Get('formData') ) {
-			parse_str($request->get('formData'), $formData);
-			if ( !empty( $formData['op_sheet'] ) ) {
-				$this->mdSheet->save(
-					[
-						'sheet_status'  => 2
-					],
-					$formData['op_sheet']
-				);
-			}
-			$this->mdMessages->save(
-				[
-					'op_sheet_id'  => $formData['op_sheet'],
-					'op_messages'  => $formData['op_messages'],
-					'op_message_title'  => $formData['op_title'],
-					'op_user_send' => Session()->get('op_user_id'),
-					'op_user_receiver' => $formData['op_receiver'],
-					'op_datetime'  => date("Y-m-d H:i:s"),
-					'op_status'    => 1,
-					'op_type'      => 'send'
-				]
-			);
+        if ($request->Get('formData')) {
+            parse_str($request->get('formData'), $formData);
+            if (!empty($formData['op_sheet'])) {
+                $this->mdSheet->save(
+                    [
+                        'sheet_status'  => 2
+                    ],
+                    $formData['op_sheet']
+                );
+            }
+            $this->mdMessages->save(
+                [
+                    'op_sheet_id'  => $formData['op_sheet'],
+                    'op_messages'  => $formData['op_messages'],
+                    'op_message_title'  => $formData['op_title'],
+                    'op_user_send' => Session()->get('op_user_id'),
+                    'op_user_receiver' => $formData['op_receiver'],
+                    'op_datetime'  => date("Y-m-d H:i:s"),
+                    'op_status'    => 1,
+                    'op_type'      => 'send'
+                ]
+            );
 
-			$this->mdMessages->save(
-				[
-					'op_sheet_id'  => $formData['op_sheet'],
-					'op_messages'  => $formData['op_messages'],
-					'op_message_title'  => $formData['op_title'],
-					'op_user_send' => Session()->get('op_user_id'),
-					'op_user_receiver' => $formData['op_receiver'],
-					'op_datetime'  => date("Y-m-d H:i:s"),
-					'op_status'    => 1,
-					'op_type'      => 'inbox'
-				]
-			);
-	
-			$userInfo = $this->mdUser->getUserBy('id',$formData['op_receiver']);
+            $this->mdMessages->save(
+                [
+                    'op_sheet_id'  => $formData['op_sheet'],
+                    'op_messages'  => $formData['op_messages'],
+                    'op_message_title'  => $formData['op_title'],
+                    'op_user_send' => Session()->get('op_user_id'),
+                    'op_user_receiver' => $formData['op_receiver'],
+                    'op_datetime'  => date("Y-m-d H:i:s"),
+                    'op_status'    => 1,
+                    'op_type'      => 'inbox'
+                ]
+            );
+    
+            $userInfo = $this->mdUser->getUserBy('id', $formData['op_receiver']);
 
-			$log = 'User <b>' . $this->infoUser['name'] . '</b> send message to User <b>' . $userInfo[0]['user_name'] . '</b>';
-			// Set notice success
-			$this->mdLogs->add($this->mdLogs->logTemplate( $log, 'Messages'));
-		}
+            $log = 'User <b>' . $this->infoUser['name'] . '</b> send message to User <b>' . $userInfo[0]['user_name'] . '</b>';
+            // Set notice success
+            $this->mdLogs->add($this->mdLogs->logTemplate($log, 'Messages'));
+        }
+    }
 
-	}
+    public function messageNotice()
+    {
+        $this->manageMessages('notice');
+    }
 
-	public function messageNotice(){
-		$this->manageMessages( 'notice' );
-	}
+    public function manageMessages($type = null)
+    {
+        
+        if (!$type) {
+            $type = 'inbox';
+        }
+        
+        registerStyle([
+            'handsontable' => assets('bower_components/handsontable/handsontable.full.min.css'),
+        ]);
 
-	public function manageMessages( $type = null ){
-		
-		if( !$type ) {
-			$type = 'inbox';
-		}
-		
-		registerStyle( [
-		    'handsontable' => assets('bower_components/handsontable/handsontable.full.min.css'),
-		] ); 
+        $condition['op_user_receiver'] = Session()->get('op_user_id');
+        $condition['op_type'] = $type;
+        $condition['ORDER'] = [
+                        'id' => 'DESC'
+                    ];
 
-		$condition['op_user_receiver'] = Session()->get('op_user_id');
-		$condition['op_type'] = $type;
-		$condition['ORDER'] = [
-						'id' => 'DESC'
-					];
+        $listMessages = $this->mdMessages->getBy(
+            $condition
+        );
 
-		$listMessages = $this->mdMessages->getBy( 
-			$condition
-		);
+        $listSheets = $this->mdSheet->getBy(['sheet_author' => Session()->get('op_user_id')]);
 
-		$listSheets = $this->mdSheet->getBy(['sheet_author' => Session()->get('op_user_id')]);
+        // Load layout.
+        return $this->loadTemplate(
+            'messages/inbox.tpl',
+            [
+                'pageType' => $type,
+                'listMessages' => $listMessages,
+                'mdUser'  => $this->mdUser,
+                'listSheets' => $listSheets,
+                'userCurrent' => $this->infoUser
+            ]
+        );
+    }
 
-		// Load layout.
-		return $this->loadTemplate(
-			'messages/inbox.tpl',
-			[
-				'pageType' => $type,
-				'listMessages' => $listMessages,
-				'mdUser'  => $this->mdUser,
-				'listSheets' => $listSheets,
-				'userCurrent' => $this->infoUser
-			]
-		);
-	}
+    public function removeMessages(Request $request)
+    {
+        if ('notice' == $request->get('type')) {
+            $check = $this->mdMessages->getBy(
+                [
+                    'op_user_send' => Session()->get('op_user_id'),
+                ]
+            );
 
-	public function removeMessages(Request $request){
-		if( 'notice' == $request->get('type') ) {
-			$check = $this->mdMessages->getBy( 
-				[
-					'op_user_send' => Session()->get('op_user_id'),
-				]
-			);
+            if (!empty($check)) {
+                $this->mdMessages->delete($request->get('id'));
+            }
+        }
+        if ('inbox' == $request->get('type')) {
+            $check = $this->mdMessages->getBy(
+                [
+                    'op_user_receiver' => Session()->get('op_user_id'),
+                ]
+            );
+            
+            if (!empty($check)) {
+                $this->mdMessages->delete($request->get('id'));
+            }
+        }
+    }
 
-			if( !empty( $check ) ) {
-				$this->mdMessages->delete($request->get('id'));
-			}
-		}
-		if( 'inbox' == $request->get('type') ) {
-			$check = $this->mdMessages->getBy( 
-				[
-					'op_user_receiver' => Session()->get('op_user_id'),
-				]
-			);
-			
-			if( !empty( $check ) ) {
-				$this->mdMessages->delete($request->get('id'));
-			}
-		}
-	}
+    public function filterMessages(Request $request)
+    {
 
-	public function filterMessages(Request $request){
+        $output = '';
+        switch ($request->get('type')) {
+            case 'search':
+                $condition['op_message_title[~]'] = $request->get('value');
+                $condition['op_type'] = $request->get('typeMes');
+                $condition['ORDER'] = [
+                            'id' => 'DESC'
+                    ];
+                $listMessages = $this->mdMessages->getBy(
+                    $condition
+                );
+                
+                ob_start();
+                View(
+                    'messages/layout/listMesJs.tpl',
+                    [
+                        'listMessages' => $listMessages,
+                        'mdUser'  => $this->mdUser,
+                        'typeMes' => $request->get('typeMes')
+                    ]
+                );
+                $output .= ob_get_clean();
+                break;
 
-		$output = '';
-		switch ($request->get('type')) {
-			case 'search':
-				$condition['op_message_title[~]'] = $request->get('value');
-				$condition['op_type'] = $request->get('typeMes');
-				$condition['ORDER'] = [
-							'id' => 'DESC'
-					];
-				$listMessages = $this->mdMessages->getBy( 
-					$condition
-				);
-				
-				ob_start();
-				View(
-					'messages/layout/listMesJs.tpl',
-					[
-						'listMessages' => $listMessages,
-						'mdUser'  => $this->mdUser,
-						'typeMes' => $request->get('typeMes')
-					]
-				);
-				$output .= ob_get_clean();
-			break;
+            case 'filter-user':
+                if ('inbox' == $request->get('typeMes')) {
+                    $condition['op_user_send'] = $request->get('value');
+                } else {
+                    $condition['op_user_send'] = $request->get('value');
+                    $condition['op_user_receiver'] = Session()->get('op_user_id');
+                }
 
-			case 'filter-user':
+                $condition['op_type'] = $request->get('typeMes');
+                $condition['ORDER'] = [
+                            'id' => 'DESC'
+                    ];
 
-				if( 'inbox' == $request->get('typeMes') ) {
-					$condition['op_user_send'] = $request->get('value');
-				}else{
-					$condition['op_user_send'] = $request->get('value');
-					$condition['op_user_receiver'] = Session()->get('op_user_id');
-				}
+                $listMessages = $this->mdMessages->getBy(
+                    $condition
+                );
+                
+                ob_start();
+                View(
+                    'messages/layout/listMesJs.tpl',
+                    [
+                        'listMessages' => $listMessages,
+                        'mdUser'  => $this->mdUser,
+                        'typeMes' => $request->get('typeMes')
+                    ]
+                );
+                $output .= ob_get_clean();
+                break;
 
-				$condition['op_type'] = $request->get('typeMes');
-				$condition['ORDER'] = [
-							'id' => 'DESC'
-					];
+            case 'filter-date':
+                $condition['op_datetime[~]'] = date('Y-m-d', strtotime($request->get('value')));
+                $condition['op_type'] = $request->get('typeMes');
+                $condition['ORDER'] = [
+                            'id' => 'DESC'
+                    ];
+                $listMessages = $this->mdMessages->getBy(
+                    $condition
+                );
+                
+                ob_start();
+                View(
+                    'messages/layout/listMesJs.tpl',
+                    [
+                        'listMessages' => $listMessages,
+                        'mdUser'  => $this->mdUser,
+                        'typeMes' => $request->get('typeMes')
+                    ]
+                );
+                $output .= ob_get_clean();
+                break;
+        }
 
-				$listMessages = $this->mdMessages->getBy( 
-					$condition
-				);
-				
-				ob_start();
-				View(
-					'messages/layout/listMesJs.tpl',
-					[
-						'listMessages' => $listMessages,
-						'mdUser'  => $this->mdUser,
-						'typeMes' => $request->get('typeMes')
-					]
-				);
-				$output .= ob_get_clean();
-			break;
+        echo json_encode([
+            'data' => $output
+        ]);
+    }
 
-			case 'filter-date':
+    public function updateInbox(Request $request)
+    {
+        if (1 == $request->get('mStatus')) {
+            $this->mdMessages->save(
+                [
+                    'op_status'    => 2,
+                ],
+                $request->get('id')
+            );
+        }
+    }
 
-				$condition['op_datetime[~]'] = date( 'Y-m-d', strtotime( $request->get('value') ) );
-				$condition['op_type'] = $request->get('typeMes');
-				$condition['ORDER'] = [
-							'id' => 'DESC'
-					];
-				$listMessages = $this->mdMessages->getBy( 
-					$condition
-				);
-				
-				ob_start();
-				View(
-					'messages/layout/listMesJs.tpl',
-					[
-						'listMessages' => $listMessages,
-						'mdUser'  => $this->mdUser,
-						'typeMes' => $request->get('typeMes')
-					]
-				);
-				$output .= ob_get_clean();
-			break;
-			
-		}
+    public function acceptSheet(Request $request)
+    {
+        $listRowEmpty = [];
 
-		echo json_encode([
-			'data' => $output
-		]);
-	}
+        $infoMes = $this->mdMessages->getBy(
+            [
+                            'id' => $request->get('mesId')
+                        ]
+        );
+        // Data sheet from inbox
+        $dataSheetInbox = json_decode($infoMes[0]['op_data_sheet']);
 
-	public function updateInbox(Request $request){
-		if( 1 == $request->get('mStatus') ) {
-			$this->mdMessages->save(
-				[
-					'op_status'    => 2,
-				], $request->get('id')
-			);
-		}
-		
-	}
+        // remove emptry
+        foreach ($dataSheetInbox as $key => $value) {
+            if (empty($value[0])) {
+                unset($dataSheetInbox[$key]);
+            }
+        }
+        $totalRow = count($dataSheetInbox);
 
-	public function acceptSheet(Request $request){
-		$listRowEmpty = [];
+        // Send notice inbox to user.
+        $this->mdMessages->save(
+            [
+                'op_messages'   => 'Your data has been moderated and accepted.',
+                'op_message_title'  => 'System notice.',
+                'op_user_send'  => Session()->get('op_user_id'),
+                'op_user_receiver' => $infoMes[0]['op_user_send'],
+                'op_sheet_id'   => $infoMes[0]['op_sheet_id'],
+                'op_datetime'   => date("Y-m-d H:i:s"),
+                'op_status'     => 1,
+                'op_type'       => 'notice',
+                'op_data_sheet' => $infoMes[0]['op_data_sheet'],
+                'op_data_sheet_meta' => $infoMes[0]['op_data_sheet_meta'],
+            ]
+        );
 
-		$infoMes = $this->mdMessages->getBy( 
-						[
-							'id' => $request->get('mesId')
-						]
-					);
-		// Data sheet from inbox
-		$dataSheetInbox = json_decode($infoMes[0]['op_data_sheet']);
+        // Change status messages
+        $this->mdMessages->save(['op_status' => 3], $request->get('mesId'));
 
-		// remove emptry
-		foreach ($dataSheetInbox as $key => $value) {
-			if( empty( $value[0] ) ) {
-				unset($dataSheetInbox[$key]);
-			}
-		}
-		$totalRow = count($dataSheetInbox);
+        $infoSheet = $this->mdSheet->getBy(
+            [
+                            'id' => $request->get('sheetId')
+                        ]
+        );
 
-		// Send notice inbox to user.
-		$this->mdMessages->save(
-			[
-				'op_messages'   => 'Your data has been moderated and accepted.',
-				'op_message_title'  => 'System notice.',
-				'op_user_send'  => Session()->get('op_user_id'),
-				'op_user_receiver' => $infoMes[0]['op_user_send'],
-				'op_sheet_id'   => $infoMes[0]['op_sheet_id'],
-				'op_datetime'   => date("Y-m-d H:i:s"),
-				'op_status'     => 1,
-				'op_type'       => 'notice',
-				'op_data_sheet' => $infoMes[0]['op_data_sheet'],
-				'op_data_sheet_meta' => $infoMes[0]['op_data_sheet_meta'],
-			]
-		);
+        if (!empty($infoMes) && !empty($infoSheet)) {
+            $listRowEmpty = [];
+            // Get current sheet data
+            if (is_array(json_decode($infoSheet[0]['sheet_content']))) {
+                $currentDataSheet = json_decode($infoSheet[0]['sheet_content']);
+                
+                // remove emptry
+                // foreach ($currentDataSheet as $key => $value) {
+                // 	if( empty( $value[0] ) ) {
+                // 		unset($currentDataSheet[$key]);
+                // 	}
+                // }
+                // Get row empty
+                $listRowEmpty = $this->getRowEmpty($currentDataSheet, $totalRow);
+            } else {
+                $currentDataSheet = array();
+            }
 
-		// Change status messages
-		$this->mdMessages->save( ['op_status' => 3], $request->get('mesId') );
+            // Get current sheet meta data
+            if (is_array(json_decode($infoSheet[0]['sheet_meta'], true))) {
+                $currentMetaSheet = json_decode($infoSheet[0]['sheet_meta'], true);
+            } else {
+                $currentMetaSheet = array();
+            }
 
-		$infoSheet = $this->mdSheet->getBy( 
-						[
-							'id' => $request->get('sheetId')
-						]
-					);
+            $newMetaSheet = array();
+            $dataSheetMetaInbox = json_decode($infoMes[0]['op_data_sheet_meta']);
+    
+            $ccol = 0;
+            $crow = 0;
+            foreach ($dataSheetMetaInbox as $key => $value) {
+                $_crow = 0;
+                $_ccol = $ccol;
+            
+                if ($_crow < $totalRow) {
+                    $_crow = $crow += 1;
+                }
 
-		if( !empty( $infoMes ) && !empty( $infoSheet ) ) {
-			$listRowEmpty = [];
-			// Get current sheet data
-			if( is_array( json_decode($infoSheet[0]['sheet_content']) ) ) {
+                if ($crow == $totalRow) {
+                    $crow = 0;
+                    $_ccol = $ccol++;
+                }
 
-				$currentDataSheet = json_decode($infoSheet[0]['sheet_content']);
-				
-				// remove emptry
-				// foreach ($currentDataSheet as $key => $value) {
-				// 	if( empty( $value[0] ) ) {
-				// 		unset($currentDataSheet[$key]);
-				// 	}
-				// }
-				// Get row empty
-				$listRowEmpty = $this->getRowEmpty($currentDataSheet, $totalRow);
+                if (16 == $ccol) {
+                    $ccol = 0;
+                }
 
-			}else{
-				$currentDataSheet = array();
-			}
+                $newMetaSheet[($_crow-1).'-'.$_ccol] = $value;
+            }
 
-			// Get current sheet meta data
-			if( is_array( json_decode($infoSheet[0]['sheet_meta'], true) ) ) {
-				$currentMetaSheet = json_decode($infoSheet[0]['sheet_meta'], true);
-			}else{
-				$currentMetaSheet = array();
-			}
+            // Merge sheet to meta sheet
+            $nextKey = 0;
+            $nextRow = count($dataSheetInbox);
+            $sheetDataMegeArgs = [];
+            foreach ($dataSheetInbox as $key => $value) {
+                $_nextRow = $nextRow++;
+                $newDataSheetUpdate = [];
+                foreach ($value as $_key => $_value) {
+                    $metaOrder = $nextKey++;
+                    if (15 == $metaOrder) {
+                        $nextKey = 0;
+                    }
+                    
+                    $newDataSheetUpdate[$metaOrder] = $newMetaSheet[$key . '-' . $metaOrder];
+                }
 
-			$newMetaSheet = array();
-			$dataSheetMetaInbox = json_decode($infoMes[0]['op_data_sheet_meta']);
-	
-			$ccol = 0;
-			$crow = 0;
-			foreach ($dataSheetMetaInbox as $key => $value) {
-				$_crow = 0;
-				$_ccol = $ccol;
-			
-				if( $_crow < $totalRow ) {
-					$_crow = $crow += 1;
-				}
+                // $currentDataSheet[] = [
+                // 	'data' => $value,
+                // 	'meta' => $newDataSheetUpdate
+                // ];
+        
+                $sheetDataMegeArgs[] = [
+                    'data' => $value,
+                    'meta' => $newDataSheetUpdate
+                ];
+            }
 
-				if( $crow == $totalRow ) {
-					$crow = 0;
-					$_ccol = $ccol++;
-					
-				}
+            if (empty($currentDataSheet)) {
+                $currentDataSheet = $sheetDataMegeArgs;
+            }
 
-				if( 16 == $ccol) {
-					$ccol = 0;
-				}
+            if (!empty($currentMetaSheet)) {
+                if (count($listRowEmpty) != $totalRow) {
+                    $firstValue = array_keys($listRowEmpty);
+                    unset($listRowEmpty[$firstValue[0]]);
+                }
+            }
 
-				$newMetaSheet[($_crow-1).'-'.$_ccol] = $value;
-			}
+            if (!empty($currentDataSheet)) {
+                $iDinbox = 0;
+                foreach ($listRowEmpty as $key => $value) {
+                    $_iDinbox = $iDinbox++;
+                    $key = $key - 1;
+                    
+                    if ($key < 0) {
+                        $key = 0;
+                    }
+                    
+                    $currentDataSheet[$key] = $sheetDataMegeArgs[$_iDinbox];
+                }
+            }
 
-			// Merge sheet to meta sheet
-			$nextKey = 0;
-			$nextRow = count($dataSheetInbox);
-			$sheetDataMegeArgs = [];
-			foreach ($dataSheetInbox as $key => $value) {
+            $newSaveSheetData = [];
+            foreach ($currentDataSheet as $row => $value) {
+                $data = $value;
 
-				$_nextRow = $nextRow++;
-				$newDataSheetUpdate = [];
-				foreach ($value as $_key => $_value) {
-					$metaOrder = $nextKey++;
-					if( 15 == $metaOrder ) {
-						$nextKey = 0;
-					}
-					
-					$newDataSheetUpdate[$metaOrder] = $newMetaSheet[$key . '-' . $metaOrder];
-				}
+                if (isset($value['data'])) {
+                    $data  = $value['data'];
 
-				// $currentDataSheet[] = [
-				// 	'data' => $value,
-				// 	'meta' => $newDataSheetUpdate
-				// ];
-		
-				$sheetDataMegeArgs[] = [
-					'data' => $value,
-					'meta' => $newDataSheetUpdate
-				];
-			}
+                    foreach ($value['meta'] as $col => $valueM) {
+                        $keyMeta = $row . '-' . $col;
 
-			if( !empty( $currentMetaSheet ) ) {
-				if( count( $listRowEmpty ) != $totalRow ) {
-					$firstValue = array_keys($listRowEmpty);
-					unset($listRowEmpty[$firstValue[0]]);
-				}	
-			}
+                        $valueM->rCtm = $valueM->row; // Sheet row of customer
+                        $valueM->cCtm = $valueM->col; // Sheet col of customer
+                        $valueM->row = $row;
+                        $valueM->col = $col;
+                        $valueM->background = '';
+                        $valueM->color = '';
 
-			if( !empty( $currentDataSheet ) ) {
-				$iDinbox = 0;
-				foreach ($listRowEmpty as $key => $value) {
-					$_iDinbox = $iDinbox++;
-					$key = $key - 1;
+                        if (1 == $this->infoUser['meta']['user_role']) {
+                            $valueM->sIdCtm = $valueM->sheetId; // Sheet id of customer
+                            $valueM->readOnly = 'false';
+                        }
 
-					if( $key < 0 ) {
-						$key = 0;
-					}
-					
-					$currentDataSheet[$key] = $sheetDataMegeArgs[$_iDinbox];
-				}
-			}
+                        if (3 == $this->infoUser['meta']['user_role']) {
+                            $valueM->mesId = $request->get('mesId');
+                        }
+                        
+                        $currentMetaSheet[$keyMeta] = $valueM;
+                    }
+                }
 
-			$newSaveSheetData = [];
-			foreach ($currentDataSheet as $row => $value) {
+                $newSaveSheetData[$row] = $data;
+            }
 
-				$data = $value;
+            $this->mdSheet->save(
+                [
+                    'sheet_content' => json_encode($newSaveSheetData),
+                ],
+                $request->get('sheetId')
+            );
 
-				if( isset( $value['data'] ) ) {
+            /**
+             * Add meta data for user.
+             */
+            $sheetMeta = [
+                'sheet_meta' => json_encode($currentMetaSheet),
+            ];
 
-					$data  = $value['data'];
+            // Loop add add | update meta data.
+            foreach ($sheetMeta as $mtaKey => $metaValue) {
+                $this->mdSheet->setMetaData($request->get('sheetId'), $mtaKey, $metaValue);
+            }
 
-					foreach ($value['meta'] as $col => $valueM) {
-						$keyMeta = $row . '-' . $col;
+            $this->mdMessages->save(
+                [
+                    'op_accept_status'  => 1,
+                ],
+                $request->get('mesId')
+            );
+        }
+    }
 
-						$valueM->rCtm = $valueM->row; // Sheet row of customer
-						$valueM->cCtm = $valueM->col; // Sheet col of customer
-						$valueM->row = $row;
-						$valueM->col = $col;
-						$valueM->background = '';
-						$valueM->color = '';
+    public function autoLoadInbox(Request $request)
+    {
 
-						if( 1 == $this->infoUser['meta']['user_role'] ) {
-							$valueM->sIdCtm = $valueM->sheetId; // Sheet id of customer
-							$valueM->readOnly = 'false';
-						}
+        $condition['op_user_receiver'] = $request->get('userId');
+        $condition['op_status'] = 1;
+        $condition['ORDER'] = [
+                    'id' => 'DESC'
+            ];
+        $listMessages = $this->mdMessages->getBy(
+            $condition
+        );
 
-						if( 3 == $this->infoUser['meta']['user_role'] ) {
-							$valueM->mesId = $request->get('mesId');
-						}
-						
-						$currentMetaSheet[$keyMeta] = $valueM;
-
-					}
-				}
-
-				$newSaveSheetData[$row] = $data;
-			}
-
-			$this->mdSheet->save(
-				[
-					'sheet_content' => json_encode($newSaveSheetData),
-				],
-				$request->get('sheetId')
-			);
-
-			/**
-			 * Add meta data for user.
-			 */
-			$sheetMeta = [
-				'sheet_meta' => json_encode($currentMetaSheet),
-			];
-
-			// Loop add add | update meta data.
-			foreach ($sheetMeta as $mtaKey => $metaValue) {
-				$this->mdSheet->setMetaData( $request->get('sheetId'), $mtaKey, $metaValue );
-			}
-
-			$this->mdMessages->save(
-				[
-					'op_accept_status'  => 1,
-				],
-				$request->get('mesId')
-			);
-		}
-	}
-
-	public function autoLoadInbox(Request $request){
-
-		$condition['op_user_receiver'] = $request->get('userId');
-		$condition['op_status'] = 1;
-		$condition['ORDER'] = [
-					'id' => 'DESC'
-			];
-		$listMessages = $this->mdMessages->getBy( 
-			$condition
-		);
-
-		$newMes = [];
-		foreach ($listMessages as $key => $value) {
-			$user = $this->mdUser->getUserBy('id', $value['op_user_send']);
+        $newMes = [];
+        foreach ($listMessages as $key => $value) {
+            $user = $this->mdUser->getUserBy('id', $value['op_user_send']);
             $avatar = assets('img/user.png');
-            if( isset( $user[0]['user_avatar'] ) ) {
+            if (isset($user[0]['user_avatar'])) {
                 $avatar = url($user[0]['user_avatar']);
             }
 
-			$newMes[] = [
-				'id' => $value['id'],
-				'op_message_title' => $value['op_message_title'],
-				'op_messages' => $value['op_messages'],
-				'user_name' => isset($user[0]) ? $user[0]['user_name'] : '',
-				'user_avatar' => $avatar,
-				'linkSheet' => url('/view-sheet/' . $value['op_sheet_id']),
-				'linkInbox' => url('/massages-manage?inbox=' . $value['id'] ),
-				'op_type' => $value['op_type']
-			];
-		}
+            $newMes[] = [
+                'id' => $value['id'],
+                'op_message_title' => $value['op_message_title'],
+                'op_messages' => $value['op_messages'],
+                'user_name' => isset($user[0]) ? $user[0]['user_name'] : '',
+                'user_avatar' => $avatar,
+                'linkSheet' => url('/view-sheet/' . $value['op_sheet_id']),
+                'linkInbox' => url('/massages-manage?inbox=' . $value['id']),
+                'op_type' => $value['op_type']
+            ];
+        }
 
-		echo json_encode($newMes);
-	}
+        echo json_encode($newMes);
+    }
 
-	public function sendBackInbox(Request $request){
+    public function sendBackInbox(Request $request)
+    {
 
-		$getMesId = json_decode( $request->get('sheetMeta') );
-		$socketId = [];
+        $getMesId = json_decode($request->get('sheetMeta'));
+        $socketId = [];
 
-		// $infoMes = $this->mdMessages->getBy( 
-		// 				[
-		// 					'id' => $request->get('mesId')
-		// 				]
-		// 			);
+        // $infoMes = $this->mdMessages->getBy(
+        // 				[
+        // 					'id' => $request->get('mesId')
+        // 				]
+        // 			);
 
-		
-			$dataSheetInbox = json_decode($request->get('sheetData'));
+        
+            $dataSheetInbox = json_decode($request->get('sheetData'));
 
-			// remove emptry
-			foreach ($dataSheetInbox as $key => $value) {
-				if( empty( $value[0] ) ) {
-					unset($dataSheetInbox[$key]);
-				}
-			}
+            // remove emptry
+        foreach ($dataSheetInbox as $key => $value) {
+            if (empty($value[0])) {
+                unset($dataSheetInbox[$key]);
+            }
+        }
 
-			// $this->mdMessages->save(
-			// 	[
-			// 		'op_data_sheet' => json_encode($dataSheetInbox),
-			// 	],
-			// 	$request->get('mesId')
-			// );
+            // $this->mdMessages->save(
+            // 	[
+            // 		'op_data_sheet' => json_encode($dataSheetInbox),
+            // 	],
+            // 	$request->get('mesId')
+            // );
 
-			// Send notice inbox to user.
-			// $this->mdMessages->save(
-			// 	[
-			// 		'op_messages'   => 'Confim items.',
-			// 		'op_message_title'  => 'System notice.',
-			// 		'op_user_send'  => Session()->get('op_user_id'),
-			// 		'op_user_receiver' => $infoMes[0]['op_user_send'],
-			// 		'op_sheet_id'   => $infoMes[0]['op_sheet_id'],
-			// 		'op_datetime'   => date("Y-m-d H:i:s"),
-			// 		'op_status'     => 1,
-			// 		'op_type'       => 'notice',
-			// 		'op_data_sheet' => $request->get('sheetData'),
-			// 		'op_data_sheet_meta' => $infoMes[0]['op_data_sheet_meta'],
-			// 	]
-			// );
-			//$socketId[] = $infoMes[0]['op_user_send'];
+            // Send notice inbox to user.
+            // $this->mdMessages->save(
+            // 	[
+            // 		'op_messages'   => 'Confim items.',
+            // 		'op_message_title'  => 'System notice.',
+            // 		'op_user_send'  => Session()->get('op_user_id'),
+            // 		'op_user_receiver' => $infoMes[0]['op_user_send'],
+            // 		'op_sheet_id'   => $infoMes[0]['op_sheet_id'],
+            // 		'op_datetime'   => date("Y-m-d H:i:s"),
+            // 		'op_status'     => 1,
+            // 		'op_type'       => 'notice',
+            // 		'op_data_sheet' => $request->get('sheetData'),
+            // 		'op_data_sheet_meta' => $infoMes[0]['op_data_sheet_meta'],
+            // 	]
+            // );
+            //$socketId[] = $infoMes[0]['op_user_send'];
 
-			$totalRow = count($dataSheetInbox);
+            $totalRow = count($dataSheetInbox);
 
-			$newMetaSheet = [];
-			$dataSheetMetaInbox = json_decode($request->get('sheetMeta'), true);
-			
-			$ccol = 0;
-			$crow = 0;
-			foreach ($dataSheetMetaInbox as $key => $value) {
-				$_crow = 0;
-				$_ccol = $ccol;
-			
-				if( $_crow < $totalRow ) {
-					$_crow = $crow += 1;
-				}
+            $newMetaSheet = [];
+            $dataSheetMetaInbox = json_decode($request->get('sheetMeta'), true);
+            
+            $ccol = 0;
+            $crow = 0;
+        foreach ($dataSheetMetaInbox as $key => $value) {
+            $_crow = 0;
+            $_ccol = $ccol;
+            
+            if ($_crow < $totalRow) {
+                $_crow = $crow += 1;
+            }
 
-				if( $crow == $totalRow ) {
-					$crow = 0;
-					$_ccol = $ccol++;
-					
-				}
+            if ($crow == $totalRow) {
+                $crow = 0;
+                $_ccol = $ccol++;
+            }
 
-				if( 16 == $ccol) {
-					$ccol = 0;
-				}
+            if (16 == $ccol) {
+                $ccol = 0;
+            }
 
-				$newMetaSheet[($_crow-1).'-'.$_ccol] = $value;
-			}
-				
-			$nextKey = 0;
-			$nextRow = count($dataSheetInbox);
-			$newDataSheetUpdate = [];
-			$newDataSheetUpdateDIS = [];
-			$newDataSheetUpdateWeight = [];
-			$sIdsCtm = [];
-			foreach ($dataSheetInbox as $key => $value) {
+            $newMetaSheet[($_crow-1).'-'.$_ccol] = $value;
+        }
+                
+            $nextKey = 0;
+            $nextRow = count($dataSheetInbox);
+            $newDataSheetUpdate = [];
+            $newDataSheetUpdateDIS = [];
+            $newDataSheetUpdateWeight = [];
+            $sIdsCtm = [];
+        foreach ($dataSheetInbox as $key => $value) {
+            $_nextRow = $nextRow++;
+            foreach ($value as $_key => $_value) {
+                $metaOrder = $nextKey++;
+                if (15 == $metaOrder) {
+                    $nextKey = 0;
+                }
 
-				$_nextRow = $nextRow++;
-				foreach ($value as $_key => $_value) {
-					$metaOrder = $nextKey++;
-					if( 15 == $metaOrder ) {
-						$nextKey = 0;
-					}
-
-					if( isset( $newMetaSheet[$key . '-' . $metaOrder] ) ) {
-
-						if( 'Out' == $_value || 'Oke' == $_value ) {
-
-							$sIdsCtm[$newMetaSheet[$key . '-' . $metaOrder]['sIdCtm']] = $newMetaSheet[$key . '-' . $metaOrder]['sIdCtm'];
+                if (isset($newMetaSheet[$key . '-' . $metaOrder])) {
+                    if ('Out' == $_value || 'Oke' == $_value) {
+                        $sIdsCtm[$newMetaSheet[$key . '-' . $metaOrder]['sIdCtm']] = $newMetaSheet[$key . '-' . $metaOrder]['sIdCtm'];
 
 
-							if( 1 == $this->infoUser['meta']['user_role'] ) {
-									$newDataSheetUpdate[$newMetaSheet[$key . '-' . $metaOrder]['sIdCtm']][] = [
-										'data' => $_value,
-										'meta' => $newMetaSheet[$key . '-' . $metaOrder]
-									];
-								}
+                        if (1 == $this->infoUser['meta']['user_role']) {
+                                $newDataSheetUpdate[$newMetaSheet[$key . '-' . $metaOrder]['sIdCtm']][] = [
+                                    'data' => $_value,
+                                    'meta' => $newMetaSheet[$key . '-' . $metaOrder]
+                                ];
+                        }
 
-								if( 3 == $this->infoUser['meta']['user_role'] ) {
-									$newDataSheetUpdate[$newMetaSheet[$key . '-' . $metaOrder]['sheetId']][] = [
-										'data' => $_value,
-										'meta' => $newMetaSheet[$key . '-' . $metaOrder]
-									];
-								}
-						}
+                        if (3 == $this->infoUser['meta']['user_role']) {
+                            $newDataSheetUpdate[$newMetaSheet[$key . '-' . $metaOrder]['sheetId']][] = [
+                            'data' => $_value,
+                            'meta' => $newMetaSheet[$key . '-' . $metaOrder]
+                            ];
+                        }
+                    }
 
-						if( 14 == $_key ) {
-							if( isset( $newMetaSheet[$key . '-' . $metaOrder]['sIdCtm'] ) ) {
-								$sIdsCtm[$newMetaSheet[$key . '-' . $metaOrder]['sIdCtm']] = $newMetaSheet[$key . '-' . $metaOrder]['sIdCtm'];
-		
-								if( 1 == $this->infoUser['meta']['user_role'] ) {
-									$newDataSheetUpdateDIS[$newMetaSheet[$key . '-' . $metaOrder]['sIdCtm']][] = [
-										'data' => $_value,
-										'meta' => $newMetaSheet[$key . '-' . $metaOrder]
-									];
-								}
+                    if (14 == $_key) {
+                        if (isset($newMetaSheet[$key . '-' . $metaOrder]['sIdCtm'])) {
+                            $sIdsCtm[$newMetaSheet[$key . '-' . $metaOrder]['sIdCtm']] = $newMetaSheet[$key . '-' . $metaOrder]['sIdCtm'];
+        
+                            if (1 == $this->infoUser['meta']['user_role']) {
+                                $newDataSheetUpdateDIS[$newMetaSheet[$key . '-' . $metaOrder]['sIdCtm']][] = [
+                                    'data' => $_value,
+                                    'meta' => $newMetaSheet[$key . '-' . $metaOrder]
+                                ];
+                            }
 
-								if( 3 == $this->infoUser['meta']['user_role'] ) {
-									$newDataSheetUpdateDIS[$newMetaSheet[$key . '-' . $metaOrder]['sheetId']][] = [
-										'data' => $_value,
-										'meta' => $newMetaSheet[$key . '-' . $metaOrder]
-									];
-								}
-							}
-						}
+                            if (3 == $this->infoUser['meta']['user_role']) {
+                                $newDataSheetUpdateDIS[$newMetaSheet[$key . '-' . $metaOrder]['sheetId']][] = [
+                                    'data' => $_value,
+                                    'meta' => $newMetaSheet[$key . '-' . $metaOrder]
+                                ];
+                            }
+                        }
+                    }
 
-						if( 15 == $_key ) {
-							if( isset( $newMetaSheet[$key . '-' . $metaOrder]['sIdCtm'] ) ) {
-								$sIdsCtm[$newMetaSheet[$key . '-' . $metaOrder]['sIdCtm']] = $newMetaSheet[$key . '-' . $metaOrder]['sIdCtm'];
-								
-								if( 1 == $this->infoUser['meta']['user_role'] ) {
-									$newDataSheetUpdateWeight[$newMetaSheet[$key . '-' . $metaOrder]['sIdCtm']][] = [
-										'data' => $_value,
-										'meta' => $newMetaSheet[$key . '-' . $metaOrder]
-									];
-								}
+                    if (15 == $_key) {
+                        if (isset($newMetaSheet[$key . '-' . $metaOrder]['sIdCtm'])) {
+                            $sIdsCtm[$newMetaSheet[$key . '-' . $metaOrder]['sIdCtm']] = $newMetaSheet[$key . '-' . $metaOrder]['sIdCtm'];
+                                
+                            if (1 == $this->infoUser['meta']['user_role']) {
+                                $newDataSheetUpdateWeight[$newMetaSheet[$key . '-' . $metaOrder]['sIdCtm']][] = [
+                                    'data' => $_value,
+                                    'meta' => $newMetaSheet[$key . '-' . $metaOrder]
+                                ];
+                            }
 
-								if( 3 == $this->infoUser['meta']['user_role'] ) {
-									$newDataSheetUpdateWeight[$newMetaSheet[$key . '-' . $metaOrder]['sheetId']][] = [
-										'data' => $_value,
-										'meta' => $newMetaSheet[$key . '-' . $metaOrder]
-									];
-								}
-							}
-							
-						}
+                            if (3 == $this->infoUser['meta']['user_role']) {
+                                $newDataSheetUpdateWeight[$newMetaSheet[$key . '-' . $metaOrder]['sheetId']][] = [
+                                    'data' => $_value,
+                                    'meta' => $newMetaSheet[$key . '-' . $metaOrder]
+                                ];
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-					}
-				}
-			}
+        if (1 == $this->infoUser['meta']['user_role']) {
+            // Send notice inbox to user.
+            $this->mdMessages->save(
+                [
+                'op_messages'   => $request->get('message'),
+                'op_message_title'  => $request->get('title'),
+                'op_user_send'  => Session()->get('op_user_id'),
+                'op_user_receiver' => $request->get('receiver'),
+                'op_sheet_id'   => '',
+                'op_datetime'   => date("Y-m-d H:i:s"),
+                'op_status'     => 1,
+                'op_type'       => 'notice',
+                'op_data_sheet' => $request->get('sheetData'),
+                'op_data_sheet_meta' => '',
+                ]
+            );
+        }
 
-			if( 1 == $this->infoUser['meta']['user_role'] ) {
-				// Send notice inbox to user.
-				$this->mdMessages->save(
-					[
-						'op_messages'   => $request->get('message'),
-						'op_message_title'  => $request->get('title'),
-						'op_user_send'  => Session()->get('op_user_id'),
-						'op_user_receiver' => $request->get('receiver'),
-						'op_sheet_id'   => '',
-						'op_datetime'   => date("Y-m-d H:i:s"),
-						'op_status'     => 1,
-						'op_type'       => 'notice',
-						'op_data_sheet' => $request->get('sheetData'),
-						'op_data_sheet_meta' => '',
-					]
-				);
-			}
+            $dataSendMessage = [];
 
-			$dataSendMessage = [];
-
-			foreach ($newDataSheetUpdate as $sIdCtm => $listDataById) {
-				
-				$sheetId = $sIdCtm;
-				foreach ($listDataById as $value) {
-					$infoSheetUpdate = $this->mdSheet->getBy( 
-								[
-									'id' => $sheetId
-								]
-							);
-					$infoSheetMetaUpdate = $this->mdSheet->getMetaData( 
-									$sheetId, 'sheet_meta'
-								);
-					$infoSheetMetaUpdate = json_decode( $infoSheetMetaUpdate, true );
+        foreach ($newDataSheetUpdate as $sIdCtm => $listDataById) {
+            $sheetId = $sIdCtm;
+            foreach ($listDataById as $value) {
+                $infoSheetUpdate = $this->mdSheet->getBy(
+                    [
+                                'id' => $sheetId
+                            ]
+                );
+                $infoSheetMetaUpdate = $this->mdSheet->getMetaData(
+                    $sheetId,
+                    'sheet_meta'
+                );
+                $infoSheetMetaUpdate = json_decode($infoSheetMetaUpdate, true);
 
 
-					if( !empty( $infoSheetUpdate ) ) {
-						$getSheetInfo = json_decode($infoSheetUpdate[0]['sheet_content'], true);
+                if (!empty($infoSheetUpdate)) {
+                    $getSheetInfo = json_decode($infoSheetUpdate[0]['sheet_content'], true);
 
-						foreach ($getSheetInfo as $row => $cols) {
-						
-							if( isset( $value['meta'] ) ) {
+                    foreach ($getSheetInfo as $row => $cols) {
+                        if (isset($value['meta'])) {
+                            if ($value['meta']['rCtm'] == $row) {
+                                if (isset($value['meta']['comment'])) {
+                                    $infoSheetMetaUpdate[$row.'-13']['comment'] = $value['meta']['comment'];
+                                }
 
-								if( $value['meta']['rCtm'] == $row ){
-								
-									if( isset( $value['meta']['comment'] ) ) {
-										$infoSheetMetaUpdate[$row.'-13']['comment'] = $value['meta']['comment'];
-									}
+                                $getSheetInfo[$row][13] = $value['data'];
+                            }
+                        }
+                    }
+                        
+                    $this->mdSheet->save(
+                        [
+                        'sheet_content' => json_encode($getSheetInfo),
+                        ],
+                        $sheetId
+                    );
 
-									$getSheetInfo[$row][13] = $value['data'];
-								}
-							}
-							
-						}
-						
-						$this->mdSheet->save(
-							[
-								'sheet_content' => json_encode($getSheetInfo),
-							],
-							$sheetId
-						);
+                    $this->mdSheet->setMetaData(
+                        $sheetId,
+                        'sheet_meta',
+                        json_encode($infoSheetMetaUpdate)
+                    );
 
-						$this->mdSheet->setMetaData( 
-							$sheetId, 
-							'sheet_meta', 
-							json_encode($infoSheetMetaUpdate)
-						);
+                    $dataSendMessage = json_encode($getSheetInfo);
+                }
+            }
+        }
+            
+        foreach ($newDataSheetUpdateDIS as $sIdCtm => $listDataById) {
+            $sheetId = $sIdCtm;
+            foreach ($listDataById as $value) {
+                $infoSheetUpdate = $this->mdSheet->getBy(
+                    [
+                                    'id' => $sheetId
+                                ]
+                );
 
-						$dataSendMessage = json_encode($getSheetInfo);
-					}
-				}
-			}
-			
-			foreach ($newDataSheetUpdateDIS as $sIdCtm => $listDataById) {
-				$sheetId = $sIdCtm;
-				foreach ($listDataById as $value) {
+                if (!empty($infoSheetUpdate)) {
+                    $getSheetInfo = json_decode($infoSheetUpdate[0]['sheet_content'], true);
 
-					$infoSheetUpdate = $this->mdSheet->getBy( 
-									[
-										'id' => $sheetId
-									]
-								);
+                    foreach ($getSheetInfo as $row => $cols) {
+                        if ($value['meta']['rCtm'] == $row) {
+                            $getSheetInfo[$row][14] = $value['data'];
+                        }
+                    }
+        
+                    $this->mdSheet->save(
+                        [
+                        'sheet_content' => json_encode($getSheetInfo),
+                        ],
+                        $sheetId
+                    );
+                    $dataSendMessage = json_encode($getSheetInfo);
+                }
+            }
+        }
 
-					if( !empty( $infoSheetUpdate ) ) {
-						$getSheetInfo = json_decode($infoSheetUpdate[0]['sheet_content'], true);
+        foreach ($newDataSheetUpdateWeight as $sIdCtm => $listDataById) {
+            foreach ($listDataById as $value) {
+                $sheetId = $sIdCtm;
 
-						foreach ($getSheetInfo as $row => $cols) {
-									
-							if( $value['meta']['rCtm'] == $row ){
-			
-								$getSheetInfo[$row][14] = $value['data'];
-							}
-						}
-		
-						$this->mdSheet->save(
-							[
-								'sheet_content' => json_encode($getSheetInfo),
-							],
-							$sheetId
-						);
-						$dataSendMessage = json_encode($getSheetInfo);
-					}
-				
-				}
-			}
+                $infoSheetUpdate = $this->mdSheet->getBy(
+                    [
+                                    'id' => $sheetId
+                                ]
+                );
 
-			foreach ($newDataSheetUpdateWeight as $sIdCtm => $listDataById) {
-				foreach ($listDataById as  $value) {
+    
+                if (!empty($infoSheetUpdate)) {
+                    $getSheetInfo = json_decode($infoSheetUpdate[0]['sheet_content'], true);
 
-					$sheetId = $sIdCtm;
+                    foreach ($getSheetInfo as $row => $cols) {
+                        if ($value['meta']['rCtm'] == $row) {
+                            $getSheetInfo[$row][15] = $value['data'];
+                        }
+                    }
+                        
+                    $this->mdSheet->save(
+                        [
+                        'sheet_content' => json_encode($getSheetInfo),
+                        ],
+                        $sheetId
+                    );
+                    $dataSendMessage = json_encode($getSheetInfo);
+                }
+            }
+        }
 
-					$infoSheetUpdate = $this->mdSheet->getBy( 
-									[
-										'id' => $sheetId
-									]
-								);
+        if (1 == $this->infoUser['meta']['user_role']) {
+            foreach ($sIdsCtm as $sIdCtm) {
+                $getAuthor = $this->mdSheet->getBy(['id' => $sIdCtm]);
 
-	
-					if( !empty( $infoSheetUpdate ) ) {
-						$getSheetInfo = json_decode($infoSheetUpdate[0]['sheet_content'], true);
+                if (!empty($getAuthor)) {
+                    // Send notice inbox to user.
+                    $this->mdMessages->save(
+                        [
+                            'op_messages'   => 'Confim items.',
+                            'op_message_title'  => 'System notice.',
+                            'op_user_send'  => Session()->get('op_user_id'),
+                            'op_user_receiver' => $getAuthor[0]['sheet_author'],
+                            'op_sheet_id'   => '',
+                            'op_datetime'   => date("Y-m-d H:i:s"),
+                            'op_status'     => 1,
+                            'op_type'       => 'notice',
+                            'op_data_sheet' => $dataSendMessage,
+                        ]
+                    );
 
-						foreach ($getSheetInfo as $row => $cols) {
-									
-							if( $value['meta']['rCtm'] == $row ){
-			
-								$getSheetInfo[$row][15] = $value['data'];
-							}
-						}
-						
-						$this->mdSheet->save(
-							[
-								'sheet_content' => json_encode($getSheetInfo),
-							],
-							$sheetId
-						);
-						$dataSendMessage = json_encode($getSheetInfo);
+                    $socketId[] = $getAuthor[0]['sheet_author'];
+                }
+            }
+        }
+            
+        echo json_encode([
+            'status' => true,
+            'socketId' => $socketId
+        ]);
+    }
 
-					}		
-				}
-			}
+    public function cancelOrder(Request $request)
+    {
+        $infoMes = $this->mdMessages->getBy(
+            [
+                            'id' => $request->get('mesId')
+                        ]
+        );
+        $this->mdMessages->save(['op_status' => 4], $request->get('mesId'));
 
-			if( 1 == $this->infoUser['meta']['user_role'] ) {
-				foreach ($sIdsCtm as $sIdCtm) {
-					$getAuthor = $this->mdSheet->getBy(['id' => $sIdCtm]);
+        if (!empty($infoMes)) {
+            $sheetMetaInbox = json_decode($infoMes[0]['op_data_sheet_meta'], true);
+            $firstMeta = [];
+            foreach ($sheetMetaInbox as $first) {
+                $firstMeta = $first;
+                break;
+            }
+    
+            $infoMetaSheet = $this->mdSheet->getMetaData($firstMeta['sheetId'], 'sheet_meta');
+            $infoMetaSheet = json_decode($infoMetaSheet, true);
+            foreach ($sheetMetaInbox as $key => $value) {
+                if (isset($infoMetaSheet[$key])) {
+                    $infoMetaSheet[$key]['background'] = '';
+                    $infoMetaSheet[$key]['color'] = '';
+                    $infoMetaSheet[$key]['readOnly'] = 'false';
+                }
+            }
 
-					if( !empty( $getAuthor ) ) {
-						// Send notice inbox to user.
-						$this->mdMessages->save(
-							[
-								'op_messages'   => 'Confim items.',
-								'op_message_title'  => 'System notice.',
-								'op_user_send'  => Session()->get('op_user_id'),
-								'op_user_receiver' => $getAuthor[0]['sheet_author'],
-								'op_sheet_id'   => '',
-								'op_datetime'   => date("Y-m-d H:i:s"),
-								'op_status'     => 1,
-								'op_type'       => 'notice',
-								'op_data_sheet' => $dataSendMessage,
-							]
-						);
+            $this->mdSheet->setMetaData($firstMeta['sheetId'], 'sheet_meta', json_encode($infoMetaSheet));
 
-						$socketId[] = $getAuthor[0]['sheet_author'];
-					}
-				}
-			}
-			
-		echo json_encode([
-			'status' => true,
-			'socketId' => $socketId
-		]);
-	}
+            $this->mdMessages->save(
+                [
+                    'op_messages'   => 'Your outgoing data is rejected.',
+                    'op_message_title'  => 'System notice.',
+                    'op_user_send'  => Session()->get('op_user_id'),
+                    'op_user_receiver' => $infoMes[0]['op_user_send'],
+                    'op_sheet_id'   => $firstMeta['sheetId'],
+                    'op_datetime'   => date("Y-m-d H:i:s"),
+                    'op_status'     => 1,
+                    'op_type'       => 'inbox',
+                    'op_data_sheet' => $infoMes[0]['op_data_sheet'],
+                    'op_data_sheet_meta' => $infoMes[0]['op_data_sheet_meta'],
+                ]
+            );
+        }
+    }
 
-	public function cancelOrder(Request $request){
-		$infoMes = $this->mdMessages->getBy( 
-						[
-							'id' => $request->get('mesId')
-						]
-					);
-		$this->mdMessages->save( ['op_status' => 4], $request->get('mesId') );
+    public function getRowEmpty($currentDataSheet, $totalRow)
+    {
+        $listRowEmpty = [];
+        foreach ($currentDataSheet as $key => $value) {
+            if (empty($value[0]) &&
+                empty($value[1]) &&
+                empty($value[2]) &&
+                empty($value[3]) ) {
+                if (count($listRowEmpty) < $totalRow) {
+                    if (empty($listRowEmpty[$key])) {
+                        for ($i = 0; $i < $totalRow; $i++) {
+                            if (null != $currentDataSheet[$key+$i][1]) {
+                                $listRowEmpty = [];
+                            }
 
-		if( !empty( $infoMes ) ) {
-			$sheetMetaInbox = json_decode($infoMes[0]['op_data_sheet_meta'], true);
-			$firstMeta = [];
-			foreach ($sheetMetaInbox as $first) {
-				$firstMeta = $first;
-				break;
-			}
-	
-			$infoMetaSheet = $this->mdSheet->getMetaData( $firstMeta['sheetId'], 'sheet_meta');
-			$infoMetaSheet = json_decode($infoMetaSheet, true);
-			foreach ($sheetMetaInbox as $key => $value) {
-				if( isset( $infoMetaSheet[$key] ) ) {
-					$infoMetaSheet[$key]['background'] = '';
-					$infoMetaSheet[$key]['color'] = '';
-					$infoMetaSheet[$key]['readOnly'] = 'false';
-				}
-			}
+                            $listRowEmpty[$key + 1 + $i] = $key + 1 + $i;
+                        }
 
-			$this->mdSheet->setMetaData( $firstMeta['sheetId'], 'sheet_meta', json_encode($infoMetaSheet));
+                        if (null != $currentDataSheet[$totalRow + $key][1]) {
+                            $listRowEmpty = [];
+                        }
+                    }
+                }
+            }
+        }
 
-			$this->mdMessages->save(
-				[
-					'op_messages'   => 'Your outgoing data is rejected.',
-					'op_message_title'  => 'System notice.',
-					'op_user_send'  => Session()->get('op_user_id'),
-					'op_user_receiver' => $infoMes[0]['op_user_send'],
-					'op_sheet_id'   => $firstMeta['sheetId'],
-					'op_datetime'   => date("Y-m-d H:i:s"),
-					'op_status'     => 1,
-					'op_type'       => 'inbox',
-					'op_data_sheet' => $infoMes[0]['op_data_sheet'],
-					'op_data_sheet_meta' => $infoMes[0]['op_data_sheet_meta'],
-				]
-			);
-
-		}
-	}
-
-	public function getRowEmpty($currentDataSheet, $totalRow){
-		$listRowEmpty = [];
-		foreach ($currentDataSheet as $key => $value) {
-			if( empty( $value[0] ) && 
-				empty( $value[1] ) && 
-				empty( $value[2] ) && 
-				empty( $value[3] ) ) 
-			{	
-				if( count($listRowEmpty) < $totalRow ){
-					if( empty( $listRowEmpty[$key] ) ) {
-						for($i = 0; $i < $totalRow; $i++){
-							
-							if( null != $currentDataSheet[$key+$i][1] ) {
-								$listRowEmpty = [];
-							}
-
-							$listRowEmpty[$key + 1 + $i] = $key + 1 + $i;
-						}
-
-						if( null != $currentDataSheet[$totalRow + $key][1] ) {
-							$listRowEmpty = [];
-						}
-					}
-					
-				}
-				
-			}
-		}
-
-		return $listRowEmpty;
-	}
-
+        return $listRowEmpty;
+    }
 }
