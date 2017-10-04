@@ -486,46 +486,46 @@ class MessagesController extends baseController
         // 			);
 
         
-            $dataSheetInbox = json_decode($request->get('sheetData'));
+        $dataSheetInbox = json_decode($request->get('sheetData'));
 
-            // remove emptry
+        // remove emptry
         foreach ($dataSheetInbox as $key => $value) {
             if (empty($value[0])) {
                 unset($dataSheetInbox[$key]);
             }
         }
 
-            // $this->mdMessages->save(
-            // 	[
-            // 		'op_data_sheet' => json_encode($dataSheetInbox),
-            // 	],
-            // 	$request->get('mesId')
-            // );
+        // $this->mdMessages->save(
+        // 	[
+        // 		'op_data_sheet' => json_encode($dataSheetInbox),
+        // 	],
+        // 	$request->get('mesId')
+        // );
 
-            // Send notice inbox to user.
-            // $this->mdMessages->save(
-            // 	[
-            // 		'op_messages'   => 'Confim items.',
-            // 		'op_message_title'  => 'System notice.',
-            // 		'op_user_send'  => Session()->get('op_user_id'),
-            // 		'op_user_receiver' => $infoMes[0]['op_user_send'],
-            // 		'op_sheet_id'   => $infoMes[0]['op_sheet_id'],
-            // 		'op_datetime'   => date("Y-m-d H:i:s"),
-            // 		'op_status'     => 1,
-            // 		'op_type'       => 'notice',
-            // 		'op_data_sheet' => $request->get('sheetData'),
-            // 		'op_data_sheet_meta' => $infoMes[0]['op_data_sheet_meta'],
-            // 	]
-            // );
-            //$socketId[] = $infoMes[0]['op_user_send'];
+        // Send notice inbox to user.
+        // $this->mdMessages->save(
+        // 	[
+        // 		'op_messages'   => 'Confim items.',
+        // 		'op_message_title'  => 'System notice.',
+        // 		'op_user_send'  => Session()->get('op_user_id'),
+        // 		'op_user_receiver' => $infoMes[0]['op_user_send'],
+        // 		'op_sheet_id'   => $infoMes[0]['op_sheet_id'],
+        // 		'op_datetime'   => date("Y-m-d H:i:s"),
+        // 		'op_status'     => 1,
+        // 		'op_type'       => 'notice',
+        // 		'op_data_sheet' => $request->get('sheetData'),
+        // 		'op_data_sheet_meta' => $infoMes[0]['op_data_sheet_meta'],
+        // 	]
+        // );
+        //$socketId[] = $infoMes[0]['op_user_send'];
 
-            $totalRow = count($dataSheetInbox);
+        $totalRow = count($dataSheetInbox);
 
-            $newMetaSheet = [];
-            $dataSheetMetaInbox = json_decode($request->get('sheetMeta'), true);
-            
-            $ccol = 0;
-            $crow = 0;
+        $newMetaSheet = [];
+        $dataSheetMetaInbox = json_decode($request->get('sheetMeta'), true);
+        
+        $ccol = 0;
+        $crow = 0;
         foreach ($dataSheetMetaInbox as $key => $value) {
             $_crow = 0;
             $_ccol = $ccol;
@@ -546,12 +546,12 @@ class MessagesController extends baseController
             $newMetaSheet[($_crow-1).'-'.$_ccol] = $value;
         }
                 
-            $nextKey = 0;
-            $nextRow = count($dataSheetInbox);
-            $newDataSheetUpdate = [];
-            $newDataSheetUpdateDIS = [];
-            $newDataSheetUpdateWeight = [];
-            $sIdsCtm = [];
+        $nextKey = 0;
+        $nextRow = count($dataSheetInbox);
+        $newDataSheetUpdate = [];
+        $newDataSheetUpdateDIS = [];
+        $newDataSheetUpdateWeight = [];
+        $sIdsCtm = [];
         foreach ($dataSheetInbox as $key => $value) {
             $_nextRow = $nextRow++;
             foreach ($value as $_key => $_value) {
@@ -573,9 +573,10 @@ class MessagesController extends baseController
                         }
 
                         if (3 == $this->infoUser['meta']['user_role']) {
+
                             $newDataSheetUpdate[$newMetaSheet[$key . '-' . $metaOrder]['sheetId']][] = [
-                            'data' => $_value,
-                            'meta' => $newMetaSheet[$key . '-' . $metaOrder]
+                                'data' => $_value,
+                                'meta' => $newMetaSheet[$key . '-' . $metaOrder]
                             ];
                         }
                     }
@@ -623,6 +624,8 @@ class MessagesController extends baseController
             }
         }
 
+
+ 
         if (1 == $this->infoUser['meta']['user_role']) {
             // Send notice inbox to user.
             $this->mdMessages->save(
@@ -641,7 +644,7 @@ class MessagesController extends baseController
             );
         }
 
-            $dataSendMessage = [];
+        $dataSendMessage = [];
 
         foreach ($newDataSheetUpdate as $sIdCtm => $listDataById) {
             $sheetId = $sIdCtm;
@@ -660,7 +663,7 @@ class MessagesController extends baseController
 
                 if (!empty($infoSheetUpdate)) {
                     $getSheetInfo = json_decode($infoSheetUpdate[0]['sheet_content'], true);
-
+                    $rowOke = [];
                     foreach ($getSheetInfo as $row => $cols) {
                         if (isset($value['meta'])) {
                             if ($value['meta']['rCtm'] == $row) {
@@ -669,9 +672,26 @@ class MessagesController extends baseController
                                 }
 
                                 $getSheetInfo[$row][13] = $value['data'];
+
+                                if( 'Oke' == $getSheetInfo[$row][13] ) {
+                                    $rowOke[] = $row;
+                                }
                             }
                         }
                     }
+
+                    foreach ($rowOke as $row) {
+                        for ($i = 0; $i <= 15; $i++) { 
+                            
+                            if( 13 == $i ) {
+                                $infoSheetMetaUpdate[$row.'-'.$i]['background'] = $this->infoUser['color'];
+                                $infoSheetMetaUpdate[$row.'-'.$i]['color'] = '#fff';
+                            }else{
+                                $infoSheetMetaUpdate[$row.'-'.$i]['background'] = '#fff';
+                                $infoSheetMetaUpdate[$row.'-'.$i]['color'] = '#0c0c0c';
+                            }
+                        }
+                    };
                         
                     $this->mdSheet->save(
                         [
@@ -690,7 +710,8 @@ class MessagesController extends baseController
                 }
             }
         }
-            
+
+
         foreach ($newDataSheetUpdateDIS as $sIdCtm => $listDataById) {
             $sheetId = $sIdCtm;
             foreach ($listDataById as $value) {

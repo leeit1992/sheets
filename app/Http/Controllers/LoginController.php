@@ -59,6 +59,7 @@ class LoginController extends baseController
                     Session()->set('op_user_id', $checkUser[0]['id']);
                     Session()->set('op_user_name', $checkUser[0]['user_name']);
                     Session()->set('op_user_email', $checkUser[0]['user_email']);
+                    Session()->set('op_user_color', $checkUser[0]['user_color']);
                     Session()->set('op_user_meta', $userMeta);
 
                     $this->mdLogs->add($this->mdLogs->logTemplate(' User <b> '.$checkUser[0]['user_email'].' </b>', 'Login'));

@@ -78,7 +78,7 @@ class SheetsController extends baseController{
 
 		$listSheetsOther = $this->mdSheet->getBy( [
 			'sheet_author' => Session()->get('op_user_id'),
-			'sheet_status' => 2
+			'sheet_status' => 3
 		] );
 
 		// Load layout.
@@ -155,7 +155,6 @@ class SheetsController extends baseController{
 				'sheet_content' => $currentDataSheet,
 				'sheet_author'  => $author,
 				'sheet_datetime' => date("Y-m-d H:i:s"),
-				'sheet_status'  => 1
 			],
 			$sheetId
 		);
@@ -465,7 +464,6 @@ class SheetsController extends baseController{
 				);
 			}
 		}
-
 	}
 
 	public function addSheetDefault( $uerId, $args ){
@@ -476,7 +474,7 @@ class SheetsController extends baseController{
 				'sheet_content' => isset( $args['sheetContent'] ) ? json_encode($args['sheetContent']) : '[]',
 				'sheet_author'  => $uerId,
 				'sheet_datetime' => date("Y-m-d H:i:s"),
-				'sheet_status'  => 2
+				'sheet_status'  => 3
 			]
 		);
 

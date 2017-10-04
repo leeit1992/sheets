@@ -84,6 +84,7 @@ class Controller extends baseController{
 							'id'     => Session()->get('op_user_id'),
 							'email'  => Session()->get('op_user_email'),
 							'name'   => Session()->get('op_user_name'),
+							'color'  => Session()->get('op_user_color'),
 							'meta'   => Session()->get('op_user_meta')
 						];
 	}

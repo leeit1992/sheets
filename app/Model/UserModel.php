@@ -40,7 +40,7 @@ class UserModel extends AtlModel
 	public function checkLogin($acc, $pass){
 		return $this->db->select(
 			$this->table, 
-				["id", "user_name", "user_email", "user_status"], 
+				["id", "user_name", "user_email", "user_status", "user_color"], 
 				[
 					"user_email"    => $acc,
 					"user_password" => $pass,

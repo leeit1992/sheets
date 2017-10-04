@@ -260,6 +260,13 @@ var OP_CANCULATOR = Backbone.View.extend({
             contextMenu: ( 2 == OPDATA.user.meta.user_role) ? false : true,
             comments: true,
 
+            modifyColWidth: function(width, col){
+                if( 5 == col || 7 == col || 13 == col || 15 == col){
+                    return 50
+                }
+                
+            },
+
             afterInit: function() {
                 
                 $("#HandsontableCopyPaste").css('position','absolute');
@@ -565,11 +572,11 @@ var OP_CANCULATOR = Backbone.View.extend({
             if( 13 == col ) {
                 if( 'Out' == instance.getDataAtCell(row,col) || 'Oke' == instance.getDataAtCell(row,col) ) {
                     
-                    td.style.background = 'white';
-                    td.style.color = 'black';
-                    if( 'Out' == instance.getDataAtCell(row,col) ) {
-                        td.style.color      = '#FF9800';
-                    }
+                    // td.style.background = 'white';
+                    // td.style.color = 'black';
+                    // if( 'Out' == instance.getDataAtCell(row,col) ) {
+                    //     td.style.color      = '#FF9800';
+                    // }
                 }
             }
         }
