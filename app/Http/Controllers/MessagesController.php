@@ -94,7 +94,10 @@ class MessagesController extends baseController
         );
 
         $listSheets = $this->mdSheet->getBy(['sheet_author' => Session()->get('op_user_id')]);
-
+        $listSheetsOther = $this->mdSheet->getBy( [
+            'sheet_author' => Session()->get('op_user_id'),
+            'sheet_status' => 3
+        ] );
         // Load layout.
         return $this->loadTemplate(
             'messages/inbox.tpl',
@@ -103,7 +106,8 @@ class MessagesController extends baseController
                 'listMessages' => $listMessages,
                 'mdUser'  => $this->mdUser,
                 'listSheets' => $listSheets,
-                'userCurrent' => $this->infoUser
+                'userCurrent' => $this->infoUser,
+                'listSheetsOther' => $listSheetsOther
             ]
         );
     }

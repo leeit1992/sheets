@@ -20,11 +20,17 @@
                             $sheetI = 7;
                         }
 
-                        $titleSheet = 'Month';
-                        if( 1 == $userCurrent['meta']['user_role'] ) {
-                            $sheetI = 1; 
-                            $titleSheet = 'Sheet';
+                        foreach ($listSheetsOther as $sheetOther) {
+                            $active = '';
+    
+                            echo '<li><a href="'. url('/view-sheet/'.$sheetOther['id']) .'">'.$sheetOther['sheet_title'].'</a></li>';
                         }
+
+                        $titleSheet = 'Month';
+                        // if( 1 == $userCurrent['meta']['user_role'] ) {
+                        //     $sheetI = 1; 
+                        //     $titleSheet = 'Sheet';
+                        // }
                     foreach ($listSheets as $key => $value) {
                         echo '<option value="' . $value['id'] . '">'. $titleSheet . ' ' . ($sheetI++) . '</option>';
                     } 

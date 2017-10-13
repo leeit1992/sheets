@@ -143,7 +143,7 @@
             </div> 
         </div>
         <?php if( 1 == $userCurrent['meta']['user_role'] || 3 == $userCurrent['meta']['user_role'] ) : ?>
-        <?php View('messages/layout/popinAcceptOrder.tpl', [ 'listSheets' => $listSheets, 'pageType' => $pageType, 'userCurrent' => $userCurrent ]) ?>
+        <?php View('messages/layout/popinAcceptOrder.tpl', [ 'listSheets' => $listSheets, 'pageType' => $pageType, 'userCurrent' => $userCurrent, 'listSheetsOther' => $listSheetsOther ]) ?>
         <?php View('messages/layout/popinSend.tpl', [ 'userCurrent' => $userCurrent, 'mdUser' => $mdUser, 'listSheets' => $listSheets ]) ?>
         <?php endif; ?>
     </div>
