@@ -265,7 +265,7 @@ var OP_CANCULATOR = Backbone.View.extend({
                     return 50
                 }
                 if( 1 == col ) {
-                    return 50;
+                    return 80;
                 }
                 
             },
