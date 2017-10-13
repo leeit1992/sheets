@@ -17,7 +17,7 @@
                     <?php $sheetI = 1; 
                         $sheetI = 1; 
                         if( 6 < date('m') ) {
-                            $sheetI = 7;
+                            $sheetI = 6;
                         }
 
                         foreach ($listSheetsOther as $sheetOther) {
