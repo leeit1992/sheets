@@ -238,7 +238,7 @@ var OP_CANCULATOR = Backbone.View.extend({
                 self.formatTextHead('L','Total'),
                 self.formatTextHead('M','Link Items'),
                 self.formatTextHead('N','Status'),
-                self.formatTextHead('O','Day In Stock'),
+                self.formatTextHead('O','Arrival'),
                 self.formatTextHead('P','Weight'),
                 self.formatTextHead('Q',''),
             ],
@@ -264,7 +264,7 @@ var OP_CANCULATOR = Backbone.View.extend({
                 if( 5 == col || 7 == col || 13 == col || 15 == col || 8 == col || 11 == col || 9 == col){
                     return 50
                 }
-                if( 1 == col ) {
+                if( 1 == col || 14 == col) {
                     return 80;
                 }
                 
