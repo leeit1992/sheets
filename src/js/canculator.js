@@ -231,7 +231,7 @@ var OP_CANCULATOR = Backbone.View.extend({
                 self.formatTextHead('E','Code Items'),
                 self.formatTextHead('F','Size'),
                 self.formatTextHead('G','Color'),
-                self.formatTextHead('H','Quantity'),
+                self.formatTextHead('H','Unit'),
                 self.formatTextHead('I','Price'),
                 self.formatTextHead('J','Ship'),
                 self.formatTextHead('K','Coupon'),
