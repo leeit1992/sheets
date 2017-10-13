@@ -147,6 +147,15 @@ class LoginController extends baseController
                     );
                 }
 
+                $this->addSheetDefault(
+                        $lastID,
+                        [
+                            'sheetTitle' => 'Thang 0',
+                            'sheetContent' => $this->autoCreatDataSheetEmpty(),
+                            'sheet_status' => 3
+                        ]
+                    );
+
                 /*
                  * Add meta data for user.
                  */
@@ -214,7 +223,7 @@ class LoginController extends baseController
                 'sheet_content' => isset($args['sheetContent']) ? json_encode($args['sheetContent']) : '[]',
                 'sheet_author' => $uerId,
                 'sheet_datetime' => date('Y-m-d H:i:s'),
-                'sheet_status' => 1,
+                'sheet_status' => isset( $args['sheet_status'] ) ? $args['sheet_status'] : 1,
             ]
         );
 

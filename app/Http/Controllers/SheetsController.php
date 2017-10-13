@@ -451,6 +451,7 @@ class SheetsController extends baseController{
 				'listUser' => $this->mdUser->getAll()
 			]
 		);
+		redirect(url('/add-sheet'));
 	}
 
 	public function handleAddSheet(Request $request){
