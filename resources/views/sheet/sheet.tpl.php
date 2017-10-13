@@ -34,10 +34,10 @@ body>.content-preloader{
                             }
 
                             $titleSheet = 'Month';
-                            if( 1 == $infoUser['meta']['user_role'] ) {
-                                $i = 1; 
-                                $titleSheet = 'Sheet';
-                            }
+                            // if( 1 == $infoUser['meta']['user_role'] ) {
+                            //     $i = 1; 
+                            //     $titleSheet = 'Sheet';
+                            // }
 
                             foreach ($listSheetsOther as $sheetOther) {
                                 $active = '';
