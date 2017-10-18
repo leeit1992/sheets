@@ -30,7 +30,7 @@ class LechController extends baseController
 
             echo json_encode([
                 'title' => isset($title[1][0]) ? $title[1][0] : '',
-                'price' => isset($price[1][0]) ? $price[1][0] : '',
+                'price' => isset($price[1][0]) ? $this->ceil($price[1][0]) : '',
             ]);
         }
 
@@ -45,7 +45,7 @@ class LechController extends baseController
 
             echo json_encode([
                 'title' => isset($title[1][0]) ? $title[1][0] : '',
-                'price' => isset($price[1][0]) ? $price[1][0] : '',
+                'price' => isset($price[1][0]) ? $this->ceil($price[1][0]) : '',
             ]);
         }
 
@@ -69,7 +69,7 @@ class LechController extends baseController
 
             echo json_encode([
                 'title' => isset($title[1][0]) ? $title[1][0] : '',
-                'price' => $priceGet[0]->productPrice->current->value,
+                'price' => $this->ceil($priceGet[0]->productPrice->current->value),
             ]);
         }
     }
@@ -88,5 +88,29 @@ class LechController extends baseController
         $context = stream_context_create($opts);
 
         $result = file_get_contents($url, false, $context, -1, 40000);
+    }
+
+    public function ceil($number){
+        $exp = explode('.',$number);
+
+        $before = $exp[0];
+        $after = '';
+
+        if (isset( $exp[1] )) {
+            if( 95 <= $exp[1] ) {
+                $before = $exp[0] + 1;
+            }else if( 45 <= $exp[1] && 95 > $exp[1] ) {
+                $after = '.50';
+            }else{
+                $after = '.'.$exp[1];
+            }
+        }
+
+        return $before.$after;
+    }
+
+    public function rounding(Request $request)
+    {
+
     }
 }

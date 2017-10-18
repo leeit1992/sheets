@@ -98,5 +98,6 @@ $route->post('/clear-logs','LogsController@clearLogs');
 /*=====  End of Logs  ======*/
 
 $route->get('/lech','LechController@lech');
+$route->get('/rounding','LechController@rounding');
 
 

@@ -21,7 +21,6 @@
                         }
 
                         foreach ($listSheetsOther as $sheetOther) {
-                            $active = '';
     
                             echo '<li><a href="'. url('/view-sheet/'.$sheetOther['id']) .'">'.$sheetOther['sheet_title'].'</a></li>';
                         }

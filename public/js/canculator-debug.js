@@ -47,14 +47,14 @@ var OP_CANCULATOR_MODEL = Backbone.Model.extend({
             { /** Code Items **/ },
 
             { // Size
-                type: 'numeric',
+               // type: 'numeric',
             },
             { /** Color **/ },
             { //Quantity
                 type: 'numeric',
             },
             { // Price On Website
-                type: 'numeric',
+                type: 'text',
             },
             
             { /** Ship Web **/ },
@@ -75,7 +75,7 @@ var OP_CANCULATOR_MODEL = Backbone.Model.extend({
                 defaultDate: '01/01/2017'
             },
             { // Weight
-                type: 'numeric'
+                //type: 'numeric'
             }
         ]
     },
@@ -438,7 +438,7 @@ var OP_CANCULATOR = Backbone.View.extend({
         });
 
 
-        Handsontable.hooks.add('afterChange', function(changes) {
+        Handsontable.hooks.add('afterChange', function(changes, source) {
             var d = this; 
 
             if( changes ) {
@@ -468,6 +468,23 @@ var OP_CANCULATOR = Backbone.View.extend({
                            d.setDataAtCell(change[0],7, 1);
                         } 
                     });  
+                }
+
+                if( 8 == change[1] ){
+
+                    //  $.ajax({
+                    //     url: OPDATA.adminUrl + 'rounding',
+                    //     type: "GET",
+                    //     data: {
+                    //         int: change[3],
+                    //     },
+                    //     success: function(res) {
+                    //        //  var dataResult = JSON.parse(res);
+                    //        // d.setDataAtCell(change[0],3, dataResult.title);
+                    //        d.setDataAtCell(change[0],8, 123);
+                    //        // d.setDataAtCell(change[0],7, 1);
+                    //     } 
+                    // });  
                 }
 
             }
