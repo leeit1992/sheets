@@ -20,20 +20,34 @@ class LechController extends baseController
         $asos = strpos($request->get('link'), 'asos.com');
 
         if ($adidas) {
-            $site = file_get_contents($request->get('link'));
+            $exAdidas = explode('/', $request->get('link'));
+            if( isset( $exAdidas[4] ) ) {
+                $exAdidas = explode('.', $exAdidas[4]);
+               
+                $apiAdidas = file_get_contents('https://www.adidas.co.uk/api/products/'.$exAdidas[0]);
+                $apiAdidas = json_decode($apiAdidas, true);
+                echo json_encode([
+                    'title' => $apiAdidas['name'],
+                    'price' => $this->ceil($apiAdidas['pricing_information']['standard_price']),
+                    'code' => $apiAdidas['id'],
+                ]);
+            }
+            // 
 
-            $patternTitle = '/<h1 class="title-32 vmargin8" itemprop="name">(.*)<\/h1>/i';
-            preg_match_all($patternTitle, $site, $title);
+            // $site = $this->checkToken($request->get('link'));
 
-            $patternPrice = '/data-sale-price="(.*)" (.*)/i';
-            preg_match_all($patternPrice, $site, $price);
+            // $patternTitle = '/<h1 class="title-32 vmargin8" itemprop="name">(.*)<\/h1>/i';
+            // preg_match_all($patternTitle, $site, $title);
 
-            echo json_encode([
-                'title' => isset($title[1][0]) ? $title[1][0] : '',
-                'price' => isset($price[1][0]) ? $this->ceil($price[1][0]) : '',
-            ]);
+            // $patternPrice = '/data-sale-price="(.*)" (.*)/i';
+            // preg_match_all($patternPrice, $site, $price);
+
+            // echo json_encode([
+            //     'title' => isset($title[1][0]) ? $title[1][0] : '',
+            //     'price' => isset($price[1][0]) ? $this->ceil($price[1][0]) : '',
+            // ]);
         }
-
+        die;
         if ($nike) {
             $site = $this->getSslPage($request->get('link'));
 
@@ -112,5 +126,20 @@ class LechController extends baseController
     public function rounding(Request $request)
     {
 
+    }
+
+    public function checkToken($url){
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_AUTOREFERER, TRUE);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);       
+
+        $data = curl_exec($ch);
+        curl_close($ch);
+
+        return $data;
     }
 }

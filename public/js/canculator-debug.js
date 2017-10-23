@@ -465,6 +465,9 @@ var OP_CANCULATOR = Backbone.View.extend({
                             var dataResult = JSON.parse(res);
                            d.setDataAtCell(change[0],3, dataResult.title);
                            d.setDataAtCell(change[0],8, dataResult.price);
+                           if( dataResult.code ) {
+                                d.setDataAtCell(change[0],4, dataResult.code);
+                           }
                            d.setDataAtCell(change[0],7, 1);
                         } 
                     });  
