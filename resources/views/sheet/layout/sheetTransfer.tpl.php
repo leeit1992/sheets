@@ -38,7 +38,13 @@
                             }
                             
                             foreach ($listSheetAuthor as $key => $value) {
-                                echo '<option value="' . $value['id'] . '">'. $titleSheet . ' ' . ($sheetI++) . '</option>';
+                                if( 3 == $value['sheet_status'] ){
+                                    echo '<option value="' . $value['id'] . '">'. $value['sheet_title'] . '</option>';
+                                }
+                                if( 1 == $value['sheet_status'] ){
+                                    echo '<option value="' . $value['id'] . '">'. $titleSheet . ' ' . ($sheetI++) . '</option>';
+                                }
+                                
                             } ?>
                         </select>
                     </p>
