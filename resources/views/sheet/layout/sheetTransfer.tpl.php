@@ -36,16 +36,19 @@
                             if (1 != $infoUser['meta']['user_role']) {
                                 $titleSheet = 'Month';
                             }
-                            
                             foreach ($listSheetAuthor as $key => $value) {
                                 if( 3 == $value['sheet_status'] ){
                                     echo '<option value="' . $value['id'] . '">'. $value['sheet_title'] . '</option>';
                                 }
+                                
+                            } 
+                            foreach ($listSheetAuthor as $key => $value) {
                                 if( 1 == $value['sheet_status'] ){
                                     echo '<option value="' . $value['id'] . '">'. $titleSheet . ' ' . ($sheetI++) . '</option>';
                                 }
                                 
-                            } ?>
+                            } 
+                            ?>
                         </select>
                     </p>
                 </div>
