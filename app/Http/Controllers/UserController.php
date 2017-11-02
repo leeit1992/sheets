@@ -182,7 +182,7 @@ class UserController extends baseController{
 
 					$this->addSheetDefault($lastID, 
 						[
-							'sheetTitle' => 'Thang 0',
+							'sheetTitle' => 'Month 0',
 							'sheetContent' => $this->autoCreatDataSheetEmpty(),
 							'sheet_status' => 3
 						]

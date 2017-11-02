@@ -896,7 +896,7 @@ var OP_CANCULATOR = Backbone.View.extend({
     },
 
 
-    getCellMetaSelect: function(d){
+    getCellMetaSelect: function(d, comment = null,read = false ){
         var metaSelect = {};
         for (var i = d.dataCellSelect.cst; i <= d.dataCellSelect.ce; i++) {
             for (var ii = d.dataCellSelect.rst; ii <= d.dataCellSelect.re; ii++) {
@@ -918,6 +918,15 @@ var OP_CANCULATOR = Backbone.View.extend({
                     meta.visualCol = undefined;
                     meta.visualRow = undefined;
                     meta.renderer  = undefined;
+                    if( comment ) {
+                        if( 13 == i ) {
+                            meta['comment'] = {value : comment};
+                        }
+                    }
+
+                    if( read ) {
+                       meta.readOnly = read;
+                    }
                 metaSelect[ ii + '-' + i ] = meta; 
             }
         };
@@ -1075,7 +1084,7 @@ var OP_CANCULATOR = Backbone.View.extend({
                 d.dataCellSelect.re,
                 d.dataCellSelect.ce
             );
-        metaSelect = this.getCellMetaSelect(d);
+        metaSelect = this.getCellMetaSelect(d, 'Has Send', true);
 
         $.ajax({
             url: OPDATA.adminUrl + 'sendback-inbox',
@@ -1095,8 +1104,10 @@ var OP_CANCULATOR = Backbone.View.extend({
                     });
                 }
                 $(".uk-modal-close").trigger('click');
+                $(".op-save-sheets-js").trigger('click');
                 altair_helpers.content_preloader_hide();
                 UIkit.modal.alert('Send back success!');
+                window.location = location.href = '';
             } 
         });
     },

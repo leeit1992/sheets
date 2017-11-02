@@ -17,12 +17,12 @@
                     <?php $sheetI = 1; 
                         $sheetI = 1; 
                         if( 6 < date('m') ) {
-                            $sheetI = 6;
+                            $sheetI = 7;
                         }
 
                         foreach ($listSheetsOther as $sheetOther) {
-    
-                            echo '<li><a href="'. url('/view-sheet/'.$sheetOther['id']) .'">'.$sheetOther['sheet_title'].'</a></li>';
+
+                            echo '<option value="' . $sheetOther['id'] . '">'.$sheetOther['sheet_title'].'</option>';
                         }
 
                         $titleSheet = 'Month';

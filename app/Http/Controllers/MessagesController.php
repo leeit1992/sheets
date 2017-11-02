@@ -93,7 +93,11 @@ class MessagesController extends baseController
             $condition
         );
 
-        $listSheets = $this->mdSheet->getBy(['sheet_author' => Session()->get('op_user_id')]);
+        $listSheets = $this->mdSheet->getBy( [
+            'sheet_author' => Session()->get('op_user_id'),
+            'sheet_status' => 1
+        ] );
+
         $listSheetsOther = $this->mdSheet->getBy( [
             'sheet_author' => Session()->get('op_user_id'),
             'sheet_status' => 3
@@ -387,6 +391,9 @@ class MessagesController extends baseController
 
                 if (isset($value['data'])) {
                     $data  = $value['data'];
+                    
+                    // Set default price ship = 0
+                    $data[9] = 0;
 
                     foreach ($value['meta'] as $col => $valueM) {
                         $keyMeta = $row . '-' . $col;

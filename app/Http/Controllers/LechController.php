@@ -24,30 +24,23 @@ class LechController extends baseController
             if( isset( $exAdidas[4] ) ) {
                 $exAdidas = explode('.', $exAdidas[4]);
                
-                $apiAdidas = file_get_contents('https://www.adidas.co.uk/api/products/'.$exAdidas[0]);
-                $apiAdidas = json_decode($apiAdidas, true);
+                // $apiAdidas = file_get_contents('https://www.adidas.co.uk/api/products/'.$exAdidas[0]);
+                // $apiAdidas = json_decode($apiAdidas, true);
+
+                // echo json_encode([
+                //     'title' => $apiAdidas['name'],
+                //     'price' => $this->ceil($apiAdidas['pricing_information']['standard_price']),
+                //     'code' => $apiAdidas['id'],
+                // ]);
+
                 echo json_encode([
-                    'title' => $apiAdidas['name'],
-                    'price' => $this->ceil($apiAdidas['pricing_information']['standard_price']),
-                    'code' => $apiAdidas['id'],
+                    'title' => 'Null',
+                    'price' => 0,
+                    'code' => 'Null',
                 ]);
             }
-            // 
-
-            // $site = $this->checkToken($request->get('link'));
-
-            // $patternTitle = '/<h1 class="title-32 vmargin8" itemprop="name">(.*)<\/h1>/i';
-            // preg_match_all($patternTitle, $site, $title);
-
-            // $patternPrice = '/data-sale-price="(.*)" (.*)/i';
-            // preg_match_all($patternPrice, $site, $price);
-
-            // echo json_encode([
-            //     'title' => isset($title[1][0]) ? $title[1][0] : '',
-            //     'price' => isset($price[1][0]) ? $this->ceil($price[1][0]) : '',
-            // ]);
         }
-        die;
+   
         if ($nike) {
             $site = $this->getSslPage($request->get('link'));
 
